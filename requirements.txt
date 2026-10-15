@@ -1,0 +1,6 @@
+livekit-agents[deepgram,openai,cartesia,silero,turn-detector]>=1.8,<2
+livekit-api>=1.2
+python-dotenv>=1.0
+pyyaml>=6.0
+numpy>=1.26
+openai>=1.40

@@ -1,0 +1,258 @@
+"""The patient caller: a LiveKit Agents worker that dials the clinic's test line
+and plays a scenario-driven patient using a STT -> LLM -> TTS pipeline.
+
+Run via scripts/run_calls.py (which starts this worker and dispatches calls),
+or manually:  python -m caller.agent dev
+"""
+
+from __future__ import annotations
+
+import asyncio
+import json
+import logging
+import os
+import time
+from pathlib import Path
+
+from livekit import api
+from livekit.agents import (
+    Agent,
+    AgentServer,
+    AgentSession,
+    JobContext,
+    JobProcess,
+    RunContext,
+    cli,
+    function_tool,
+    inference,
+    room_io,
+)
+from livekit.plugins import cartesia, deepgram, openai, silero
+
+from .audio import export_recording
+from .config import AGENT_NAME, ROOT, TARGET_NUMBER, load_settings
+from .persona import Scenario, build_instructions, load_scenarios
+from .transcript import CallLog
+
+logger = logging.getLogger("patient-caller")
+
+CLINIC_IDENTITY = "clinic-line"
+HELLO_AFTER_S = 6.0  # if the clinic hasn't spoken this long after answering, say "hello?"
+HARD_LIMIT_S = 6 * 60  # absolute cap on call length, whatever the scenario says
+
+
+class PatientAgent(Agent):
+    def __init__(self, instructions: str, hangup) -> None:
+        super().__init__(instructions=instructions)
+        self._hangup = hangup
+
+    @function_tool
+    async def hold_silently(self, context: RunContext) -> None:
+        """Say nothing and keep listening. Use when the receptionist is checking or looking
+        something up, asked you to hold, is transferring you, or only gave a short
+        acknowledgement and is clearly about to continue."""
+        return None  # returning None means no spoken reply follows
+
+    @function_tool
+    async def end_call(self, context: RunContext) -> None:
+        """Hang up the phone. Only use this after you have already said goodbye."""
+        await context.wait_for_playout()
+        await asyncio.sleep(0.8)  # let the last syllable reach the phone line
+        await self._hangup("patient bot said goodbye")
+
+
+server = AgentServer()
+
+
+def prewarm(proc: JobProcess) -> None:
+    proc.userdata["vad"] = silero.VAD.load()
+
+
+server.setup_fnc = prewarm
+
+
+@server.rtc_session(agent_name=AGENT_NAME)
+async def entrypoint(ctx: JobContext) -> None:
+    meta = json.loads(ctx.job.metadata or "{}")
+    # No metadata means a local rehearsal (`python -m caller.agent console`): you play the
+    # receptionist through your mic, nothing is dialed. Pick the scenario with SCENARIO=...
+    rehearsal = "scenario" not in meta
+    settings = load_settings()
+    scenario: Scenario = load_scenarios(settings)[
+        meta.get("scenario") or os.getenv("SCENARIO", "schedule_new_checkup")
+    ]
+    out_dir = Path(meta.get("output_dir") or ROOT / "logs" / f"rehearsal-{int(time.time())}")
+    call_to = meta.get("phone_number", TARGET_NUMBER)
+
+    # Safety rail: this bot only ever calls the assessment line.
+    if call_to != TARGET_NUMBER:
+        logger.error("refusing to dial %s: only %s is allowed", call_to, TARGET_NUMBER)
+        ctx.shutdown("disallowed number")
+        return
+
+    log = CallLog(call_id=out_dir.name, scenario_id=scenario.id, scenario_title=scenario.title)
+
+    session = AgentSession(
+        vad=ctx.proc.userdata["vad"],
+        stt=deepgram.STT(
+            model=settings.stt_model,
+            language="en-US",
+            smart_format=True,  # dates, times and phone numbers come back formatted
+            keyterm=[settings.patient_first_name, settings.patient_last_name],
+        ),
+        llm=openai.LLM(model=settings.llm_model, temperature=0.8, parallel_tool_calls=False),
+        tts=cartesia.TTS(model=settings.tts_model, voice=settings.tts_voice),
+        turn_handling={
+            # Semantic end-of-turn model on top of VAD: waits through mid-sentence pauses
+            # ("let me check... okay, I have Tuesday at...") instead of jumping in.
+            "turn_detection": inference.TurnDetector(),
+            "endpointing": {
+                "min_delay": settings.min_endpointing_delay,
+                "max_delay": settings.max_endpointing_delay,
+            },
+            # The clinic can interrupt us (that's realistic), but a cough or "mm-hmm"
+            # shouldn't, and a false interruption resumes our sentence.
+            "interruption": {
+                "min_duration": 0.6,
+                "resume_false_interruption": True,
+                "false_interruption_timeout": 1.5,
+            },
+            # Start the LLM on the interim transcript to shave latency off each turn.
+            "preemptive_generation": {"enabled": True},
+        },
+    )
+    log.attach(session)
+
+    async def hangup(reason: str) -> None:
+        if log.end_reason == "unknown":
+            log.end_reason = reason
+        log.event(f"hangup: {reason}")
+        try:
+            await ctx.api.room.delete_room(api.DeleteRoomRequest(room=ctx.room.name))
+        except Exception:  # room may already be gone
+            pass
+        ctx.shutdown(reason)
+
+    async def finalize() -> None:
+        try:
+            await session.aclose()  # flushes the recorder so audio.ogg is complete
+        except Exception:
+            logger.exception("error closing session")
+        log.write(out_dir)
+        src = ctx.session_directory / "audio.ogg"
+        if src.exists():
+            try:
+                export_recording(src, out_dir)
+            except Exception:
+                logger.exception("failed to export recording")
+        else:
+            logger.warning("no recording found at %s", src)
+        (out_dir / "scenario.json").write_text(
+            json.dumps(
+                {"id": scenario.id, "title": scenario.title, "goal": scenario.goal,
+                 "try": scenario.try_, "expected": scenario.expected},
+                indent=2,
+            )
+        )
+        (out_dir / "DONE").write_text(log.end_reason + "\n")
+        logger.info("call %s finished (%s) -> %s", log.call_id, log.end_reason, out_dir)
+
+    ctx.add_shutdown_callback(finalize)
+
+    @session.on("close")
+    def _on_close(ev) -> None:
+        if log.end_reason == "unknown":
+            reason = getattr(ev.reason, "value", ev.reason)
+            log.end_reason = (
+                "clinic hung up" if reason == "participant_disconnected" else f"session closed: {reason}"
+            )
+        ctx.shutdown("session closed")
+
+    # --- scripted barge-in (only for scenarios that ask for it) ---------------------
+    heard_clinic = asyncio.Event()
+    clinic_turns = 0
+    barge_target = scenario.interrupt.on_clinic_turn if scenario.interrupt else None
+
+    async def barge_in() -> None:
+        nonlocal barge_target
+        assert scenario.interrupt is not None
+        await asyncio.sleep(scenario.interrupt.after_seconds)
+        if session.user_state == "speaking":
+            log.event("scripted barge-in: talking over the clinic agent")
+            session.say(scenario.interrupt.line, allow_interruptions=False)
+            barge_target = None
+        else:  # that turn was too short to talk over; try the next one
+            barge_target = clinic_turns + 1
+
+    @session.on("user_state_changed")
+    def _on_user_state(ev) -> None:
+        nonlocal clinic_turns
+        if ev.new_state != "speaking":
+            return
+        heard_clinic.set()
+        clinic_turns += 1
+        if barge_target is not None and clinic_turns == barge_target:
+            asyncio.create_task(barge_in())
+
+    # --- start the session, then dial ----------------------------------------------
+    patient = PatientAgent(build_instructions(scenario, settings), hangup)
+    if rehearsal:
+        log.t0 = time.time()
+        await session.start(agent=patient, room=ctx.room)
+        return
+
+    await ctx.connect()
+    log.t0 = time.time()  # recording starts with the session; transcript times match it
+    session_started = asyncio.create_task(
+        session.start(
+            agent=patient,
+            room=ctx.room,
+            room_options=room_io.RoomOptions(participant_identity=CLINIC_IDENTITY),
+            record=True,  # stereo OGG of both sides, written to ctx.session_directory
+        )
+    )
+
+    log.event(f"dialing {call_to}")
+    try:
+        await ctx.api.sip.create_sip_participant(
+            api.CreateSIPParticipantRequest(
+                room_name=ctx.room.name,
+                sip_trunk_id=settings.sip_trunk_id,
+                sip_call_to=call_to,
+                participant_identity=CLINIC_IDENTITY,
+                participant_name="Clinic agent",
+                wait_until_answered=True,
+            )
+        )
+    except api.TwirpError as e:
+        log.end_reason = f"dial failed: {e.message} (SIP {e.metadata.get('sip_status_code')})"
+        logger.error(log.end_reason)
+        ctx.shutdown(log.end_reason)
+        return
+
+    await session_started
+    log.event("call answered")
+
+    # Let the clinic greet first, like a real caller would. Only nudge if it stays silent.
+    try:
+        await asyncio.wait_for(heard_clinic.wait(), timeout=HELLO_AFTER_S)
+    except asyncio.TimeoutError:
+        log.event("clinic silent after answer; saying hello")
+        session.say("Hi, hello?")
+
+    # Soft limit: ask the bot to wrap up. Hard limit: hang up regardless.
+    async def watchdog() -> None:
+        await asyncio.sleep(scenario.max_minutes * 60 + 30)
+        log.event("soft time limit: asking the patient to wrap up")
+        session.generate_reply(
+            instructions="You need to go now. Politely say you have to run, say goodbye in "
+            "one short sentence, then call end_call."
+        )
+        await asyncio.sleep(max(45.0, HARD_LIMIT_S - scenario.max_minutes * 60 - 30))
+        await hangup("hard time limit")
+
+    asyncio.create_task(watchdog())
+
+
+if __name__ == "__main__":
+    cli.run_app(server)
