@@ -6,13 +6,12 @@ The bot dials exactly one number, `+1-805-439-8008`. The number is hard-coded in
 
 ## Quick start
 
-Requirements: Python 3.10+, a LiveKit Cloud project, a Twilio account with one phone number, and API keys for Deepgram, OpenAI and Cartesia.
+Requirements: macOS or Linux, Python 3.10+ (`brew install python@3.12` on a Mac), a LiveKit Cloud project, a Twilio account with one phone number, and API keys for Deepgram, OpenAI and Cartesia.
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env              # fill in keys, Twilio trunk details, and the test patient
-python -m caller.agent download-files   # VAD / turn-detector model weights (one time)
+./setup.sh                        # creates .venv, installs deps, copies .env, downloads model weights
+source .venv/bin/activate         # do this in every new terminal
+# fill in .env: keys, Twilio trunk details, and the test patient
 python scripts/setup_trunk.py     # registers the Twilio trunk with LiveKit; copy the printed id into .env
 ```
 
