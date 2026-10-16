@@ -3,4 +3,5 @@ livekit-api>=1.2
 python-dotenv>=1.0
 pyyaml>=6.0
 numpy>=1.26
+av>=12  # already pulled in by livekit-agents; listed because caller/audio.py imports it
 openai>=1.40

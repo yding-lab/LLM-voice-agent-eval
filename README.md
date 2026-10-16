@@ -21,6 +21,7 @@ Run the calls (one command; it starts the worker, places calls one after another
 python scripts/run_calls.py --all                    # every scenario, in order
 python scripts/run_calls.py schedule_new_checkup     # one scenario
 python scripts/run_calls.py --list                   # see scenario ids
+python scripts/run_calls.py --check                  # re-check saved calls, rewrite calls/INDEX.md
 ```
 
 Then do a first-pass review of the transcripts (optional):
@@ -30,6 +31,9 @@ python scripts/analyze_calls.py   # writes calls/*/findings.md and reports/candi
 ```
 
 ## What each call produces
+
+After every call, the runner checks that it is a real conversation: the recording and transcript were saved, the call lasted at least 45 s, and each side spoke at least 3 times. It prints VALID or the reason it isn't, and keeps a table of all calls in `calls/INDEX.md`. Only valid calls count toward the 10.
+
 
 `calls/NN-<scenario>/`
 

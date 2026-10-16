@@ -75,6 +75,53 @@ class Worker:
         self._log.close()
 
 
+MIN_DURATION_S = 45
+MIN_TURNS_EACH_SIDE = 3
+
+
+def check_call(out_dir: Path) -> list[str]:
+    """Reasons this call doesn't count as a full conversation (empty list = valid)."""
+    problems = []
+    for name in ("recording.mp3", "recording.ogg", "transcript.txt"):
+        if not (out_dir / name).exists():
+            problems.append(f"missing {name}")
+    tj = out_dir / "transcript.json"
+    if not tj.exists():
+        return problems + ["missing transcript.json"]
+    data = json.loads(tj.read_text())
+    if data.get("end_reason", "").startswith("dial failed"):
+        problems.append(data["end_reason"])
+    if data.get("duration_s", 0) < MIN_DURATION_S:
+        problems.append(f"only {data.get('duration_s', 0):.0f}s long")
+    for speaker in ("CLINIC AGENT", "PATIENT (bot)"):
+        n = sum(1 for t in data.get("turns", []) if t["speaker"] == speaker)
+        if n < MIN_TURNS_EACH_SIDE:
+            problems.append(f"{speaker} spoke only {n} time(s)")
+    return problems
+
+
+def write_index() -> int:
+    """Rewrites calls/INDEX.md (one row per call) and returns how many calls are valid."""
+    rows, valid = [], 0
+    for d in sorted(p for p in CALLS_DIR.iterdir() if p.is_dir()):
+        tj = d / "transcript.json"
+        data = json.loads(tj.read_text()) if tj.exists() else {}
+        problems = check_call(d)
+        valid += not problems
+        lat = data.get("latency", {})
+        rows.append(
+            f"| {d.name} | {data.get('duration_s', 0):.0f}s | {data.get('end_reason', '?')} | "
+            f"{lat.get('median_s', '-')} | {'yes' if not problems else 'NO: ' + '; '.join(problems)} |"
+        )
+    (CALLS_DIR / "INDEX.md").write_text(
+        "# Calls\n\nValid = recording + transcript saved, at least "
+        f"{MIN_DURATION_S}s, and at least {MIN_TURNS_EACH_SIDE} turns from each side.\n\n"
+        "| Call | Length | Ended because | Bot median latency (s) | Valid |\n"
+        "|---|---|---|---|---|\n" + "\n".join(rows) + f"\n\n**{valid} valid calls.**\n"
+    )
+    return valid
+
+
 def next_call_number() -> int:
     nums = [int(m.group(1)) for p in CALLS_DIR.glob("*") if (m := re.match(r"(\d+)-", p.name))]
     return max(nums, default=0) + 1
@@ -114,10 +161,11 @@ async def run(scenario_ids: list[str], worker: Worker | None) -> None:
             done = out_dir / "DONE"
             reason = done.read_text().strip() if done.exists() else "timeout"
             print(f"  finished in {time.time() - started:.0f}s: {reason}")
-            if (out_dir / "transcript.txt").exists():
-                print(f"  transcript: {out_dir / 'transcript.txt'}")
+            problems = check_call(out_dir)
+            print("  VALID full conversation" if not problems else f"  NOT VALID: {'; '.join(problems)}")
             if i < len(scenario_ids) - 1:
                 await asyncio.sleep(GAP_BETWEEN_CALLS_S)
+    print(f"\n{write_index()} valid calls so far (see calls/INDEX.md)")
 
 
 def main() -> None:
@@ -126,6 +174,7 @@ def main() -> None:
     parser.add_argument("scenarios", nargs="*", help="scenario ids (see --list)")
     parser.add_argument("--all", action="store_true", help="run every scenario in file order")
     parser.add_argument("--list", action="store_true", help="list scenarios and exit")
+    parser.add_argument("--check", action="store_true", help="re-check saved calls, rewrite calls/INDEX.md")
     parser.add_argument("--repeat", type=int, default=1, help="run each scenario N times")
     parser.add_argument(
         "--no-worker", action="store_true",
@@ -136,6 +185,9 @@ def main() -> None:
     if args.list:
         for sc in scenarios.values():
             print(f"{sc.id:28s} {sc.title}")
+        return
+    if args.check:
+        print(f"{write_index()} valid calls; details in calls/INDEX.md")
         return
 
     ids = list(scenarios) if args.all else args.scenarios
