@@ -69,6 +69,54 @@ scenarios:
       or what next step is required.
     max_minutes: 3
 
+  - id: new_patient_booking
+    title: New patient books a first checkup (weekday morning window)
+    identity:
+      first: Sarah
+      last: Mitchell
+      dob: July twelfth, nineteen ninety-two
+      phone: five five five, three one four, two seven eight nine
+    # Pick a female Cartesia voice id to match the persona (https://play.cartesia.ai/voices)
+    # tts_voice: <voice-id>
+    background: >
+      Thirty-four years old, recently moved to the area, has never been to this office.
+      Can be flexible if the preferred time isn't available.
+    opening: >
+      Hi, I'm a new patient, and I'd like to schedule a regular checkup sometime next week.
+    goal: >
+      Book a routine primary care checkup next week, ideally a weekday morning between
+      9 and 11 am. If asked whether you're new or existing, say this is your first visit.
+      If your preferred time isn't available, ask what alternatives they have and pick one.
+      If no booking can be completed, ask how to proceed.
+    try:
+      - When they offer a time, ask for the exact date and time.
+      - Once it's confirmed, repeat the details back naturally ("so that's Tuesday the twentieth at nine thirty?").
+    expected: >
+      Recognizes a new patient, collects the details needed to register (name, date of birth,
+      phone, possibly insurance), offers slots that respect the 9-11 weekday window or explains
+      why not, confirms date/time/provider, and tells the patient anything they need for a first
+      visit. If it can't book new patients by phone, says so and gives the next step.
+    checks:
+      - id: NEW-01
+        fail_if: Books without collecting basic registration details (name, date of birth, phone)
+        severity: High
+      - id: NEW-02
+        fail_if: Treats the caller as an existing patient, or says it found an existing record for someone who has never been there
+        severity: High
+      - id: NEW-03
+        fail_if: Ignores the 9-11 am weekday preference without explanation
+        severity: Medium
+      - id: NEW-04
+        fail_if: Confirms a date or time that differs from what was offered, or agrees with a wrong read-back
+        severity: High
+      - id: NEW-05
+        fail_if: Ends without a clear outcome (booked with details, or a concrete next step)
+        severity: High
+    pass_outcome: >
+      The new patient knows whether they're booked, for exactly when, and anything they need
+      to do before the first visit.
+    max_minutes: 3
+
   - id: schedule_weekend
     title: Ask for a Sunday appointment (closed-day handling)
     background: >

@@ -98,10 +98,13 @@ async def entrypoint(ctx: JobContext) -> None:
             model=settings.stt_model,
             language="en-US",
             smart_format=True,  # dates, times and phone numbers come back formatted
-            keyterm=[settings.patient_first_name, settings.patient_last_name],
+            keyterm=[
+                scenario.identity.get("first", settings.patient_first_name),
+                scenario.identity.get("last", settings.patient_last_name),
+            ],
         ),
         llm=openai.LLM(model=settings.llm_model, temperature=0.8, parallel_tool_calls=False),
-        tts=cartesia.TTS(model=settings.tts_model, voice=settings.tts_voice),
+        tts=cartesia.TTS(model=settings.tts_model, voice=scenario.tts_voice or settings.tts_voice),
         turn_handling={
             # Semantic end-of-turn model on top of VAD: waits through mid-sentence pauses
             # ("let me check... okay, I have Tuesday at...") instead of jumping in.

@@ -42,6 +42,11 @@ class Scenario:
     pass_outcome: str = ""
     max_minutes: float = 3.0
     interrupt: Interrupt | None = None
+    # Optional per-scenario overrides. identity keys: first, last, dob, phone.
+    # Without them the patient is the test account from .env.
+    identity: dict[str, str] = field(default_factory=dict)
+    opening: str = ""  # roughly what to say once the receptionist has greeted us
+    tts_voice: str | None = None  # Cartesia voice id, so the voice matches the persona
 
 
 def load_common_checks() -> list[Check]:
@@ -66,6 +71,9 @@ def load_scenarios(settings: Settings | None = None) -> dict[str, Scenario]:
             pass_outcome=_fill(item.get("pass_outcome", ""), fill),
             max_minutes=float(item.get("max_minutes", 3)),
             interrupt=Interrupt(**intr) if intr else None,
+            identity={k: str(v) for k, v in (item.get("identity") or {}).items()},
+            opening=_fill(item.get("opening", ""), fill),
+            tts_voice=item.get("tts_voice"),
         )
         out[sc.id] = sc
     return out
@@ -90,19 +98,26 @@ def _fill(text: str, values: dict[str, str]) -> str:
 
 def build_instructions(sc: Scenario, s: Settings) -> str:
     tries = "\n".join(f"- {t}" for t in sc.try_) or "- (nothing extra)"
+    who = sc.identity
+    opening = (
+        f"\nHOW YOU OPEN\nWait for the receptionist to greet you, then say something close to:\n"
+        f"\"{sc.opening}\" (in your own words, not word for word).\n"
+        if sc.opening
+        else ""
+    )
     return f"""You are role-playing a PATIENT making a phone call to a medical clinic.
 The other side of the call is the clinic's front-desk receptionist. Stay fully in character
 for the whole call. Never say or hint that you are an AI, a bot, or running a test.
 
 WHO YOU ARE
-- Name: {s.patient_first_name} {s.patient_last_name}
-- Date of birth: {s.patient_dob}
-- Phone number on file: {s.patient_phone}
+- Name: {who.get("first", s.patient_first_name)} {who.get("last", s.patient_last_name)}
+- Date of birth: {who.get("dob", s.patient_dob)}
+- Phone number: {who.get("phone", s.patient_phone)}
 - {sc.background}
 
 YOUR GOAL ON THIS CALL
 {sc.goal}
-
+{opening}
 THINGS TO WORK IN NATURALLY (one at a time, when it fits, not all at once)
 {tries}
 
