@@ -89,16 +89,16 @@ ITERATION_LOG.md  what changed after listening to early calls
 
 ## Scenarios and bug detection criteria
 
-`caller/scenarios.yaml` holds 14 scenarios. Each one has:
+`caller/scenarios.yaml` holds 15 scenarios. Each one has:
 - a goal and a few things to try, which the bot sees;
 - numbered failure conditions with a severity (for example `SCH-01`: confirms an appointment without checking availability, Critical), which the bot does not see;
 - a one-line passing outcome.
 
-Five common checks (`GEN-01` to `GEN-05`: talking over the caller, loops, self-contradiction, false "done" claims, dead air) apply to every call. That makes 55 checks in total.
+Five common checks (`GEN-01` to `GEN-05`: talking over the caller, loops, self-contradiction, false "done" claims, dead air) apply to every call. That makes 64 checks in total.
 
 `scripts/analyze_calls.py` grades every check as pass, fail or not tested, and writes `reports/check_matrix.md`. Confirm every fail by listening before it goes into `BUG_REPORT.md`, and cite it by check ID.
 
-A scenario can also override the caller's `identity` (name, DOB, phone), give an `opening` line, and set a `tts_voice` so the voice matches the persona. `new_patient_booking` (Sarah Mitchell) does this. Otherwise the caller is the test account from `.env`.
+A scenario can also override the caller's `identity` (name, DOB, phone), give an `opening` line, and set a `tts_voice` so the voice matches the persona. `new_patient_booking` (Sarah Mitchell) and `reschedule_unknown_appointment` (Daniel Brooks) do this. Otherwise the caller is the test account from `.env`.
 
 To add a scenario, append an entry with an `id`, `goal`, `try` items, `expected`, `checks` and `pass_outcome`. Add an `interrupt` block to script a barge-in.
 
