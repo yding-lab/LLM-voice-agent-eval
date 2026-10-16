@@ -6,7 +6,7 @@ The bot dials exactly one number, `+1-805-439-8008`. The number is hard-coded in
 
 ## Quick start
 
-Requirements: macOS or Linux, Python 3.10+ (`brew install python@3.12` on a Mac), a LiveKit Cloud project, a Twilio account with one phone number, and API keys for Deepgram, OpenAI and Cartesia.
+Requirements: macOS or Linux, Python 3.11–3.13 (`brew install python@3.12` on a Mac; 3.14 has no voice-package builds for Intel Macs, and 3.10 cannot install them either), a LiveKit Cloud project, a Twilio account with one phone number, and API keys for Deepgram, OpenAI and Cartesia.
 
 ```bash
 ./setup.sh                        # creates .venv, installs deps, copies .env, downloads model weights

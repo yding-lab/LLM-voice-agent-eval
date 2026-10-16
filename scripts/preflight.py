@@ -61,10 +61,10 @@ def main() -> None:
 
     print("Local setup")
 
-    @check("Python 3.10+", "install a newer Python: brew install python@3.12")
+    @check("Python 3.11-3.13", "install a newer Python: brew install python@3.12, then rerun ./setup.sh")
     def _():
         v = sys.version_info
-        return (v >= (3, 10), f"Python {v.major}.{v.minor}")
+        return ((3, 11) <= v < (3, 14), f"Python {v.major}.{v.minor}")
 
     @check("Packages installed", "activate the venv (source .venv/bin/activate) and run ./setup.sh")
     def _():

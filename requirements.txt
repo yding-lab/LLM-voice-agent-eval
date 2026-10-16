@@ -1,4 +1,4 @@
-livekit-agents[deepgram,openai,cartesia,silero,turn-detector]>=1.8,<2
+livekit-agents[deepgram,openai,cartesia,silero]>=1.8,<2
 livekit-api>=1.2
 python-dotenv>=1.0
 pyyaml>=6.0
