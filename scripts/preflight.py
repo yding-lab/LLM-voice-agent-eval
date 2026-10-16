@@ -57,6 +57,8 @@ def check(name: str, hint: str = ""):
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--offline", action="store_true", help="skip API key checks")
+    parser.add_argument("--console", action="store_true",
+                        help="only check what console rehearsal needs (no LiveKit/SIP/patient settings)")
     args = parser.parse_args()
 
     print("Local setup")
@@ -66,7 +68,7 @@ def main() -> None:
         v = sys.version_info
         return ((3, 11) <= v < (3, 14), f"Python {v.major}.{v.minor}")
 
-    @check("Packages installed", "activate the venv (source .venv/bin/activate) and run ./setup.sh")
+    @check("Packages installed", "activate your venv (source .venv/bin/activate) and run ./setup.sh")
     def _():
         import livekit.agents  # noqa: F401
         import yaml  # noqa: F401
@@ -87,24 +89,31 @@ def main() -> None:
 
     from caller import config  # loads .env
 
-    required = [
-        "LIVEKIT_URL", "LIVEKIT_API_KEY", "LIVEKIT_API_SECRET",
-        "DEEPGRAM_API_KEY", "OPENAI_API_KEY", "CARTESIA_API_KEY",
-        "SIP_OUTBOUND_TRUNK_ID", "CALLER_ID_NUMBER",
-        "PATIENT_FIRST_NAME", "PATIENT_LAST_NAME", "PATIENT_DOB", "PATIENT_PHONE",
-    ]
-
-    @check("Required .env values filled in")
+    @check("Console settings (provider keys)")
     def _():
-        bad = [k for k in required
-               if not os.getenv(k) or "xxxx" in os.getenv(k, "").lower() or "your-" in os.getenv(k, "")]
+        bad = config.missing_settings(outbound=False)
         return (not bad, f"still empty or placeholder: {', '.join(bad)}" if bad else "")
 
-    @check("Scenarios load and prompts build", "fill in .env first; otherwise check caller/scenarios.yaml")
+    if not args.console:
+
+        @check("Real-call settings (LiveKit, SIP trunk, caller id, test patient)")
+        def _():
+            bad = [k for k in config.missing_settings(outbound=True) if k not in config.PROVIDER_KEYS]
+            if not os.getenv("CALLER_ID_NUMBER", "").startswith("+") or "X" in os.getenv("CALLER_ID_NUMBER", ""):
+                bad.append("CALLER_ID_NUMBER")
+            return (not bad, f"still empty or placeholder: {', '.join(bad)}" if bad else "")
+
+    @check("Scenarios load and prompts build", "check caller/scenarios.yaml")
     def _():
         from caller.persona import build_instructions, load_scenarios
 
-        s = config.load_settings()
+        d = config.CONSOLE_PATIENT_DEFAULTS
+        s = config.Settings(
+            outbound=False, sip_trunk_id="", llm_model="-", stt_model="-", tts_model="-", tts_voice="-",
+            patient_first_name=d["PATIENT_FIRST_NAME"], patient_last_name=d["PATIENT_LAST_NAME"],
+            patient_dob=d["PATIENT_DOB"], patient_phone=d["PATIENT_PHONE"],
+            min_endpointing_delay=0.7, max_endpointing_delay=3.0,
+        )
         sc = load_scenarios(s)
         for one in sc.values():
             build_instructions(one, s)
@@ -114,7 +123,7 @@ def main() -> None:
     def _():
         return (config.TARGET_NUMBER == "+18054398008", config.TARGET_NUMBER)
 
-    @check("Voice activity model loads", "run: python -m caller.agent download-files")
+    @check("Voice activity model loads", "run: python -m livekit.agents download-files")
     def _():
         from livekit.plugins import silero
 
@@ -177,6 +186,9 @@ def main() -> None:
                                       {"X-API-Key": os.environ["CARTESIA_API_KEY"],
                                        "Cartesia-Version": "2025-04-16"})
         return (status == 200, body.get("name", "") if status == 200 else f"HTTP {status}")
+
+    if args.console:
+        return finish()
 
     @check("LiveKit credentials + outbound SIP trunk",
            "check LIVEKIT_* values; run python scripts/setup_trunk.py --list to see trunk ids")

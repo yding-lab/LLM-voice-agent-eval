@@ -28,7 +28,7 @@ sys.path.insert(0, str(ROOT))
 
 from livekit import api  # noqa: E402
 
-from caller.config import AGENT_NAME, CALLS_DIR, TARGET_NUMBER  # noqa: E402
+from caller.config import AGENT_NAME, CALLS_DIR, TARGET_NUMBER, missing_settings  # noqa: E402
 from caller.persona import load_scenarios  # noqa: E402
 
 CALL_TIMEOUT_S = 8 * 60
@@ -195,6 +195,14 @@ def main() -> None:
     if not ids or unknown:
         parser.error(f"unknown or missing scenario(s): {unknown or 'none given'}; try --list")
     ids = [s for s in ids for _ in range(args.repeat)]
+
+    # Real calls need SIP, LiveKit and an explicit test patient; check before dialing anything.
+    missing = missing_settings(outbound=True)
+    if missing:
+        sys.exit(
+            "Not placing any calls. Missing in .env: " + ", ".join(missing)
+            + "\n(Console rehearsal works without these: python -m caller.agent console)"
+        )
 
     worker = None
     if not args.no_worker:

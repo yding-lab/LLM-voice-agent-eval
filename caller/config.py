@@ -1,5 +1,14 @@
-"""Central configuration. Everything comes from the environment (.env), with
-sane defaults so a fresh clone only needs API keys + trunk id."""
+"""Central configuration, read from the environment (.env).
+
+There are two modes:
+
+* console  (`python -m caller.agent console`): a local rehearsal where you play the
+  receptionist. Needs only the speech/LLM provider keys. Telephony settings are not
+  used, and the patient falls back to a fictional identity if PATIENT_* is unset.
+* outbound (`scripts/run_calls.py`): real phone calls. Everything is validated strictly,
+  including the SIP trunk, LiveKit credentials and an explicit test patient that
+  matches the account created on the clinic's signup page.
+"""
 
 from __future__ import annotations
 
@@ -20,40 +29,84 @@ AGENT_NAME = "patient-caller"
 CALLS_DIR = ROOT / "calls"
 SCENARIOS_FILE = ROOT / "caller" / "scenarios.yaml"
 
+# Needed in both modes: the STT -> LLM -> TTS pipeline.
+PROVIDER_KEYS = ("DEEPGRAM_API_KEY", "OPENAI_API_KEY", "CARTESIA_API_KEY")
+# Needed only to place real calls.
+OUTBOUND_KEYS = ("LIVEKIT_URL", "LIVEKIT_API_KEY", "LIVEKIT_API_SECRET", "SIP_OUTBOUND_TRUNK_ID")
+PATIENT_KEYS = ("PATIENT_FIRST_NAME", "PATIENT_LAST_NAME", "PATIENT_DOB", "PATIENT_PHONE")
 
-def _env(name: str, default: str | None = None) -> str:
-    value = os.getenv(name, default)
-    if value is None or value == "":
-        raise RuntimeError(f"Missing required environment variable: {name} (see .env.example)")
+# Fictional identity for console rehearsals only (555-01xx numbers are reserved for fiction).
+# Real calls never fall back to this: they must use the test account you created.
+CONSOLE_PATIENT_DEFAULTS = {
+    "PATIENT_FIRST_NAME": "Sarah",
+    "PATIENT_LAST_NAME": "Mitchell",
+    "PATIENT_DOB": "March 15, 1992",
+    "PATIENT_PHONE": "+12125550147",
+}
+
+
+def _value(name: str) -> str:
+    """The variable's value, or "" if it is unset or still a .env.example placeholder."""
+    value = os.getenv(name, "").strip()
+    lowered = value.lower()
+    if "xxxx" in lowered or lowered.startswith("your-") or "your-project" in lowered:
+        return ""
     return value
+
+
+def missing_settings(*, outbound: bool) -> list[str]:
+    """Names of required variables that are empty or placeholders for this mode."""
+    names = list(PROVIDER_KEYS)
+    if outbound:
+        names += [*OUTBOUND_KEYS, *PATIENT_KEYS]
+    return [n for n in names if not _value(n)]
 
 
 @dataclass(frozen=True)
 class Settings:
-    sip_trunk_id: str
+    outbound: bool
+    sip_trunk_id: str  # "" in console mode
     llm_model: str
     stt_model: str
     tts_model: str
     tts_voice: str
     patient_first_name: str
     patient_last_name: str
-    patient_dob: str  # spoken form, e.g. "March fourth, nineteen eighty-five"
+    patient_dob: str  # written the way it should be spoken
     patient_phone: str
     min_endpointing_delay: float
     max_endpointing_delay: float
+    using_default_patient: bool = False
 
 
-def load_settings() -> Settings:
+def load_settings(*, outbound: bool = False) -> Settings:
+    """Load settings for console (default) or outbound-call mode.
+
+    Raises RuntimeError listing every missing variable, so you can fix them in one go.
+    """
+    missing = missing_settings(outbound=outbound)
+    if missing:
+        mode = "real calls" if outbound else "console mode"
+        raise RuntimeError(
+            f"Missing required environment variable(s) for {mode}: {', '.join(missing)}. "
+            "Set them in .env (see .env.example)."
+        )
+
+    def patient(name: str) -> str:
+        return _value(name) or ("" if outbound else CONSOLE_PATIENT_DEFAULTS[name])
+
     return Settings(
-        sip_trunk_id=_env("SIP_OUTBOUND_TRUNK_ID"),
+        outbound=outbound,
+        sip_trunk_id=_value("SIP_OUTBOUND_TRUNK_ID") if outbound else "",
         llm_model=os.getenv("LLM_MODEL", "gpt-4.1-mini"),
         stt_model=os.getenv("STT_MODEL", "nova-3"),
         tts_model=os.getenv("TTS_MODEL", "sonic-3"),
         tts_voice=os.getenv("TTS_VOICE_ID", "f786b574-daa5-4673-aa0c-cbe3e8534c02"),
-        patient_first_name=_env("PATIENT_FIRST_NAME"),
-        patient_last_name=_env("PATIENT_LAST_NAME"),
-        patient_dob=_env("PATIENT_DOB"),
-        patient_phone=_env("PATIENT_PHONE"),
+        patient_first_name=patient("PATIENT_FIRST_NAME"),
+        patient_last_name=patient("PATIENT_LAST_NAME"),
+        patient_dob=patient("PATIENT_DOB"),
+        patient_phone=patient("PATIENT_PHONE"),
         min_endpointing_delay=float(os.getenv("MIN_ENDPOINTING_DELAY", "0.7")),
         max_endpointing_delay=float(os.getenv("MAX_ENDPOINTING_DELAY", "3.0")),
+        using_default_patient=not outbound and not all(_value(n) for n in PATIENT_KEYS),
     )

@@ -77,10 +77,15 @@ async def entrypoint(ctx: JobContext) -> None:
     # No metadata means a local rehearsal (`python -m caller.agent console`): you play the
     # receptionist through your mic, nothing is dialed. Pick the scenario with SCENARIO=...
     rehearsal = "scenario" not in meta
-    settings = load_settings()
-    scenario: Scenario = load_scenarios(settings)[
-        meta.get("scenario") or os.getenv("SCENARIO", "schedule_new_checkup")
-    ]
+    # Console needs only provider keys; real calls validate SIP + patient settings strictly.
+    settings = load_settings(outbound=not rehearsal)
+    if settings.using_default_patient:
+        logger.info("console mode: using the fictional default patient (PATIENT_* not set)")
+    scenarios = load_scenarios(settings)
+    scenario_id = meta.get("scenario") or os.getenv("SCENARIO", "schedule_new_checkup")
+    if scenario_id not in scenarios:
+        raise RuntimeError(f"Unknown scenario {scenario_id!r}. Valid ids: {', '.join(scenarios)}")
+    scenario: Scenario = scenarios[scenario_id]
     out_dir = Path(meta.get("output_dir") or ROOT / "logs" / f"rehearsal-{int(time.time())}")
     call_to = meta.get("phone_number", TARGET_NUMBER)
 
@@ -148,7 +153,7 @@ async def entrypoint(ctx: JobContext) -> None:
                 export_recording(src, out_dir)
             except Exception:
                 logger.exception("failed to export recording")
-        else:
+        elif not rehearsal:  # console mode doesn't record; real calls always should
             logger.warning("no recording found at %s", src)
         (out_dir / "scenario.json").write_text(
             json.dumps(

@@ -1,43 +1,55 @@
 #!/usr/bin/env bash
 # One-time setup on macOS/Linux:  ./setup.sh
+# Use an existing venv folder name with:  VENV=.venv312 ./setup.sh
 set -euo pipefail
 cd "$(dirname "$0")"
 
-# Pick Python 3.11-3.13. The voice packages (onnxruntime) have no Python 3.14 builds for Intel Macs, and 3.10 cannot resolve them either.
+VENV=${VENV:-.venv}
+
+# Python 3.12 preferred; 3.13 / 3.11 accepted. Never 3.14: the voice packages (onnxruntime)
+# have no 3.14 builds for Intel Macs. 3.10 can't resolve them either.
+ok_python() { "$1" -c 'import sys; sys.exit(0 if (3, 11) <= sys.version_info < (3, 14) else 1)' 2>/dev/null; }
+
 PY=${PYTHON:-}
+if [ -n "$PY" ] && ! ok_python "$PY"; then
+  echo "PYTHON=$PY is $("$PY" --version 2>&1); need 3.11-3.13 (3.12 preferred)." >&2
+  exit 1
+fi
 if [ -z "$PY" ]; then
-  for cand in python3.13 python3.12 python3.11 python3; do
-    if command -v "$cand" >/dev/null 2>&1 && "$cand" -c 'import sys; sys.exit(0 if (3, 11) <= sys.version_info < (3, 14) else 1)' 2>/dev/null; then
+  for cand in python3.12 python3.13 python3.11 python3; do
+    if command -v "$cand" >/dev/null 2>&1 && ok_python "$cand"; then
       PY=$cand; break
     fi
   done
 fi
 if [ -z "$PY" ]; then
-  echo "Need Python 3.11, 3.12 or 3.13 (found: $(python3 --version 2>&1))." >&2
-  echo "On a Mac:  brew install python@3.12   then run ./setup.sh again." >&2
-  echo "(No Homebrew? Install it from https://brew.sh first.)" >&2
+  echo "Need Python 3.12 (3.11-3.13 also work). Found: $(python3 --version 2>&1)." >&2
+  echo "On a Mac:  brew install python@3.12   (or the installer from python.org), then rerun ./setup.sh" >&2
   exit 1
 fi
-echo "Using $PY ($("$PY" --version))"
+echo "Using $PY ($("$PY" --version)) -> $VENV"
 
-# Rebuild the venv if it was made with an unsuitable Python (e.g. an earlier failed run).
-if [ -d .venv ] && ! .venv/bin/python -c 'import sys; sys.exit(0 if (3, 11) <= sys.version_info < (3, 14) else 1)' 2>/dev/null; then
-  echo "Removing old .venv built with $(.venv/bin/python --version 2>&1)"
-  rm -rf .venv
+# Rebuild the venv if it was made with an unsupported Python (e.g. an earlier 3.14 attempt).
+if [ -d "$VENV" ] && ! ok_python "$VENV/bin/python"; then
+  echo "Removing $VENV (built with $("$VENV/bin/python" --version 2>&1))"
+  rm -rf "$VENV"
 fi
-[ -d .venv ] || "$PY" -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip -q
-pip install -r requirements.txt
+[ -d "$VENV" ] || "$PY" -m venv "$VENV"
+# shellcheck disable=SC1091
+source "$VENV/bin/activate"
+python -m pip install --upgrade pip -q
+python -m pip install -r requirements.txt
 
-[ -f .env ] || { cp .env.example .env; echo "Created .env from .env.example. Fill in your keys."; }
+[ -f .env ] || { cp .env.example .env; echo "Created .env from .env.example (it is git-ignored)."; }
 
-python -m caller.agent download-files   # VAD + turn-detector model weights
+python -m livekit.agents download-files   # model weights for installed plugins (VAD etc.)
 
 echo
 echo "Done. Next:"
-echo "  1. Fill in .env"
-echo "  2. source .venv/bin/activate && python scripts/setup_trunk.py   (paste the trunk id into .env)"
-echo "  3. python scripts/preflight.py   (checks every key and the trunk; fix any FAIL)"
-echo "  4. SCENARIO=schedule_new_checkup python -m caller.agent console   (free rehearsal, you play the clinic)"
-echo "  5. python scripts/run_calls.py schedule_new_checkup              (first real call)"
+echo "  source $VENV/bin/activate"
+echo "  1. Put DEEPGRAM / OPENAI / CARTESIA keys in .env"
+echo "  2. python scripts/preflight.py --console                                   (checks console needs)"
+echo "  3. SCENARIO=schedule_new_checkup python -m caller.agent console --text     (type as the clinic)"
+echo "     SCENARIO=schedule_new_checkup python -m caller.agent console            (talk through your mic)"
+echo "  Real calls later: fill LiveKit/Twilio/patient in .env, python scripts/setup_trunk.py,"
+echo "  python scripts/preflight.py, then python scripts/run_calls.py schedule_new_checkup"

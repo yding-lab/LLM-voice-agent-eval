@@ -9,7 +9,7 @@ The bot dials exactly one number, `+1-805-439-8008`. The number is hard-coded in
 Requirements: macOS or Linux, Python 3.11–3.13 (`brew install python@3.12` on a Mac; 3.14 has no voice-package builds for Intel Macs, and 3.10 cannot install them either), a LiveKit Cloud project, a Twilio account with one phone number, and API keys for Deepgram, OpenAI and Cartesia.
 
 ```bash
-./setup.sh                        # creates .venv, installs deps, copies .env, downloads model weights
+./setup.sh                        # creates .venv (or VENV=.venv312 ./setup.sh), installs deps, copies .env
 source .venv/bin/activate         # do this in every new terminal
 # fill in .env: keys, Twilio trunk details, and the test patient
 python scripts/setup_trunk.py     # registers the Twilio trunk with LiveKit; copy the printed id into .env
@@ -108,7 +108,7 @@ To add a scenario, append an entry with an `id`, `goal`, `try` items, `expected`
 
 ## Debugging tips
 
-- **Rehearse without phone charges:** run `SCENARIO=refill_routine python -m caller.agent console`. You play the receptionist through your mic, and nothing is dialed. Use this to tune the persona before spending on real calls.
+- **Rehearse without phone charges:** run `SCENARIO=refill_routine python -m caller.agent console` to play the receptionist through your mic, or add `--text` to type instead. Nothing is dialed. Console mode needs only the Deepgram, OpenAI and Cartesia keys. With no `PATIENT_*` values set, it uses a fictional patient (Sarah Mitchell, March 15, 1992, +12125550147). Real calls refuse to start until the LiveKit, SIP and test-patient settings are all filled in.
 - `python -m caller.agent dev` runs the worker with debug logs. In another shell, run `python scripts/run_calls.py --no-worker <scenario>`.
 - The worker log for batch runs is at `logs/worker.log`.
 - If the bot talks over the clinic's pauses, raise `MIN_ENDPOINTING_DELAY` (for example to 0.9). If it feels sluggish, lower it.
