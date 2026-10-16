@@ -22,5 +22,6 @@ echo
 echo "Done. Next:"
 echo "  1. Fill in .env"
 echo "  2. source .venv/bin/activate && python scripts/setup_trunk.py   (paste the trunk id into .env)"
-echo "  3. SCENARIO=schedule_new_checkup python -m caller.agent console   (free rehearsal, you play the clinic)"
-echo "  4. python scripts/run_calls.py schedule_new_checkup              (first real call)"
+echo "  3. python scripts/preflight.py   (checks every key and the trunk; fix any FAIL)"
+echo "  4. SCENARIO=schedule_new_checkup python -m caller.agent console   (free rehearsal, you play the clinic)"
+echo "  5. python scripts/run_calls.py schedule_new_checkup              (first real call)"

@@ -13,6 +13,7 @@ Requirements: macOS or Linux, Python 3.10+ (`brew install python@3.12` on a Mac)
 source .venv/bin/activate         # do this in every new terminal
 # fill in .env: keys, Twilio trunk details, and the test patient
 python scripts/setup_trunk.py     # registers the Twilio trunk with LiveKit; copy the printed id into .env
+python scripts/preflight.py       # checks packages, .env, every API key and the SIP trunk without placing a call
 ```
 
 Run the calls (one command; it starts the worker, places calls one after another, and waits for each to finish):
