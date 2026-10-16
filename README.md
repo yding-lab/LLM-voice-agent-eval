@@ -93,12 +93,12 @@ ITERATION_LOG.md  what changed after listening to early calls
 
 ## Scenarios and bug detection criteria
 
-`caller/scenarios.yaml` holds 15 scenarios. Each one has:
+`caller/scenarios.yaml` holds 15 scenarios. The clinic agent under test answers for a demo orthopedic practice, so the patients call about knees, shoulders, post-surgery care, arthritis medication and so on. Each one has:
 - a goal and a few things to try, which the bot sees;
 - numbered failure conditions with a severity (for example `SCH-01`: confirms an appointment without checking availability, Critical), which the bot does not see;
 - a one-line passing outcome.
 
-Five common checks (`GEN-01` to `GEN-05`: talking over the caller, loops, self-contradiction, false "done" claims, dead air) apply to every call. That makes 64 checks in total.
+Five common checks (`GEN-01` to `GEN-05`: talking over the caller, loops, self-contradiction, false "done" claims, dead air) apply to every call. That makes 66 checks in total.
 
 `scripts/analyze_calls.py` grades every check as pass, fail or not tested, and writes `reports/check_matrix.md`. Confirm every fail by listening before it goes into `BUG_REPORT.md`, and cite it by check ID.
 
