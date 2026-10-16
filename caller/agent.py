@@ -150,7 +150,9 @@ async def entrypoint(ctx: JobContext) -> None:
         (out_dir / "scenario.json").write_text(
             json.dumps(
                 {"id": scenario.id, "title": scenario.title, "goal": scenario.goal,
-                 "try": scenario.try_, "expected": scenario.expected},
+                 "try": scenario.try_, "expected": scenario.expected,
+                 "pass_outcome": scenario.pass_outcome,
+                 "checks": [vars(c) for c in scenario.checks]},
                 indent=2,
             )
         )

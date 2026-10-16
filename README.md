@@ -41,7 +41,7 @@ python scripts/analyze_calls.py   # writes calls/*/findings.md and reports/candi
 | `transcript.txt` | Both sides, with `[mm:ss]` timestamps that match the recording. Barge-ins, hangups and tool calls are marked. |
 | `transcript.json` | The same turns in structured form, plus the bot's per-turn response latency. |
 | `scenario.json` | The goal and the expected correct behaviour for this call. |
-| `findings.md` | LLM first-pass candidate issues, if you ran the analyzer. These must be verified against the audio. |
+| `findings.md` / `.json` | Each check graded pass, fail or not tested, plus other candidate issues (if you ran the analyzer). These must be verified against the audio. |
 
 ## Telephony setup (Twilio → LiveKit SIP)
 
@@ -87,9 +87,18 @@ BUG_REPORT.md     issues found in the clinic agent
 ITERATION_LOG.md  what changed after listening to early calls
 ```
 
-## Adding a scenario
+## Scenarios and bug detection criteria
 
-Append an entry to `caller/scenarios.yaml` with an `id`, `goal`, a few `try` items, and the `expected` behaviour. The `expected` field is not shown to the bot; it guides review and the analyzer. Add an `interrupt` block to script a barge-in.
+`caller/scenarios.yaml` holds 13 scenarios. Each one has:
+- a goal and a few things to try, which the bot sees;
+- numbered failure conditions with a severity (for example `SCH-01`: confirms an appointment without checking availability, Critical), which the bot does not see;
+- a one-line passing outcome.
+
+Five common checks (`GEN-01` to `GEN-05`: talking over the caller, loops, self-contradiction, false "done" claims, dead air) apply to every call. That makes 50 checks in total.
+
+`scripts/analyze_calls.py` grades every check as pass, fail or not tested, and writes `reports/check_matrix.md`. Confirm every fail by listening before it goes into `BUG_REPORT.md`, and cite it by check ID.
+
+To add a scenario, append an entry with an `id`, `goal`, `try` items, `expected`, `checks` and `pass_outcome`. Add an `interrupt` block to script a barge-in.
 
 ## Debugging tips
 

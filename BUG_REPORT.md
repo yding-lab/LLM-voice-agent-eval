@@ -10,14 +10,15 @@ Severity:
 
 ## Summary
 
-| # | Bug | Severity | Call |
-|---|---|---|---|
-| 1 | _title_ | High | `calls/NN-scenario` at mm:ss |
+| # | Check | Bug | Severity | Call |
+|---|---|---|---|---|
+| 1 | SCH-01 | _title_ | High | `calls/NN-scenario` at mm:ss |
 
 ---
 
 ## 1. _Title: what the agent did wrong, in one line_
 
+**Check:** SCH-01 (see `caller/scenarios.yaml`)
 **Severity:** High
 **Call:** `calls/NN-scenario/transcript.txt` at mm:ss (recording at the same time)
 **Steps / context:** What the patient said and asked for.

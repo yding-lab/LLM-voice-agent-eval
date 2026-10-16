@@ -22,6 +22,15 @@ class Interrupt:
 
 
 @dataclass
+class Check:
+    """A numbered failure condition, e.g. SCH-01. Never shown to the patient bot."""
+
+    id: str
+    fail_if: str
+    severity: str
+
+
+@dataclass
 class Scenario:
     id: str
     title: str
@@ -29,15 +38,22 @@ class Scenario:
     goal: str
     try_: list[str] = field(default_factory=list)
     expected: str = ""
+    checks: list[Check] = field(default_factory=list)
+    pass_outcome: str = ""
     max_minutes: float = 3.0
     interrupt: Interrupt | None = None
+
+
+def load_common_checks() -> list[Check]:
+    raw = yaml.safe_load(SCENARIOS_FILE.read_text())
+    return [Check(**c) for c in raw.get("common_checks", [])]
 
 
 def load_scenarios(settings: Settings | None = None) -> dict[str, Scenario]:
     raw = yaml.safe_load(SCENARIOS_FILE.read_text())
     fill = _fill_values(settings)
     out: dict[str, Scenario] = {}
-    for item in raw:
+    for item in raw["scenarios"]:
         intr = item.get("interrupt")
         sc = Scenario(
             id=item["id"],
@@ -46,6 +62,8 @@ def load_scenarios(settings: Settings | None = None) -> dict[str, Scenario]:
             goal=_fill(item["goal"], fill),
             try_=[_fill(t, fill) for t in item.get("try", [])],
             expected=_fill(item.get("expected", ""), fill),
+            checks=[Check(**c) for c in item.get("checks", [])],
+            pass_outcome=_fill(item.get("pass_outcome", ""), fill),
             max_minutes=float(item.get("max_minutes", 3)),
             interrupt=Interrupt(**intr) if intr else None,
         )
