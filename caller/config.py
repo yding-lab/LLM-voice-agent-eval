@@ -13,6 +13,7 @@ There are two modes:
 from __future__ import annotations
 
 import os
+import ssl
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -20,6 +21,26 @@ from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
+
+
+def _ensure_ca_certificates() -> None:
+    """Python from the python.org macOS installer has no CA certificates until its
+    'Install Certificates.command' is run, so every HTTPS call (Deepgram, Cartesia,
+    LiveKit) fails with CERTIFICATE_VERIFY_FAILED. In that case only, use the certifi
+    bundle that livekit-agents already installs. Never overrides an explicit setting."""
+    if os.getenv("SSL_CERT_FILE") or os.getenv("SSL_CERT_DIR"):
+        return
+    paths = ssl.get_default_verify_paths()
+    if paths.cafile or (paths.capath and os.path.isdir(paths.capath) and any(os.scandir(paths.capath))):
+        return  # the system already has certificates
+    try:
+        import certifi
+    except ImportError:
+        return
+    os.environ["SSL_CERT_FILE"] = certifi.where()
+
+
+_ensure_ca_certificates()
 
 # The ONLY number this bot is ever allowed to dial. Hard-coded on purpose:
 # the agent refuses to place a call anywhere else, whatever the job metadata says.
