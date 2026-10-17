@@ -11,6 +11,7 @@ import asyncio
 import json
 import logging
 import os
+import sys
 import time
 from pathlib import Path
 
@@ -30,7 +31,7 @@ from livekit.agents import (
 from livekit.plugins import cartesia, deepgram, openai, silero
 
 from .audio import export_recording
-from .config import AGENT_NAME, ROOT, TARGET_NUMBER, load_settings
+from .config import AGENT_NAME, ROOT, TARGET_NUMBER, load_settings, prepare_console_env
 from .persona import Scenario, build_instructions, load_scenarios
 from .transcript import CallLog
 
@@ -60,6 +61,11 @@ class PatientAgent(Agent):
         await asyncio.sleep(0.8)  # let the last syllable reach the phone line
         await self._hangup("patient bot said goodbye")
 
+
+# Console works without LiveKit Cloud settings. AgentServer() reads LIVEKIT_URL when it is
+# created, so a half-filled LiveKit config has to be cleared before this line.
+if "console" in sys.argv[1:]:
+    prepare_console_env()
 
 server = AgentServer()
 

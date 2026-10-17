@@ -75,6 +75,14 @@ def _value(name: str) -> str:
     return value
 
 
+def prepare_console_env() -> None:
+    """Console mode never connects to LiveKit Cloud. If LIVEKIT_URL is set but the key or
+    secret is missing (e.g. the .env.example placeholder), livekit-agents crashes at startup
+    with "either token, or api_key and api_secret, must be set". Drop the URL in that case."""
+    if not all(_value(n) for n in ("LIVEKIT_URL", "LIVEKIT_API_KEY", "LIVEKIT_API_SECRET")):
+        os.environ.pop("LIVEKIT_URL", None)
+
+
 def missing_settings(*, outbound: bool) -> list[str]:
     """Names of required variables that are empty or placeholders for this mode."""
     names = list(PROVIDER_KEYS)
