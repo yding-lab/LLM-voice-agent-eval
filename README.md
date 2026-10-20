@@ -23,6 +23,7 @@ python scripts/run_calls.py --all                    # every scenario, in order
 python scripts/run_calls.py schedule_new_checkup     # one scenario
 python scripts/run_calls.py --list                   # see scenario ids
 python scripts/run_calls.py --check                  # re-check saved calls, rewrite calls/INDEX.md
+python scripts/renumber_calls.py                     # before submitting: drop invalid calls, renumber 01..N (add --apply)
 ```
 
 Then do a first-pass review of the transcripts (optional):
