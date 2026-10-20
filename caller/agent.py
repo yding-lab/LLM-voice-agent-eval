@@ -11,6 +11,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -23,6 +24,7 @@ from livekit.agents import (
     JobContext,
     JobProcess,
     RunContext,
+    StopResponse,
     cli,
     function_tool,
     inference,
@@ -33,7 +35,7 @@ from livekit.plugins import cartesia, deepgram, openai, silero
 from .audio import export_recording
 from .config import AGENT_NAME, ROOT, TARGET_NUMBER, load_settings, prepare_console_env
 from .persona import Scenario, build_instructions, load_scenarios
-from .transcript import CallLog
+from .transcript import CallLog, Turn
 
 logger = logging.getLogger("patient-caller")
 
@@ -42,10 +44,41 @@ HELLO_AFTER_S = 6.0  # if the clinic hasn't spoken this long after answering, sa
 HARD_LIMIT_S = 6 * 60  # absolute cap on call length, whatever the scenario says
 
 
+# "This call may be recorded for quality and training purposes." Clinics play a notice like
+# this, pause, and only then greet. It is a complete sentence followed by silence, so the
+# turn detector rightly ends the turn, and the LLM used to answer it as if it were a greeting.
+RECORDING_NOTICE = re.compile(
+    r"(this\s+)?call\s+(may|might|will|can|is going to)\s+be\s+(recorded|monitored)[^.?!]*[.?!]?",
+    re.IGNORECASE,
+)
+
+
+def is_only_recording_notice(text: str) -> bool:
+    """True when a clinic turn is just the recording notice, with no greeting or question."""
+    if not RECORDING_NOTICE.search(text):
+        return False
+    rest = RECORDING_NOTICE.sub(" ", text)
+    return len(re.findall(r"[A-Za-z']+", rest)) <= 2  # allow a stray "okay" or "and"
+
+
 class PatientAgent(Agent):
-    def __init__(self, instructions: str, hangup) -> None:
+    def __init__(self, instructions: str, hangup, on_ignored=None) -> None:
         super().__init__(instructions=instructions)
         self._hangup = hangup
+        self._on_ignored = on_ignored  # lets the transcript still show what we didn't answer
+        self._greeted = False
+
+    async def on_user_turn_completed(self, turn_ctx, new_message) -> None:
+        # Only the opening is affected: until the clinic has actually greeted us, a turn
+        # that is nothing but the recording notice gets no reply. Everything else, including
+        # a notice and greeting heard as one turn, is answered as before.
+        text = new_message.text_content or ""
+        if not self._greeted and is_only_recording_notice(text):
+            logger.info("ignoring recording notice: %r", text)
+            if self._on_ignored:
+                self._on_ignored(text)
+            raise StopResponse()
+        self._greeted = True
 
     @function_tool
     async def hold_silently(self, context: RunContext) -> None:
@@ -211,7 +244,11 @@ async def entrypoint(ctx: JobContext) -> None:
             asyncio.create_task(barge_in())
 
     # --- start the session, then dial ----------------------------------------------
-    patient = PatientAgent(build_instructions(scenario, settings), hangup)
+    def on_ignored(text: str) -> None:
+        log.turns.append(Turn(t=max(0.0, time.time() - log.t0), speaker="CLINIC AGENT", text=text))
+        log.event("recording notice: patient stays silent")
+
+    patient = PatientAgent(build_instructions(scenario, settings), hangup, on_ignored)
     if rehearsal:
         log.t0 = time.time()
         await session.start(agent=patient, room=ctx.room)
