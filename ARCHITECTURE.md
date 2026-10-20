@@ -21,4 +21,8 @@ The design is driven by the first thing a reviewer does: listen to the calls. Th
 
 ## Measured results
 
-To fill in after the test runs, from `calls/*/transcript.json`: median and p90 bot response latency, number of calls, and average call length.
+From the 11 submitted calls (`calls/*/transcript.json`, 110 measured bot turns):
+
+- **Response latency** (clinic stops speaking → bot audio starts): median **1.31 s**, p90 **1.73 s**, max 3.29 s. Roughly 0.7 s of that is the deliberate endpointing wait; the rest is STT finalization, LLM time-to-first-token and TTS first audio.
+- **Call length:** 96–323 s, mean 2.8 min. All ended with the bot's own goodbye.
+- **Turn-taking:** 33 of 113 bot turns were cut off by overlap, and 30 of those were in the first 35 s of a call. The clinic plays a recording notice, pauses, then greets; the bot answered the notice. This is the main thing the next iteration fixes (see [ITERATION_LOG.md](ITERATION_LOG.md) #7).

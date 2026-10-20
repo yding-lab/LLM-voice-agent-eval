@@ -94,7 +94,7 @@ ITERATION_LOG.md  what changed after listening to early calls
 
 ## Scenarios and bug detection criteria
 
-`caller/scenarios.yaml` holds 15 scenarios. The clinic agent under test answers for a demo orthopedic practice, so the patients call about knees, shoulders, post-surgery care, arthritis medication and so on. Each one has:
+`caller/scenarios.yaml` holds 15 scenarios. The clinic agent under test answers for a demo orthopedic practice, so the patients call about knees, shoulders, post-surgery care, arthritis medication and so on. (The submitted calls 01–11 were made with the earlier primary-care version of these scenarios; each call's `scenario.json` records what it used.) Each one has:
 - a goal and a few things to try, which the bot sees;
 - numbered failure conditions with a severity (for example `SCH-01`: confirms an appointment without checking availability, Critical), which the bot does not see;
 - a one-line passing outcome.
