@@ -24,10 +24,10 @@ from livekit.agents import (
     JobContext,
     JobProcess,
     RunContext,
-    StopResponse,
     cli,
     function_tool,
     inference,
+    llm,
     room_io,
 )
 from livekit.plugins import cartesia, deepgram, openai, silero
@@ -35,7 +35,7 @@ from livekit.plugins import cartesia, deepgram, openai, silero
 from .audio import export_recording
 from .config import AGENT_NAME, ROOT, TARGET_NUMBER, load_settings, prepare_console_env
 from .persona import Scenario, build_instructions, load_scenarios
-from .transcript import CallLog, Turn
+from .transcript import CallLog
 
 logger = logging.getLogger("patient-caller")
 
@@ -61,24 +61,30 @@ def is_only_recording_notice(text: str) -> bool:
     return len(re.findall(r"[A-Za-z']+", rest)) <= 2  # allow a stray "okay" or "and"
 
 
+def should_wait_for_greeting(chat_ctx: llm.ChatContext) -> bool:
+    """True while the patient hasn't spoken yet and the clinic's latest turn is only the
+    recording notice. Read from the conversation itself, so it needs no extra state."""
+    messages = [m for m in chat_ctx.items if isinstance(m, llm.ChatMessage)]
+    if any(m.role == "assistant" and (m.text_content or "").strip() for m in messages):
+        return False  # the call is under way; never second-guess later turns
+    last_user = next((m for m in reversed(messages) if m.role == "user"), None)
+    return last_user is not None and is_only_recording_notice(last_user.text_content or "")
+
+
 class PatientAgent(Agent):
-    def __init__(self, instructions: str, hangup, on_ignored=None) -> None:
+    def __init__(self, instructions: str, hangup) -> None:
         super().__init__(instructions=instructions)
         self._hangup = hangup
-        self._on_ignored = on_ignored  # lets the transcript still show what we didn't answer
-        self._greeted = False
 
-    async def on_user_turn_completed(self, turn_ctx, new_message) -> None:
-        # Only the opening is affected: until the clinic has actually greeted us, a turn
-        # that is nothing but the recording notice gets no reply. Everything else, including
-        # a notice and greeting heard as one turn, is answered as before.
-        text = new_message.text_content or ""
-        if not self._greeted and is_only_recording_notice(text):
-            logger.info("ignoring recording notice: %r", text)
-            if self._on_ignored:
-                self._on_ignored(text)
-            raise StopResponse()
-        self._greeted = True
+    async def llm_node(self, chat_ctx, tools, model_settings):
+        # llm_node runs right before every reply, for spoken turns (phone, console) and for
+        # typed ones (console --text). Skipping it here means: no LLM call, no speech.
+        # Only the opening is affected. A notice and greeting heard as one turn is answered.
+        if should_wait_for_greeting(chat_ctx):
+            logger.info("recording notice heard; staying silent until the clinic greets us")
+            return
+        async for chunk in Agent.default.llm_node(self, chat_ctx, tools, model_settings):
+            yield chunk
 
     @function_tool
     async def hold_silently(self, context: RunContext) -> None:
@@ -244,11 +250,7 @@ async def entrypoint(ctx: JobContext) -> None:
             asyncio.create_task(barge_in())
 
     # --- start the session, then dial ----------------------------------------------
-    def on_ignored(text: str) -> None:
-        log.turns.append(Turn(t=max(0.0, time.time() - log.t0), speaker="CLINIC AGENT", text=text))
-        log.event("recording notice: patient stays silent")
-
-    patient = PatientAgent(build_instructions(scenario, settings), hangup, on_ignored)
+    patient = PatientAgent(build_instructions(scenario, settings), hangup)
     if rehearsal:
         log.t0 = time.time()
         await session.start(agent=patient, room=ctx.room)

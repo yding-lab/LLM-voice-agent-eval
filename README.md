@@ -109,6 +109,8 @@ To add a scenario, append an entry with an `id`, `goal`, `try` items, `expected`
 
 ## Debugging tips
 
+- `python tests/test_recording_notice.py` checks, with no API keys, that the bot stays silent on the clinic's recording notice and answers the real greeting.
+
 - **Rehearse without phone charges:** run `SCENARIO=refill_routine python -m caller.agent console` to play the receptionist through your mic, or add `--text` to type instead. Nothing is dialed. Console mode needs only the Deepgram, OpenAI and Cartesia keys. With no `PATIENT_*` values set, it uses a fictional patient (Sarah Mitchell, March 15, 1992, +12125550147). Real calls refuse to start until the LiveKit, SIP and test-patient settings are all filled in.
 - `python -m caller.agent dev` runs the worker with debug logs. In another shell, run `python scripts/run_calls.py --no-worker <scenario>`.
 - The worker log for batch runs is at `logs/worker.log`.
