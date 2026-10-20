@@ -1,0 +1,254 @@
+{
+  "call_id": "02-new_patient_booking",
+  "scenario": "new_patient_booking",
+  "started_at": 1792353129.799427,
+  "duration_s": 225.4,
+  "end_reason": "patient bot said goodbye",
+  "latency": {
+    "bot_turns": 12,
+    "median_s": 1.38,
+    "p90_s": 1.88,
+    "max_s": 1.91
+  },
+  "turns": [
+    {
+      "t": 5.948253154754639,
+      "speaker": "CLINIC AGENT",
+      "text": "This call may be recorded for quality and training",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 12.756695032119751,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I'm new to the area and",
+      "interrupted": true,
+      "latency": 1.0688848495483398
+    },
+    {
+      "t": 13.29945421218872,
+      "speaker": "CLINIC AGENT",
+      "text": "Thank you for calling Pivot.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 16.265467882156372,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I'm a new",
+      "interrupted": true,
+      "latency": 1.829653024673462
+    },
+    {
+      "t": 16.55357813835144,
+      "speaker": "CLINIC AGENT",
+      "text": "Welcome.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 18.893258094787598,
+      "speaker": "PATIENT (bot)",
+      "text": "patient, and I was hoping to",
+      "interrupted": true,
+      "latency": 1.9051990509033203
+    },
+    {
+      "t": 19.859424114227295,
+      "speaker": "CLINIC AGENT",
+      "text": "Well no problem. Would you like to create a demo patient profile to get started?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 27.547729969024658,
+      "speaker": "CLINIC AGENT",
+      "text": "I just need your first and last name.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 30.66345191001892,
+      "speaker": "PATIENT (bot)",
+      "text": "Sure, it's Sarah Mitchell.",
+      "interrupted": false,
+      "latency": 1.5736498832702637
+    },
+    {
+      "t": 41.248287200927734,
+      "speaker": "CLINIC AGENT",
+      "text": "Your patient profile is set up. And your date of birth is July fourth two thousand for demo purposes. How may I help you today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 50.66697096824646,
+      "speaker": "PATIENT (bot)",
+      "text": "I'm looking to schedule a routine primary care checkup next week, preferably a weekday morning between nine and eleven.",
+      "interrupted": false,
+      "latency": 1.879408836364746
+    },
+    {
+      "t": 61.60066795349121,
+      "speaker": "CLINIC AGENT",
+      "text": "You already have a routine office visit. Scheduled with doctor Kelly Noble on Tuesday. October 20 at 10AM at Pivot Point Orthopedics. Would you like to keep this appointment reschedule it, or cancel it?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 75.0189561843872,
+      "speaker": "PATIENT (bot)",
+      "text": "Oh, I think that might be from a demo or something. This is my first visit to your office, so I don't have any appointments yet. Could we book a new one?",
+      "interrupted": false,
+      "latency": 1.581949234008789
+    },
+    {
+      "t": 85.90022897720337,
+      "speaker": "CLINIC AGENT",
+      "text": "It looks like the system shows an appointment already booked for you. Which is why I can't schedule another of the same type. Would you like to reschedule or cancel the existing appointment so we can book a new one?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 98.5046558380127,
+      "speaker": "PATIENT (bot)",
+      "text": "Okay, let's go ahead and cancel that one then. Can we book a new checkup after that?",
+      "interrupted": false,
+      "latency": 1.6161589622497559
+    },
+    {
+      "t": 105.24926018714905,
+      "speaker": "CLINIC AGENT",
+      "text": "You have an appoint",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 107.30198001861572,
+      "speaker": "CLINIC AGENT",
+      "text": "we'll need to cancel your current appointment on Tuesday, October 20 with doctor Kelly Noble before booking a new checkup. Would you like to go ahead and cancel that appointment now?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 117.46390104293823,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, please cancel the appointment on October twentieth with Dr. Kelly Noble. Then I\u2019d like to book a new checkup.",
+      "interrupted": false,
+      "latency": 1.0736970901489258
+    },
+    {
+      "t": 125.70073890686035,
+      "speaker": "CLINIC AGENT",
+      "text": "Can you share the reason you'd like to cancel your appointment with doctor Kelly Noble on Tuesday? October 20,",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 132.8165259361267,
+      "speaker": "PATIENT (bot)",
+      "text": "I just recently moved here and want to make sure the new appointment fits better with my schedule.",
+      "interrupted": false,
+      "latency": 1.1780848503112793
+    },
+    {
+      "t": 139.20155930519104,
+      "speaker": "CLINIC AGENT",
+      "text": "Thank you. To confirm, you want to cancel your appointment with doctor Kelly Noble on Tuesday, October 20. Is that correct?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 147.300311088562,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, that's correct.",
+      "interrupted": false,
+      "latency": 1.0618679523468018
+    },
+    {
+      "t": 153.15033411979675,
+      "speaker": "CLINIC AGENT",
+      "text": "Your appointment with doctor Kelly Noble on October 20 has been canceled. Would you like to go ahead and book a new checkup now?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 160.50668597221375,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, please. I\u2019m hoping for a weekday morning between nine and eleven next week. What do you have available?",
+      "interrupted": false,
+      "latency": 1.1157901287078857
+    },
+    {
+      "t": 169.0511200428009,
+      "speaker": "CLINIC AGENT",
+      "text": "Let me check the schedule for weekday mornings nine and eleven next week. One moment.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 183.3028280735016,
+      "speaker": "CLINIC AGENT",
+      "text": "Let me fetch the available weekday morning slots between nine and eleven next week. For you.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 196.80271291732788,
+      "speaker": "CLINIC AGENT",
+      "text": "You still there?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 198.67029881477356,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, I\u2019m here. Do you have any openings next week between nine and eleven on a weekday?",
+      "interrupted": false,
+      "latency": 1.1282978057861328
+    },
+    {
+      "t": 205.70141506195068,
+      "speaker": "CLINIC AGENT",
+      "text": "Let me check for available weekday morning appointments between nine and eleven next week.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 211.79942679405212,
+      "speaker": "CLINIC AGENT",
+      "text": "One moment.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 217.0910520553589,
+      "speaker": "PATIENT (bot)",
+      "text": "I have to run now, thanks for your help, goodbye.",
+      "interrupted": false,
+      "latency": null
+    }
+  ],
+  "events": [
+    [
+      0.00021791458129882812,
+      "dialing +18054398008"
+    ],
+    [
+      5.535214900970459,
+      "call answered"
+    ],
+    [
+      216.01934003829956,
+      "soft time limit: asking the patient to wrap up"
+    ],
+    [
+      220.54371905326843,
+      "hangup: patient bot said goodbye"
+    ],
+    [
+      220.92706203460693,
+      "tool: end_call"
+    ]
+  ]
+}

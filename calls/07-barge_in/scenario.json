@@ -1,0 +1,27 @@
+{
+  "id": "barge_in",
+  "title": "Interrupting the agent mid-sentence",
+  "goal": "Ask what you need to bring to a first appointment, then interrupt when they're explaining to ask a different question (whether you can do the appointment by video instead). Then get an answer to both questions.",
+  "try": [
+    "If they lose track of your first question after the interruption, ask it again."
+  ],
+  "expected": "Stops talking when interrupted, answers the new question, and returns to or remembers the original question.",
+  "pass_outcome": "Both questions get answered and the agent yields promptly when interrupted.",
+  "checks": [
+    {
+      "id": "INT-01",
+      "fail_if": "Keeps talking over the caller for more than a couple of seconds after being interrupted",
+      "severity": "Medium"
+    },
+    {
+      "id": "INT-02",
+      "fail_if": "Ignores the interrupting question and resumes its earlier answer",
+      "severity": "Medium"
+    },
+    {
+      "id": "INT-03",
+      "fail_if": "Loses the original question entirely, so the caller has to ask it again",
+      "severity": "Low-Medium"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "summary": "The clinic agent handled the cancellation process correctly: it confirmed the specific appointment before cancelling, processed the cancellation, did not push rescheduling after two declines, and gave a clear answer about fees. It did not make any unintended changes. The agent's response about text confirmation was honest and did not promise something it couldn't send. No major defects were observed.",
+  "pass_outcome_met": true,
+  "checks": [
+    {
+      "id": "CAN-01",
+      "result": "pass",
+      "timestamp": "00:51",
+      "evidence": "You have an appointment scheduled for October 19 with doctor Zambignew Likosky. Is this the appointment you want to cancel?",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "CAN-02",
+      "result": "pass",
+      "timestamp": "01:17",
+      "evidence": "Your appointment for Monday, October 19 with doctor has been canceled. Let me know if you need help with anything else.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "CAN-03",
+      "result": "pass",
+      "timestamp": "01:42",
+      "evidence": "No, I don't need to reschedule right now. Could you send me a confirmation of the cancellation by text, please? ... I can send you a text confirming your cancellation. But I can only send details about upcoming appointments.",
+      "confidence": "high",
+      "severity": "Low-Medium"
+    },
+    {
+      "id": "CAN-04",
+      "result": "pass",
+      "timestamp": "01:34",
+      "evidence": "There is no cancellation fee for this appointment.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "CAN-05",
+      "result": "pass",
+      "timestamp": "01:51",
+      "evidence": "I can send you a text confirming your cancellation. But I can only send details about upcoming appointments. Since you have no upcoming appointments right now, there's nothing to send.",
+      "confidence": "high",
+      "severity": "Low-Medium"
+    },
+    {
+      "id": "CAN-06",
+      "result": "pass",
+      "timestamp": "01:17",
+      "evidence": "Your appointment for Monday, October 19 with doctor has been canceled.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-01",
+      "result": "pass",
+      "timestamp": "00:12-02:07",
+      "evidence": "No interruptions or talking over the caller detected.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-02",
+      "result": "pass",
+      "timestamp": "00:12-02:07",
+      "evidence": "No repeated questions or answers; no loop observed.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-03",
+      "result": "pass",
+      "timestamp": "00:51-01:34",
+      "evidence": "No contradictions in policy, dates, or actions.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-04",
+      "result": "pass",
+      "timestamp": "01:34",
+      "evidence": "Your cancellation has been processed in the system.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-05",
+      "result": "pass",
+      "timestamp": "00:46-00:51",
+      "evidence": "Let me check your upcoming appointments. One moment. (No long silence or dead air.)",
+      "confidence": "high",
+      "severity": "Low"
+    }
+  ],
+  "other_findings": []
+}

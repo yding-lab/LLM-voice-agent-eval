@@ -1,0 +1,14 @@
+Call: 08-insurance_questions
+Scenario: insurance_questions - Insurance acceptance and self-pay pricing
+Date: 2026-10-18 16:17
+Duration: 00:18   End: patient bot said goodbye
+Timestamps are relative to the start of recording.ogg / recording.mp3.
+Clinic-side text comes from our speech-to-text; check the audio before quoting it.
+
+[00:00] -- dialing +18054398008 --
+[00:04] -- call answered --
+[00:05] CLINIC AGENT: This call may be recorded for quality and training purposes.
+[00:12] PATIENT (bot): Hi, I wanted to check if your  [cut off]
+[00:12] CLINIC AGENT: Thank you for call
+[00:15] -- hangup: patient bot said goodbye --
+[00:15] -- tool: end_call --

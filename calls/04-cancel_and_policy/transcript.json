@@ -1,0 +1,159 @@
+{
+  "call_id": "04-cancel_and_policy",
+  "scenario": "cancel_and_policy",
+  "started_at": 1792354160.76913,
+  "duration_s": 138.0,
+  "end_reason": "patient bot said goodbye",
+  "latency": {
+    "bot_turns": 8,
+    "median_s": 1.14,
+    "p90_s": 1.53,
+    "max_s": 1.53
+  },
+  "turns": [
+    {
+      "t": 6.213235139846802,
+      "speaker": "CLINIC AGENT",
+      "text": "This call may be recorded for quality and training purposes.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 12.900637865066528,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I need to cancel an appointment",
+      "interrupted": true,
+      "latency": 0.9478518962860107
+    },
+    {
+      "t": 13.512507915496826,
+      "speaker": "CLINIC AGENT",
+      "text": "Thank you for calling",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 16.963776111602783,
+      "speaker": "CLINIC AGENT",
+      "text": "Would you like to create a demo patient profile first? I just need your first and last name to get started.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 23.88602113723755,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, please. My name is Sophia Williams.",
+      "interrupted": false,
+      "latency": 1.3834950923919678
+    },
+    {
+      "t": 30.267640113830566,
+      "speaker": "CLINIC AGENT",
+      "text": "Your patient profile is set up. And your date of birth is 07/04/2000 for demo purposes. How may I help you today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 38.840758085250854,
+      "speaker": "PATIENT (bot)",
+      "text": "Actually, I need to cancel an appointment I have coming up. Could you check the date for me?",
+      "interrupted": false,
+      "latency": 1.088536024093628
+    },
+    {
+      "t": 46.16417622566223,
+      "speaker": "CLINIC AGENT",
+      "text": "Let me check your upcoming appointments. One moment.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 51.714736223220825,
+      "speaker": "CLINIC AGENT",
+      "text": "You have an appointment scheduled for October 19 with doctor Zambignew Likosky. Is this the appointment you want to cancel?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 59.678765058517456,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, that's the one I want to cancel, please. Can you confirm the cancellation for me?",
+      "interrupted": false,
+      "latency": 1.0244300365447998
+    },
+    {
+      "t": 66.11515617370605,
+      "speaker": "CLINIC AGENT",
+      "text": "Could you tell me the reason you'd like to cancel this appointment?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 69.91755390167236,
+      "speaker": "PATIENT (bot)",
+      "text": "My schedule changed, so I just don't need the visit right now. I'm not ready to reschedule yet.",
+      "interrupted": false,
+      "latency": 1.0641329288482666
+    },
+    {
+      "t": 77.2156879901886,
+      "speaker": "CLINIC AGENT",
+      "text": "Your appointment for Monday, October 19 with doctor has been canceled. Let me know if you need help with anything else.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 85.562579870224,
+      "speaker": "PATIENT (bot)",
+      "text": "Has the cancellation actually been processed in your system? Also, is there a cancellation fee for such short notice?",
+      "interrupted": false,
+      "latency": 1.4096498489379883
+    },
+    {
+      "t": 94.16464591026306,
+      "speaker": "CLINIC AGENT",
+      "text": "Your cancellation has been processed in the system. There is no cancellation fee for this appointment. Would you like help with anything else?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 102.2483069896698,
+      "speaker": "PATIENT (bot)",
+      "text": "No, I don't need to reschedule right now. Could you send me a confirmation of the cancellation by text, please?",
+      "interrupted": false,
+      "latency": 1.193120002746582
+    },
+    {
+      "t": 111.7659981250763,
+      "speaker": "CLINIC AGENT",
+      "text": "I can send you a text confirming your cancellation. But I can only send details about upcoming appointments. Since you have no upcoming appointments right now, there's nothing to send. If you book a new appointment, I can text you the details.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 127.28592419624329,
+      "speaker": "PATIENT (bot)",
+      "text": "Okay, I understand. I will call back when I'm ready to book again. Thanks for your help. Goodbye.",
+      "interrupted": false,
+      "latency": 1.5310521125793457
+    }
+  ],
+  "events": [
+    [
+      0.00021982192993164062,
+      "dialing +18054398008"
+    ],
+    [
+      5.7603490352630615,
+      "call answered"
+    ],
+    [
+      133.52604794502258,
+      "hangup: patient bot said goodbye"
+    ],
+    [
+      133.86306500434875,
+      "tool: end_call"
+    ]
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "summary": "The clinic agent correctly handled the rescheduling request: it checked for an existing appointment, did not find one, transparently communicated this, booked a new appointment, and confirmed that only one appointment is on file. The agent did not double-book, lose context, or contradict itself. All required confirmations were provided. No significant defects outside the listed checks were observed.",
+  "pass_outcome_met": true,
+  "checks": [
+    {
+      "id": "RSC-01",
+      "result": "pass",
+      "timestamp": "02:57",
+      "evidence": "You have just one appointment on file now.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "RSC-02",
+      "result": "pass",
+      "timestamp": "00:57",
+      "evidence": "I don't see any upcoming appointments for you right now.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "RSC-03",
+      "result": "pass",
+      "timestamp": "01:14",
+      "evidence": "I checked again. But there are no upcoming appointments on your record.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "RSC-04",
+      "result": "pass",
+      "timestamp": "02:57",
+      "evidence": "You have just one appointment on file now. Your routine checkup with doctor Zee Bignew on Monday, October 19 at 3PM.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-01",
+      "result": "not_tested",
+      "timestamp": "",
+      "evidence": "",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-02",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No repeated questions or answers three or more times.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-03",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No contradictions regarding hours, dates, policy, or actions.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-04",
+      "result": "pass",
+      "timestamp": "02:29",
+      "evidence": "You're all set for a routine checkup with doctor Zibnenu on Monday, October 19 at 3PM at Pivot Point Orthopedics.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-05",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No long silences or dead air observed.",
+      "confidence": "high",
+      "severity": "Low"
+    }
+  ],
+  "other_findings": []
+}

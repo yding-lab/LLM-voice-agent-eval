@@ -1,0 +1,36 @@
+Call: 01-schedule_new_checkup
+Scenario: schedule_new_checkup - Book a routine annual physical
+Date: 2026-10-18 10:16
+Duration: 02:14   End: patient bot said goodbye
+Timestamps are relative to the start of recording.ogg / recording.mp3.
+Clinic-side text comes from our speech-to-text; check the audio before quoting it.
+
+[00:00] -- dialing +18054398008 --
+[00:05] -- call answered --
+[00:05] CLINIC AGENT: This call may be recorded for quality and training purposes.
+[00:12] PATIENT (bot): Hi, I'd like to  [cut off]
+[00:12] CLINIC AGENT: Thank you for calling Pivot
+[00:15] PATIENT (bot): Hi, I'd like to book an annual physical sometime next  [cut off]
+[00:16] CLINIC AGENT: Would you like to
+[00:22] PATIENT (bot): Yes, I'm looking for an appointment  [cut off]
+[00:23] CLINIC AGENT: to help you
+[00:25] PATIENT (bot): Yes, please. I'm looking  [cut off]
+[00:26] CLINIC AGENT: would you like
+[00:28] PATIENT (bot): Yes, I'm looking for an appointment next  [cut off]
+[00:29] CLINIC AGENT: before
+[00:31] PATIENT (bot): Could you please help me find an appointment  [cut off]
+[00:32] CLINIC AGENT: to get
+[00:34] PATIENT (bot): Sure, I'd like to get an annual  [cut off]
+[00:35] CLINIC AGENT: I can
+[00:38] CLINIC AGENT: to help you book an annual physical I'll need to create a demo patient profile for you. Can I have your first and last name?
+[00:46] PATIENT (bot): Sophia Williams.
+[00:58] CLINIC AGENT: Your patient profile is set up and your date of birth is 07/04/2000 for demo purposes. How may I help you today?
+[01:07] PATIENT (bot): I want to schedule my annual physical for next week, preferably Tuesday or Thursday morning. Is there availability?
+[01:15] CLINIC AGENT: Just to confirm, you'd like to schedule a general office visit for your annual physical. Is that correct?
+[01:22] PATIENT (bot): Yes, that's correct. Tuesday or Thursday morning next week would be best.
+[01:28] CLINIC AGENT: There are several openings next week. For Tuesday, October twentieth, I have a 10AM slot with Kelly Noble, MD. Would you like to book that, or would you prefer to hear Thursday morning options?
+[01:42] PATIENT (bot): I'll take the Tuesday at 10AM with Dr. Noble. Do I need to fast before the visit if I want bloodwork?
+[01:50] CLINIC AGENT: You may need to fast before certain blood tests, but it depends on what your provider orders. It's best to check with your doctor or the clinic staff for specific instructions. Would you like me to note this question for your provider before your appointment?
+[02:05] PATIENT (bot): Yes, please note that for my provider. Can you repeat the date and time of my appointment?
+[02:11] -- hangup: patient bot said goodbye --
+[02:11] -- tool: end_call --

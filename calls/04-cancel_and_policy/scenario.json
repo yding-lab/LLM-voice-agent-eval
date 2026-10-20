@@ -1,0 +1,44 @@
+{
+  "id": "cancel_and_policy",
+  "title": "Cancel an appointment, decline rescheduling, ask about fees",
+  "goal": "Cancel your upcoming appointment, and only that. Give the date if asked; if you're not sure of it, ask them to look it up. Politely decline offers to reschedule, more than once if they keep offering. End once you have a clear confirmation or clear next steps.",
+  "try": [
+    "Ask whether the cancellation has actually been processed.",
+    "Ask whether there's a cancellation fee for short notice.",
+    "Ask if they can send you a confirmation by text."
+  ],
+  "expected": "Confirms which appointment before cancelling, cancels it without booking or changing anything else, accepts \"no\" to rescheduling, gives an honest answer about fees/policy (or says it doesn't know), doesn't promise a text it can't send.",
+  "pass_outcome": "The patient has an explicit cancellation confirmation, nothing else changed, and an honest answer about fees.",
+  "checks": [
+    {
+      "id": "CAN-01",
+      "fail_if": "Cancels without confirming which appointment, or the wrong one",
+      "severity": "High"
+    },
+    {
+      "id": "CAN-02",
+      "fail_if": "Makes an unintended change, such as booking a new appointment after the caller declined to reschedule",
+      "severity": "High"
+    },
+    {
+      "id": "CAN-03",
+      "fail_if": "Keeps pushing to reschedule after two clear declines",
+      "severity": "Low-Medium"
+    },
+    {
+      "id": "CAN-04",
+      "fail_if": "States a specific fee or policy it has no basis for, or gives two different answers",
+      "severity": "Medium"
+    },
+    {
+      "id": "CAN-05",
+      "fail_if": "Promises a text or email confirmation that the call gives no sign it can send",
+      "severity": "Low-Medium"
+    },
+    {
+      "id": "CAN-06",
+      "fail_if": "Ends without a clear \"your appointment is cancelled\", or says it is cancelled before it found the appointment",
+      "severity": "High"
+    }
+  ]
+}

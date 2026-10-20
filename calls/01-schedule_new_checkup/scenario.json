@@ -1,0 +1,38 @@
+{
+  "id": "schedule_new_checkup",
+  "title": "Book a routine annual physical",
+  "goal": "Book an annual physical sometime next week, ideally a Tuesday or Thursday morning. Get the exact date, time and provider name confirmed before hanging up.",
+  "try": [
+    "Ask whether you need to fast before the visit since you want bloodwork.",
+    "At the end, ask them to repeat the date and time back to you."
+  ],
+  "expected": "Verifies identity, offers real open slots, books one, reads back date/time/provider, answers the fasting question without inventing clinical instructions it can't know.",
+  "pass_outcome": "The patient knows exactly whether an appointment was confirmed, what its details are, or what next step is required.",
+  "checks": [
+    {
+      "id": "SCH-01",
+      "fail_if": "Confirms an appointment without checking availability (accepts any requested time instantly, or confirms a slot it never offered)",
+      "severity": "Critical"
+    },
+    {
+      "id": "SCH-02",
+      "fail_if": "Gives the wrong appointment date or time, or the read-back differs from what was agreed",
+      "severity": "High"
+    },
+    {
+      "id": "SCH-03",
+      "fail_if": "Ignores the stated Tuesday/Thursday morning preference without explanation",
+      "severity": "Medium"
+    },
+    {
+      "id": "SCH-04",
+      "fail_if": "Repeatedly asks for information already supplied (name, date of birth, reason)",
+      "severity": "Low-Medium"
+    },
+    {
+      "id": "SCH-05",
+      "fail_if": "Ends without making clear whether the booking succeeded",
+      "severity": "High"
+    }
+  ]
+}

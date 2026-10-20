@@ -1,0 +1,187 @@
+{
+  "call_id": "03-reschedule_existing",
+  "scenario": "reschedule_existing",
+  "started_at": 1792353693.1411579,
+  "duration_s": 191.1,
+  "end_reason": "patient bot said goodbye",
+  "latency": {
+    "bot_turns": 9,
+    "median_s": 1.09,
+    "p90_s": 1.74,
+    "max_s": 1.74
+  },
+  "turns": [
+    {
+      "t": 5.238893270492554,
+      "speaker": "CLINIC AGENT",
+      "text": "This call may be recorded for quality and training purposes.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 11.971805095672607,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, this is Sophia Williams.",
+      "interrupted": true,
+      "latency": 0.9448678493499756
+    },
+    {
+      "t": 12.640319347381592,
+      "speaker": "CLINIC AGENT",
+      "text": "Thank you for calling Pivot.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 15.462736129760742,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I have an appointment booked, but I",
+      "interrupted": true,
+      "latency": 1.7345588207244873
+    },
+    {
+      "t": 16.139904022216797,
+      "speaker": "CLINIC AGENT",
+      "text": "Hi, Sophie. Great. Would you like to create a demo patient profile so I can help you with your appointment? I just need your first and last name.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 26.968910217285156,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, it's Sophia Williams. Could you please check my appointment details? I don't remember the exact date.",
+      "interrupted": false,
+      "latency": 0.9922840595245361
+    },
+    {
+      "t": 32.290202140808105,
+      "speaker": "CLINIC AGENT",
+      "text": "Your patient profile is set up.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 34.58984327316284,
+      "speaker": "CLINIC AGENT",
+      "text": "And your date of birth is 07/04/2000 for demo purposes. How can I help you today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 40.7212929725647,
+      "speaker": "PATIENT (bot)",
+      "text": "My birthday is August twentieth, nineteen ninety-two. I need to reschedule my appointment to any afternoon next week. Could you help with that?",
+      "interrupted": false,
+      "latency": 0.992877721786499
+    },
+    {
+      "t": 57.290729999542236,
+      "speaker": "CLINIC AGENT",
+      "text": "I don't see any upcoming appointments for you right now. You like to book a new appointment for an afternoon next week?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 63.56979513168335,
+      "speaker": "PATIENT (bot)",
+      "text": "No, I had an appointment but can't find it either. Please check again, then move it to any afternoon next week and cancel the old one.",
+      "interrupted": false,
+      "latency": 1.0899090766906738
+    },
+    {
+      "t": 74.74120712280273,
+      "speaker": "CLINIC AGENT",
+      "text": "I checked again. But there are no upcoming appointments on your record. If you'd like, I can help you book a new one for an afternoon next week. Would you like to do that?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 85.01966619491577,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, please book me a new appointment for any afternoon next week and make sure there\u2019s only that one appointment now.",
+      "interrupted": false,
+      "latency": 1.739483118057251
+    },
+    {
+      "t": 94.14180302619934,
+      "speaker": "CLINIC AGENT",
+      "text": "What kind of visit do you need this appointment for? For example, is it a routine checkup, a follow-up, something urgent, or a procedure?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 103.35229325294495,
+      "speaker": "PATIENT (bot)",
+      "text": "It's a routine checkup. Could you schedule that for me? Any afternoon next week works.",
+      "interrupted": false,
+      "latency": 1.3728232383728027
+    },
+    {
+      "t": 110.49176025390625,
+      "speaker": "CLINIC AGENT",
+      "text": "I found openings with doctor Zigmy Lakoski next week. The first available afternoon slot is Monday, October 19 at 2PM. Would you like to book that time? There are openings with doctor Zigniew Likosky on Monday, October nineteenth in the afternoon, Would you like the 2PM, 02:30PM, 3PM or 03:30PM slot?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 131.97928428649902,
+      "speaker": "PATIENT (bot)",
+      "text": "Monday the nineteenth at 3PM sounds good. Please book that.",
+      "interrupted": false,
+      "latency": 1.4969279766082764
+    },
+    {
+      "t": 138.64417123794556,
+      "speaker": "CLINIC AGENT",
+      "text": "Booking your appointment for Monday, October 19 at 3PM. With doctor Zevdignu Lukowski for a routine checkup. One moment while I confirm this for you.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 149.64535522460938,
+      "speaker": "CLINIC AGENT",
+      "text": "You're all set for a routine checkup with doctor Zibnenu on Monday, October 19 at 3PM at Pivot Point Orthopedics. Please bring your photo ID, insurance card, a list of your medications, and any imaging discs if you have them. Would you like me to send you a text message with these appointment details?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 168.77262902259827,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, please send me a text with the appointment details. Also, how many appointments do I have on file now?",
+      "interrupted": false,
+      "latency": 0.9901618957519531
+    },
+    {
+      "t": 177.19441533088684,
+      "speaker": "CLINIC AGENT",
+      "text": "You have just one appointment on file now.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 179.9935371875763,
+      "speaker": "CLINIC AGENT",
+      "text": "Your routine checkup with doctor Zee Bignew on Monday, October 19 at 3PM.",
+      "interrupted": false,
+      "latency": null
+    }
+  ],
+  "events": [
+    [
+      0.0002338886260986328,
+      "dialing +18054398008"
+    ],
+    [
+      4.814950227737427,
+      "call answered"
+    ],
+    [
+      186.36189222335815,
+      "hangup: patient bot said goodbye"
+    ],
+    [
+      186.71870827674866,
+      "tool: end_call"
+    ]
+  ]
+}

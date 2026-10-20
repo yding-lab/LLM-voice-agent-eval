@@ -1,0 +1,43 @@
+Call: 02-new_patient_booking
+Scenario: new_patient_booking - New patient books a first checkup (weekday morning window)
+Date: 2026-10-18 15:52
+Duration: 03:45   End: patient bot said goodbye
+Timestamps are relative to the start of recording.ogg / recording.mp3.
+Clinic-side text comes from our speech-to-text; check the audio before quoting it.
+
+[00:00] -- dialing +18054398008 --
+[00:05] -- call answered --
+[00:05] CLINIC AGENT: This call may be recorded for quality and training
+[00:12] PATIENT (bot): Hi, I'm new to the area and  [cut off]
+[00:13] CLINIC AGENT: Thank you for calling Pivot.
+[00:16] PATIENT (bot): Hi, I'm a new  [cut off]
+[00:16] CLINIC AGENT: Welcome.
+[00:18] PATIENT (bot): patient, and I was hoping to  [cut off]
+[00:19] CLINIC AGENT: Well no problem. Would you like to create a demo patient profile to get started?
+[00:27] CLINIC AGENT: I just need your first and last name.
+[00:30] PATIENT (bot): Sure, it's Sarah Mitchell.
+[00:41] CLINIC AGENT: Your patient profile is set up. And your date of birth is July fourth two thousand for demo purposes. How may I help you today?
+[00:50] PATIENT (bot): I'm looking to schedule a routine primary care checkup next week, preferably a weekday morning between nine and eleven.
+[01:01] CLINIC AGENT: You already have a routine office visit. Scheduled with doctor Kelly Noble on Tuesday. October 20 at 10AM at Pivot Point Orthopedics. Would you like to keep this appointment reschedule it, or cancel it?
+[01:15] PATIENT (bot): Oh, I think that might be from a demo or something. This is my first visit to your office, so I don't have any appointments yet. Could we book a new one?
+[01:25] CLINIC AGENT: It looks like the system shows an appointment already booked for you. Which is why I can't schedule another of the same type. Would you like to reschedule or cancel the existing appointment so we can book a new one?
+[01:38] PATIENT (bot): Okay, let's go ahead and cancel that one then. Can we book a new checkup after that?
+[01:45] CLINIC AGENT: You have an appoint
+[01:47] CLINIC AGENT: we'll need to cancel your current appointment on Tuesday, October 20 with doctor Kelly Noble before booking a new checkup. Would you like to go ahead and cancel that appointment now?
+[01:57] PATIENT (bot): Yes, please cancel the appointment on October twentieth with Dr. Kelly Noble. Then I’d like to book a new checkup.
+[02:05] CLINIC AGENT: Can you share the reason you'd like to cancel your appointment with doctor Kelly Noble on Tuesday? October 20,
+[02:12] PATIENT (bot): I just recently moved here and want to make sure the new appointment fits better with my schedule.
+[02:19] CLINIC AGENT: Thank you. To confirm, you want to cancel your appointment with doctor Kelly Noble on Tuesday, October 20. Is that correct?
+[02:27] PATIENT (bot): Yes, that's correct.
+[02:33] CLINIC AGENT: Your appointment with doctor Kelly Noble on October 20 has been canceled. Would you like to go ahead and book a new checkup now?
+[02:40] PATIENT (bot): Yes, please. I’m hoping for a weekday morning between nine and eleven next week. What do you have available?
+[02:49] CLINIC AGENT: Let me check the schedule for weekday mornings nine and eleven next week. One moment.
+[03:03] CLINIC AGENT: Let me fetch the available weekday morning slots between nine and eleven next week. For you.
+[03:16] CLINIC AGENT: You still there?
+[03:18] PATIENT (bot): Yes, I’m here. Do you have any openings next week between nine and eleven on a weekday?
+[03:25] CLINIC AGENT: Let me check for available weekday morning appointments between nine and eleven next week.
+[03:31] CLINIC AGENT: One moment.
+[03:36] -- soft time limit: asking the patient to wrap up --
+[03:37] PATIENT (bot): I have to run now, thanks for your help, goodbye.
+[03:40] -- hangup: patient bot said goodbye --
+[03:40] -- tool: end_call --

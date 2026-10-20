@@ -1,0 +1,149 @@
+{
+  "call_id": "07-barge_in",
+  "scenario": "barge_in",
+  "started_at": 1792356749.724868,
+  "duration_s": 159.0,
+  "end_reason": "patient bot said goodbye",
+  "latency": {
+    "bot_turns": 7,
+    "median_s": 1.49,
+    "p90_s": 1.57,
+    "max_s": 1.57
+  },
+  "turns": [
+    {
+      "t": 5.242733955383301,
+      "speaker": "CLINIC AGENT",
+      "text": "This call may be recorded for quality and training purposes.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 11.872474908828735,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, this is Sophia",
+      "interrupted": true,
+      "latency": 0.9385578632354736
+    },
+    {
+      "t": 12.450431108474731,
+      "speaker": "CLINIC AGENT",
+      "text": "Thank you for call",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 14.652477025985718,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I have a first appointment coming up and",
+      "interrupted": true,
+      "latency": 1.5688462257385254
+    },
+    {
+      "t": 20.818275928497314,
+      "speaker": "PATIENT (bot)",
+      "text": "Sorry, sorry, quick question before I forget, can I do this appointment by video instead?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 28.093504190444946,
+      "speaker": "CLINIC AGENT",
+      "text": "I can help with that. First, I'll need to create a demo patient profile for you. May I have your first and last name?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 35.84023880958557,
+      "speaker": "PATIENT (bot)",
+      "text": "Sure, it's Sophia Williams.",
+      "interrupted": false,
+      "latency": 1.5075037479400635
+    },
+    {
+      "t": 42.29582405090332,
+      "speaker": "CLINIC AGENT",
+      "text": "Patient profile is set up. And your date of birth is July fourth two thousand. How can I help you today? Would you like to talk more about switching your appointment to video?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 53.649340867996216,
+      "speaker": "PATIENT (bot)",
+      "text": "Actually, my birthday is August twentieth, nineteen ninety-two. And yeah, can you tell me what I need to bring to the first appointment?\nAlso, can you confirm if the appointment can be done by video?",
+      "interrupted": false,
+      "latency": 1.4651808738708496
+    },
+    {
+      "t": 68.14575004577637,
+      "speaker": "CLINIC AGENT",
+      "text": "Thanks for letting me know about your birthday. I'll update your date of birth to August twentieth. Nineteen ninety two. For your first appointment, please bring your photo ID insurance card, and any relevant medical records or imaging if you have them. Wear comfortable clothing if you expect a physical exam. Let me check if your appointment can be switched to video. One moment.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 91.40611505508423,
+      "speaker": "CLINIC AGENT",
+      "text": "Your appointment is on Friday, October 23 at 10AM. With doctor Judy Hauser, at Pivot Point Orthopaedics. Two two zero Athens Way. Is this the appointment you wanna switch to a video visit? If so, can you tell me the reason you'd like to change it?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 108.72591280937195,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, that's the appointment. I want to switch to video because I'm at work and have limited time to get there in person.",
+      "interrupted": false,
+      "latency": 1.4906549453735352
+    },
+    {
+      "t": 118.69661712646484,
+      "speaker": "CLINIC AGENT",
+      "text": "The next available appointments are all in person visits. There are no virtual or telehealth slots showing right now. Would you like to try for a different date or time, or do you wanna keep your current appointment?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 131.39874696731567,
+      "speaker": "PATIENT (bot)",
+      "text": "I'll keep the current appointment then, thanks. Could you remind me again what I need to bring?",
+      "interrupted": false,
+      "latency": 1.4122660160064697
+    },
+    {
+      "t": 138.22352290153503,
+      "speaker": "CLINIC AGENT",
+      "text": "Please bring your photo ID. Insurance card, and any relevant medical records or imaging. Wear comfortable clothing if you expect a physical exam. Let me know if you have any other questions.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 150.49384307861328,
+      "speaker": "PATIENT (bot)",
+      "text": "Got it. That's all for now. Thanks a lot. Goodbye.",
+      "interrupted": false,
+      "latency": 1.5036261081695557
+    }
+  ],
+  "events": [
+    [
+      0.00016999244689941406,
+      "dialing +18054398008"
+    ],
+    [
+      4.786376953125,
+      "call answered"
+    ],
+    [
+      20.608237743377686,
+      "scripted barge-in: talking over the clinic agent"
+    ],
+    [
+      154.4236228466034,
+      "hangup: patient bot said goodbye"
+    ],
+    [
+      154.83635783195496,
+      "tool: end_call"
+    ]
+  ]
+}

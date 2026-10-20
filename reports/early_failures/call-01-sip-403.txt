@@ -1,0 +1,8 @@
+Call: 01-schedule_new_checkup
+Scenario: schedule_new_checkup - Book a routine annual physical
+Date: 2026-10-17 22:12
+Duration: 00:03   End: dial failed: unexpected status from INVITE response: sip status: 403: No International Permission (SIP 403)
+Timestamps are relative to the start of recording.ogg / recording.mp3.
+Clinic-side text comes from our speech-to-text; check the audio before quoting it.
+
+[00:00] -- dialing +18054398008 --

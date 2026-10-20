@@ -1,0 +1,243 @@
+{
+  "call_id": "08-hours_and_location",
+  "scenario": "hours_and_location",
+  "started_at": 1792357015.865485,
+  "duration_s": 165.2,
+  "end_reason": "patient bot said goodbye",
+  "latency": {
+    "bot_turns": 13,
+    "median_s": 1.15,
+    "p90_s": 1.71,
+    "max_s": 3.29
+  },
+  "turns": [
+    {
+      "t": 6.210679292678833,
+      "speaker": "CLINIC AGENT",
+      "text": "This call may be recorded for quality and training purposes.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 13.287046909332275,
+      "speaker": "PATIENT (bot)",
+      "text": "Hello, this is",
+      "interrupted": true,
+      "latency": 0.9882588386535645
+    },
+    {
+      "t": 14.21696925163269,
+      "speaker": "CLINIC AGENT",
+      "text": "You for calling Pivot Point or",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 16.931562185287476,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I was wondering if you could",
+      "interrupted": true,
+      "latency": 1.6338920593261719
+    },
+    {
+      "t": 17.457589149475098,
+      "speaker": "CLINIC AGENT",
+      "text": "Hi there.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 21.092661142349243,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I just moved",
+      "interrupted": true,
+      "latency": 3.2886290550231934
+    },
+    {
+      "t": 23.68064284324646,
+      "speaker": "CLINIC AGENT",
+      "text": "Go ahead. How can I help you today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 27.51833200454712,
+      "speaker": "PATIENT (bot)",
+      "text": "I",
+      "interrupted": true,
+      "latency": null
+    },
+    {
+      "t": 25.017261266708374,
+      "speaker": "CLINIC AGENT",
+      "text": "How can I assist you today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 29.987532138824463,
+      "speaker": "PATIENT (bot)",
+      "text": "I just moved to the area and was",
+      "interrupted": true,
+      "latency": 1.7078969478607178
+    },
+    {
+      "t": 30.610244035720825,
+      "speaker": "CLINIC AGENT",
+      "text": "Please let me know how welcome to the area. Would you like to create a demo patient profile with us? I just need your first and last name to get started.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 42.044986963272095,
+      "speaker": "PATIENT (bot)",
+      "text": "Actually, I just wanted to find out your office hours and where you are located. Could you tell me the address, please?",
+      "interrupted": false,
+      "latency": 1.1484229564666748
+    },
+    {
+      "t": 50.42337131500244,
+      "speaker": "CLINIC AGENT",
+      "text": "I can help with that. May I have your first and last name to create a demo patient profile? So let me share our location and office hours with you.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 59.03268313407898,
+      "speaker": "PATIENT (bot)",
+      "text": "Sure, it's Sophia Williams. You can go ahead and share the info.",
+      "interrupted": false,
+      "latency": 0.9839558601379395
+    },
+    {
+      "t": 65.2589852809906,
+      "speaker": "CLINIC AGENT",
+      "text": "Your patient profile is set up. And your date of birth is 07/04/2000 for demo purposes. How may I help you today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 73.78154802322388,
+      "speaker": "PATIENT (bot)",
+      "text": "Actually, my date of birth is August twentieth, nineteen ninety-two. Could you tell me your office hours?",
+      "interrupted": false,
+      "latency": 1.331007957458496
+    },
+    {
+      "t": 81.95948505401611,
+      "speaker": "CLINIC AGENT",
+      "text": "Our clinic is open Monday. Tuesday and Thursday from 9AM to 4PM, Wednesday from 12PM to 7PM, and Friday from 9AM to 12PM. Would you also like the address?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 94.33427906036377,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, please. And could you spell the street name for me?",
+      "interrupted": false,
+      "latency": 1.4352939128875732
+    },
+    {
+      "t": 100.26134729385376,
+      "speaker": "CLINIC AGENT",
+      "text": "The street name is Athens Way. Would you like directions or any other details about the clinic?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 106.94596004486084,
+      "speaker": "PATIENT (bot)",
+      "text": "No, thanks. Where can I park when I come to the office?",
+      "interrupted": false,
+      "latency": 0.9909958839416504
+    },
+    {
+      "t": 112.81176424026489,
+      "speaker": "CLINIC AGENT",
+      "text": "You can park for free in the surface lot in front of the building.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 116.2982931137085,
+      "speaker": "CLINIC AGENT",
+      "text": "Let me know if you have any other questions.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 119.29253697395325,
+      "speaker": "PATIENT (bot)",
+      "text": "Oh, one more thing, do you have more than one location?",
+      "interrupted": false,
+      "latency": 1.4934048652648926
+    },
+    {
+      "t": 125.11051607131958,
+      "speaker": "CLINIC AGENT",
+      "text": "We have one main location. You need details about other services or providers, just let me know.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 131.0285041332245,
+      "speaker": "PATIENT (bot)",
+      "text": "Got it. And just to be sure, what time do you close on Fridays?",
+      "interrupted": false,
+      "latency": 0.9781532287597656
+    },
+    {
+      "t": 137.5122320652008,
+      "speaker": "CLINIC AGENT",
+      "text": "We close at 12PM on Fridays.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 140.50935888290405,
+      "speaker": "PATIENT (bot)",
+      "text": "Okay, that works. Are you open on Thanksgiving?",
+      "interrupted": false,
+      "latency": 1.1094536781311035
+    },
+    {
+      "t": 145.962069272995,
+      "speaker": "CLINIC AGENT",
+      "text": "We are closed on Thanksgiving. If you need to schedule around the holiday, I can help with that.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 151.4460060596466,
+      "speaker": "PATIENT (bot)",
+      "text": "Thanks, that\u2019s all I needed. Goodbye.",
+      "interrupted": false,
+      "latency": 0.9457190036773682
+    },
+    {
+      "t": 156.81073713302612,
+      "speaker": "CLINIC AGENT",
+      "text": "You're welcome. Have a great day.",
+      "interrupted": false,
+      "latency": null
+    }
+  ],
+  "events": [
+    [
+      0.0003120899200439453,
+      "dialing +18054398008"
+    ],
+    [
+      5.748354196548462,
+      "call answered"
+    ],
+    [
+      160.21482920646667,
+      "hangup: patient bot said goodbye"
+    ],
+    [
+      160.56791520118713,
+      "tool: end_call"
+    ]
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "call_id": "06-indecisive_corrections",
+  "scenario": "indecisive_corrections",
+  "started_at": 1792356519.412551,
+  "duration_s": 189.9,
+  "end_reason": "patient bot said goodbye",
+  "latency": {
+    "bot_turns": 12,
+    "median_s": 1.14,
+    "p90_s": 1.52,
+    "max_s": 1.7
+  },
+  "turns": [
+    {
+      "t": 6.227869272232056,
+      "speaker": "CLINIC AGENT",
+      "text": "This call may be recorded for quality and training purposes.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 12.926450252532959,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, um, I need",
+      "interrupted": true,
+      "latency": 0.9600210189819336
+    },
+    {
+      "t": 13.328892230987549,
+      "speaker": "CLINIC AGENT",
+      "text": "Thank you for calling Pivot",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 16.143901109695435,
+      "speaker": "PATIENT (bot)",
+      "text": "Yeah, hi, I need",
+      "interrupted": true,
+      "latency": 1.5245940685272217
+    },
+    {
+      "t": 16.52847719192505,
+      "speaker": "CLINIC AGENT",
+      "text": "hello? How... Hi there. What can I help you with today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 22.709192991256714,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I need to come in for, um, the thing, the follow-up appointment.",
+      "interrupted": false,
+      "latency": 1.092714786529541
+    },
+    {
+      "t": 28.527783155441284,
+      "speaker": "CLINIC AGENT",
+      "text": "I can help with that. Would you like to create a demo patient profile first? I just need your first and last name to get started.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 36.569799184799194,
+      "speaker": "PATIENT (bot)",
+      "text": "No, thanks. I just want to book the follow-up. My name is Sophia Williams.",
+      "interrupted": false,
+      "latency": 0.9524180889129639
+    },
+    {
+      "t": 44.379088163375854,
+      "speaker": "CLINIC AGENT",
+      "text": "Thanks. Sophia. You like to create a demo patient profile now? This will let me help you book your follow-up appointment just need your first and last name.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 54.71928000450134,
+      "speaker": "PATIENT (bot)",
+      "text": "I already said Sophia Williams. Can you book the follow-up appointment now?",
+      "interrupted": false,
+      "latency": 1.4515597820281982
+    },
+    {
+      "t": 60.43013620376587,
+      "speaker": "CLINIC AGENT",
+      "text": "Your patient profile is set up and your date of birth is 07/04/2000 for demo purposes. How may I help you today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 69.39368104934692,
+      "speaker": "PATIENT (bot)",
+      "text": "Oh, actually my date of birth is August twentieth, nineteen ninety-two. I want to book a follow-up visit.",
+      "interrupted": false,
+      "latency": 1.025820016860962
+    },
+    {
+      "t": 78.03064608573914,
+      "speaker": "CLINIC AGENT",
+      "text": "Do you have a specific provider you'd like to see for your follow-up? Or is anyone fine?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 83.75329518318176,
+      "speaker": "PATIENT (bot)",
+      "text": "Anyone is fine, thanks. Could I come in on Friday? No, wait, maybe Thursday. Actually, let's go back to Friday.",
+      "interrupted": false,
+      "latency": 1.1848621368408203
+    },
+    {
+      "t": 93.67982625961304,
+      "speaker": "CLINIC AGENT",
+      "text": "No problem. On Friday, October twenty third, there are several openings. Would you prefer morning or afternoon?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 101.524169921875,
+      "speaker": "PATIENT (bot)",
+      "text": "Morning is better for me, please.",
+      "interrupted": false,
+      "latency": 1.4553308486938477
+    },
+    {
+      "t": 105.63070321083069,
+      "speaker": "CLINIC AGENT",
+      "text": "The earliest available slot on Friday is at 10AM with Judy Hauser. Would you like to book that time?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 112.41712212562561,
+      "speaker": "PATIENT (bot)",
+      "text": "Yeah, 10 a.m. on Friday works for me. Can you please book that?",
+      "interrupted": false,
+      "latency": 1.0484209060668945
+    },
+    {
+      "t": 119.83172726631165,
+      "speaker": "CLINIC AGENT",
+      "text": "You are all set. Your follow-up appointment is booked for Friday, October 23 at 10AM with Judy Hauser at Pivot Point Orthopedics. Please bring your photo ID, insurance card, a list of your current medications, and any imaging discs you have. Would you like me to send you a text message with these appointment details?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 141.622483253479,
+      "speaker": "PATIENT (bot)",
+      "text": "No, thank you. Could you please read back the appointment date, time, and my date of birth for me?",
+      "interrupted": false,
+      "latency": 1.7032082080841064
+    },
+    {
+      "t": 149.7837393283844,
+      "speaker": "CLINIC AGENT",
+      "text": "Appointment is Friday. October twenty",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 154.0312693119049,
+      "speaker": "CLINIC AGENT",
+      "text": "Your date of birth is 08/20/1992.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 158.10546708106995,
+      "speaker": "PATIENT (bot)",
+      "text": "Okay, just to be sure, that's Friday, October twenty third at 10 a.m., and my date of birth is August twentieth, nineteen ninety-two?",
+      "interrupted": false,
+      "latency": 1.2344980239868164
+    },
+    {
+      "t": 168.03306818008423,
+      "speaker": "CLINIC AGENT",
+      "text": "That's correct. Friday, October 23 at 10AM. And your date of birth is 08/20/1992.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 175.01995587348938,
+      "speaker": "PATIENT (bot)",
+      "text": "Great, thanks for confirming all that. Goodbye!",
+      "interrupted": false,
+      "latency": 0.9488537311553955
+    },
+    {
+      "t": 181.63280415534973,
+      "speaker": "CLINIC AGENT",
+      "text": "Goodbye. Have a great day.",
+      "interrupted": false,
+      "latency": null
+    }
+  ],
+  "events": [
+    [
+      0.0002391338348388672,
+      "dialing +18054398008"
+    ],
+    [
+      5.804113149642944,
+      "call answered"
+    ],
+    [
+      184.906888961792,
+      "hangup: patient bot said goodbye"
+    ],
+    [
+      185.28495407104492,
+      "tool: end_call"
+    ]
+  ]
+}

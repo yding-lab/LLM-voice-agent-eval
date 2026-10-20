@@ -1,0 +1,33 @@
+Call: 03-reschedule_existing
+Scenario: reschedule_existing - Move an existing appointment
+Date: 2026-10-18 16:01
+Duration: 03:11   End: patient bot said goodbye
+Timestamps are relative to the start of recording.ogg / recording.mp3.
+Clinic-side text comes from our speech-to-text; check the audio before quoting it.
+
+[00:00] -- dialing +18054398008 --
+[00:04] -- call answered --
+[00:05] CLINIC AGENT: This call may be recorded for quality and training purposes.
+[00:11] PATIENT (bot): Hi, this is Sophia Williams.  [cut off]
+[00:12] CLINIC AGENT: Thank you for calling Pivot.
+[00:15] PATIENT (bot): Hi, I have an appointment booked, but I  [cut off]
+[00:16] CLINIC AGENT: Hi, Sophie. Great. Would you like to create a demo patient profile so I can help you with your appointment? I just need your first and last name.
+[00:26] PATIENT (bot): Yes, it's Sophia Williams. Could you please check my appointment details? I don't remember the exact date.
+[00:32] CLINIC AGENT: Your patient profile is set up.
+[00:34] CLINIC AGENT: And your date of birth is 07/04/2000 for demo purposes. How can I help you today?
+[00:40] PATIENT (bot): My birthday is August twentieth, nineteen ninety-two. I need to reschedule my appointment to any afternoon next week. Could you help with that?
+[00:57] CLINIC AGENT: I don't see any upcoming appointments for you right now. You like to book a new appointment for an afternoon next week?
+[01:03] PATIENT (bot): No, I had an appointment but can't find it either. Please check again, then move it to any afternoon next week and cancel the old one.
+[01:14] CLINIC AGENT: I checked again. But there are no upcoming appointments on your record. If you'd like, I can help you book a new one for an afternoon next week. Would you like to do that?
+[01:25] PATIENT (bot): Yes, please book me a new appointment for any afternoon next week and make sure there’s only that one appointment now.
+[01:34] CLINIC AGENT: What kind of visit do you need this appointment for? For example, is it a routine checkup, a follow-up, something urgent, or a procedure?
+[01:43] PATIENT (bot): It's a routine checkup. Could you schedule that for me? Any afternoon next week works.
+[01:50] CLINIC AGENT: I found openings with doctor Zigmy Lakoski next week. The first available afternoon slot is Monday, October 19 at 2PM. Would you like to book that time? There are openings with doctor Zigniew Likosky on Monday, October nineteenth in the afternoon, Would you like the 2PM, 02:30PM, 3PM or 03:30PM slot?
+[02:11] PATIENT (bot): Monday the nineteenth at 3PM sounds good. Please book that.
+[02:18] CLINIC AGENT: Booking your appointment for Monday, October 19 at 3PM. With doctor Zevdignu Lukowski for a routine checkup. One moment while I confirm this for you.
+[02:29] CLINIC AGENT: You're all set for a routine checkup with doctor Zibnenu on Monday, October 19 at 3PM at Pivot Point Orthopedics. Please bring your photo ID, insurance card, a list of your medications, and any imaging discs if you have them. Would you like me to send you a text message with these appointment details?
+[02:48] PATIENT (bot): Yes, please send me a text with the appointment details. Also, how many appointments do I have on file now?
+[02:57] CLINIC AGENT: You have just one appointment on file now.
+[02:59] CLINIC AGENT: Your routine checkup with doctor Zee Bignew on Monday, October 19 at 3PM.
+[03:06] -- hangup: patient bot said goodbye --
+[03:06] -- tool: end_call --

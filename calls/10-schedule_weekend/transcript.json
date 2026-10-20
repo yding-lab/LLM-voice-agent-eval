@@ -1,0 +1,275 @@
+{
+  "call_id": "10-schedule_weekend",
+  "scenario": "schedule_weekend",
+  "started_at": 1792456630.94467,
+  "duration_s": 323.3,
+  "end_reason": "patient bot said goodbye",
+  "latency": {
+    "bot_turns": 16,
+    "median_s": 1.49,
+    "p90_s": 1.62,
+    "max_s": 1.87
+  },
+  "turns": [
+    {
+      "t": 5.975683212280273,
+      "speaker": "CLINIC AGENT",
+      "text": "This call may be recorded for quality and training purposes.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 12.749891996383667,
+      "speaker": "PATIENT (bot)",
+      "text": "Hello, this is Sophia Williams. I was",
+      "interrupted": true,
+      "latency": 1.035386085510254
+    },
+    {
+      "t": 13.27799916267395,
+      "speaker": "CLINIC AGENT",
+      "text": "Thank you for calling",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 15.619723081588745,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I was wondering if I could schedule an",
+      "interrupted": true,
+      "latency": 1.6055729389190674
+    },
+    {
+      "t": 16.577932119369507,
+      "speaker": "CLINIC AGENT",
+      "text": "Hi, Sophie.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 18.62893319129944,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I\u2019m looking to book an appointment. Do you have anything available this Sunday at 10 am?",
+      "interrupted": false,
+      "latency": 1.4944782257080078
+    },
+    {
+      "t": 19.975917100906372,
+      "speaker": "CLINIC AGENT",
+      "text": "I can help with that. Before I check the schedule, would you like to create a demo patient profile? I just need your first and last name.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 33.62362313270569,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, please. My name is Sophia Williams.",
+      "interrupted": false,
+      "latency": 1.008331060409546
+    },
+    {
+      "t": 40.02686309814453,
+      "speaker": "CLINIC AGENT",
+      "text": "Your patient profile is set up, your date of birth is July fourth two thousand. How can I help you today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 46.39891600608826,
+      "speaker": "PATIENT (bot)",
+      "text": "Oh, my birthday is actually August twentieth, nineteen ninety-two. Could you check for a Sunday 10 am appointment?",
+      "interrupted": false,
+      "latency": 1.0843591690063477
+    },
+    {
+      "t": 57.676756143569946,
+      "speaker": "CLINIC AGENT",
+      "text": "Let me check the schedule for Sunday at 10AM. Before I do, can you tell me the reason for your visit? For example, is this for a routine checkup, a follow-up, a new patient consultation, or something else?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 69.7952492237091,
+      "speaker": "PATIENT (bot)",
+      "text": "It's for a routine checkup.",
+      "interrupted": false,
+      "latency": 1.4804410934448242
+    },
+    {
+      "t": 75.97705221176147,
+      "speaker": "CLINIC AGENT",
+      "text": "You already have a routine checkup booked for Monday, October 19, at 2PM with doctor Zeebigniew Lukosky at Pivot Point Orthopedics. Would you like to keep this appointment? Reschedule it, or cancel it?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 89.82299995422363,
+      "speaker": "PATIENT (bot)",
+      "text": "I can't do Monday afternoon. Could you please see if there is any opening on Saturday morning instead?",
+      "interrupted": false,
+      "latency": 1.5068628787994385
+    },
+    {
+      "t": 98.17703413963318,
+      "speaker": "CLINIC AGENT",
+      "text": "I'll look for Saturday morning openings. First, would you like to reschedule your current Monday appointment? Or just check for Saturday availability before making any changes?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 108.78275203704834,
+      "speaker": "PATIENT (bot)",
+      "text": "Just check Saturday availability first, please.",
+      "interrupted": false,
+      "latency": 1.6165680885314941
+    },
+    {
+      "t": 115.68006110191345,
+      "speaker": "CLINIC AGENT",
+      "text": "You have two upcoming appointments, one today, Monday, October 19 at 2PM, and another on Friday, October 23 at 10AM. Would you like to look for a Saturday morning slot to move one of these appointments? Or are you hoping to book an additional appointment?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 131.92310500144958,
+      "speaker": "PATIENT (bot)",
+      "text": "I'm hoping to book an additional appointment on Saturday morning, please. What are your hours on weekends?",
+      "interrupted": false,
+      "latency": 1.406548023223877
+    },
+    {
+      "t": 137.38031315803528,
+      "speaker": "CLINIC AGENT",
+      "text": "Me check Saturday morning availability for a new appointment.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 142.6795961856842,
+      "speaker": "CLINIC AGENT",
+      "text": "Just to confirm, is this Saturday morning appointment also for a routine checkup or do you have a different reason for this visit?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 149.98918294906616,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, it\u2019s also for a routine checkup.",
+      "interrupted": false,
+      "latency": 1.1720168590545654
+    },
+    {
+      "t": 157.2303900718689,
+      "speaker": "CLINIC AGENT",
+      "text": "Can only have one routine checkup appointment booked at a time. Your soonest is Monday, October 19 at 2PM with doctor Zibing Liu If you wanna move this to a Saturday morning, I can help reschedule it. Would you like to do that?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 172.2872190475464,
+      "speaker": "PATIENT (bot)",
+      "text": "No, I can\u2019t do Monday afternoon. Please reschedule the Monday appointment to Saturday morning, if possible.",
+      "interrupted": false,
+      "latency": 1.5195090770721436
+    },
+    {
+      "t": 181.6290671825409,
+      "speaker": "CLINIC AGENT",
+      "text": "Before I look for Saturday morning openings, can you tell me the reason you need to reschedule your Monday appointment? For example, is it a schedule conflict? Personal reason, or something else?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 193.82699394226074,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, I work Monday through Friday and can\u2019t easily take time off during the day.",
+      "interrupted": false,
+      "latency": 1.6079978942871094
+    },
+    {
+      "t": 201.93017506599426,
+      "speaker": "CLINIC AGENT",
+      "text": "There are no Saturday morning openings available between October twenty fourth and November 24. With Doctor. Zabigniew Lukowski, Would you like to try a different day or time? Or should I check with another provider? If you prefer, I can also transfer you to live support at the clinic for more help.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 220.5715250968933,
+      "speaker": "PATIENT (bot)",
+      "text": "Could you please check for any weekday appointments before nine am or after four pm? I\u2019m okay with any day like that.",
+      "interrupted": false,
+      "latency": 1.5028741359710693
+    },
+    {
+      "t": 228.53175020217896,
+      "speaker": "CLINIC AGENT",
+      "text": "Next opening is Tuesday, October 20 at 10:30AM. With doctor Zig Bingyu Lokoski at Nashville. Would you like to move your Monday appointment to this time?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 238.18646097183228,
+      "speaker": "PATIENT (bot)",
+      "text": "That\u2019s during work hours, so no. Do you have anything before nine am or after four pm?",
+      "interrupted": false,
+      "latency": 1.0162928104400635
+    },
+    {
+      "t": 245.8312451839447,
+      "speaker": "CLINIC AGENT",
+      "text": "There are no appointments before 9AM or after 4PM on weekdays in the next month with Doctor. Zebigniew Lukowski. Would you like to try a different provider, or should I transfer you to live support at the for more options?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 259.2860360145569,
+      "speaker": "PATIENT (bot)",
+      "text": "Please transfer me to live support for more options.",
+      "interrupted": false,
+      "latency": 1.8655040264129639
+    },
+    {
+      "t": 265.03206419944763,
+      "speaker": "CLINIC AGENT",
+      "text": "Transferring you now. Thank you.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 268.0907561779022,
+      "speaker": "PATIENT (bot)",
+      "text": "Thank you, goodbye.",
+      "interrupted": false,
+      "latency": 1.170673131942749
+    },
+    {
+      "t": 269.1327791213989,
+      "speaker": "CLINIC AGENT",
+      "text": "Hello. You've reached",
+      "interrupted": false,
+      "latency": null
+    }
+  ],
+  "events": [
+    [
+      0.00022101402282714844,
+      "dialing +18054398008"
+    ],
+    [
+      5.483741998672485,
+      "call answered"
+    ],
+    [
+      216.04753398895264,
+      "soft time limit: asking the patient to wrap up"
+    ],
+    [
+      270.1048288345337,
+      "hangup: patient bot said goodbye"
+    ],
+    [
+      270.4247889518738,
+      "tool: end_call"
+    ]
+  ]
+}

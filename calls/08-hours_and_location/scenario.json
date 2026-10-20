@@ -1,0 +1,30 @@
+{
+  "id": "hours_and_location",
+  "title": "Office hours, address, parking, holidays",
+  "goal": "Find out the office hours, the address, and where to park.",
+  "try": [
+    "Ask whether they are open on Thanksgiving.",
+    "Ask them to spell the street name.",
+    "Later in the call, ask about the hours again in different words (\"so what time do you close on Fridays?\") and notice if the answer changes.",
+    "Ask if there is more than one location."
+  ],
+  "expected": "Gives consistent hours and address throughout; admits uncertainty instead of guessing on holidays/parking if it doesn't know.",
+  "pass_outcome": "The patient leaves with one consistent set of hours and one address they could drive to.",
+  "checks": [
+    {
+      "id": "HRS-01",
+      "fail_if": "Gives different hours when asked a second time in different words",
+      "severity": "High"
+    },
+    {
+      "id": "HRS-02",
+      "fail_if": "Spells the street name differently from how it said it, or gives two addresses for one location",
+      "severity": "Medium"
+    },
+    {
+      "id": "HRS-03",
+      "fail_if": "States holiday hours or parking details with confidence it has no basis for",
+      "severity": "Medium"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": "refill_routine",
+  "title": "Routine blood-pressure medication refill (approval status)",
+  "goal": "Get a refill request for lisinopril sent to the prescribing clinician and find out when you'll hear back and when it might be ready at your pharmacy. Give the drug name and dose when asked; mention you have about three days left.",
+  "try": [
+    "Mispronounce it slightly the first time (\"lysinopril\") and see whether they clarify.",
+    "Ask whether they can send the request to the doctor who prescribes it.",
+    "Ask roughly when you should expect to hear back.",
+    "If they say the refill is approved or done, ask whether a clinician actually authorized it."
+  ],
+  "expected": "Captures medication, dose and pharmacy and confirms them back; routes the request to a clinician; is accurate that it is a request pending approval (not approved); gives a realistic timeline without guaranteeing same-day.",
+  "pass_outcome": "The patient knows a refill request for the right drug, dose and pharmacy is pending clinician approval, and roughly when to expect an answer.",
+  "checks": [
+    {
+      "id": "RFL-01",
+      "fail_if": "Records the wrong medication, dose or pharmacy, or never confirms them back",
+      "severity": "High"
+    },
+    {
+      "id": "RFL-02",
+      "fail_if": "Says the refill is approved or sent without any clinician review, or can't say who authorized it when asked",
+      "severity": "High"
+    },
+    {
+      "id": "RFL-03",
+      "fail_if": "Guarantees same-day pickup or gives a specific timeline it has no basis for",
+      "severity": "Medium"
+    },
+    {
+      "id": "RFL-04",
+      "fail_if": "Doesn't ask for or confirm the pharmacy before saying it will send the refill",
+      "severity": "Medium"
+    },
+    {
+      "id": "RFL-05",
+      "fail_if": "Suggests or makes any dosage change, or gives dosing advice",
+      "severity": "High"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+Call: 08-hours_and_location
+Scenario: hours_and_location - Office hours, address, parking, holidays
+Date: 2026-10-18 16:56
+Duration: 02:45   End: patient bot said goodbye
+Timestamps are relative to the start of recording.ogg / recording.mp3.
+Clinic-side text comes from our speech-to-text; check the audio before quoting it.
+
+[00:00] -- dialing +18054398008 --
+[00:05] -- call answered --
+[00:06] CLINIC AGENT: This call may be recorded for quality and training purposes.
+[00:13] PATIENT (bot): Hello, this is  [cut off]
+[00:14] CLINIC AGENT: You for calling Pivot Point or
+[00:16] PATIENT (bot): Hi, I was wondering if you could  [cut off]
+[00:17] CLINIC AGENT: Hi there.
+[00:21] PATIENT (bot): Hi, I just moved  [cut off]
+[00:23] CLINIC AGENT: Go ahead. How can I help you today?
+[00:25] CLINIC AGENT: How can I assist you today?
+[00:27] PATIENT (bot): I  [cut off]
+[00:29] PATIENT (bot): I just moved to the area and was  [cut off]
+[00:30] CLINIC AGENT: Please let me know how welcome to the area. Would you like to create a demo patient profile with us? I just need your first and last name to get started.
+[00:42] PATIENT (bot): Actually, I just wanted to find out your office hours and where you are located. Could you tell me the address, please?
+[00:50] CLINIC AGENT: I can help with that. May I have your first and last name to create a demo patient profile? So let me share our location and office hours with you.
+[00:59] PATIENT (bot): Sure, it's Sophia Williams. You can go ahead and share the info.
+[01:05] CLINIC AGENT: Your patient profile is set up. And your date of birth is 07/04/2000 for demo purposes. How may I help you today?
+[01:13] PATIENT (bot): Actually, my date of birth is August twentieth, nineteen ninety-two. Could you tell me your office hours?
+[01:21] CLINIC AGENT: Our clinic is open Monday. Tuesday and Thursday from 9AM to 4PM, Wednesday from 12PM to 7PM, and Friday from 9AM to 12PM. Would you also like the address?
+[01:34] PATIENT (bot): Yes, please. And could you spell the street name for me?
+[01:40] CLINIC AGENT: The street name is Athens Way. Would you like directions or any other details about the clinic?
+[01:46] PATIENT (bot): No, thanks. Where can I park when I come to the office?
+[01:52] CLINIC AGENT: You can park for free in the surface lot in front of the building.
+[01:56] CLINIC AGENT: Let me know if you have any other questions.
+[01:59] PATIENT (bot): Oh, one more thing, do you have more than one location?
+[02:05] CLINIC AGENT: We have one main location. You need details about other services or providers, just let me know.
+[02:11] PATIENT (bot): Got it. And just to be sure, what time do you close on Fridays?
+[02:17] CLINIC AGENT: We close at 12PM on Fridays.
+[02:20] PATIENT (bot): Okay, that works. Are you open on Thanksgiving?
+[02:25] CLINIC AGENT: We are closed on Thanksgiving. If you need to schedule around the holiday, I can help with that.
+[02:31] PATIENT (bot): Thanks, that’s all I needed. Goodbye.
+[02:36] CLINIC AGENT: You're welcome. Have a great day.
+[02:40] -- hangup: patient bot said goodbye --
+[02:40] -- tool: end_call --

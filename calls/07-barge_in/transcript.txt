@@ -1,0 +1,29 @@
+Call: 07-barge_in
+Scenario: barge_in - Interrupting the agent mid-sentence
+Date: 2026-10-18 16:52
+Duration: 02:39   End: patient bot said goodbye
+Timestamps are relative to the start of recording.ogg / recording.mp3.
+Clinic-side text comes from our speech-to-text; check the audio before quoting it.
+
+[00:00] -- dialing +18054398008 --
+[00:04] -- call answered --
+[00:05] CLINIC AGENT: This call may be recorded for quality and training purposes.
+[00:11] PATIENT (bot): Hi, this is Sophia  [cut off]
+[00:12] CLINIC AGENT: Thank you for call
+[00:14] PATIENT (bot): Hi, I have a first appointment coming up and  [cut off]
+[00:20] -- scripted barge-in: talking over the clinic agent --
+[00:20] PATIENT (bot): Sorry, sorry, quick question before I forget, can I do this appointment by video instead?
+[00:28] CLINIC AGENT: I can help with that. First, I'll need to create a demo patient profile for you. May I have your first and last name?
+[00:35] PATIENT (bot): Sure, it's Sophia Williams.
+[00:42] CLINIC AGENT: Patient profile is set up. And your date of birth is July fourth two thousand. How can I help you today? Would you like to talk more about switching your appointment to video?
+[00:53] PATIENT (bot): Actually, my birthday is August twentieth, nineteen ninety-two. And yeah, can you tell me what I need to bring to the first appointment?
+Also, can you confirm if the appointment can be done by video?
+[01:08] CLINIC AGENT: Thanks for letting me know about your birthday. I'll update your date of birth to August twentieth. Nineteen ninety two. For your first appointment, please bring your photo ID insurance card, and any relevant medical records or imaging if you have them. Wear comfortable clothing if you expect a physical exam. Let me check if your appointment can be switched to video. One moment.
+[01:31] CLINIC AGENT: Your appointment is on Friday, October 23 at 10AM. With doctor Judy Hauser, at Pivot Point Orthopaedics. Two two zero Athens Way. Is this the appointment you wanna switch to a video visit? If so, can you tell me the reason you'd like to change it?
+[01:48] PATIENT (bot): Yes, that's the appointment. I want to switch to video because I'm at work and have limited time to get there in person.
+[01:58] CLINIC AGENT: The next available appointments are all in person visits. There are no virtual or telehealth slots showing right now. Would you like to try for a different date or time, or do you wanna keep your current appointment?
+[02:11] PATIENT (bot): I'll keep the current appointment then, thanks. Could you remind me again what I need to bring?
+[02:18] CLINIC AGENT: Please bring your photo ID. Insurance card, and any relevant medical records or imaging. Wear comfortable clothing if you expect a physical exam. Let me know if you have any other questions.
+[02:30] PATIENT (bot): Got it. That's all for now. Thanks a lot. Goodbye.
+[02:34] -- hangup: patient bot said goodbye --
+[02:34] -- tool: end_call --

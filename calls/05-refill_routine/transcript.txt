@@ -1,0 +1,26 @@
+Call: 05-refill_routine
+Scenario: refill_routine - Routine blood-pressure medication refill (approval status)
+Date: 2026-10-18 16:14
+Duration: 01:36   End: patient bot said goodbye
+Timestamps are relative to the start of recording.ogg / recording.mp3.
+Clinic-side text comes from our speech-to-text; check the audio before quoting it.
+
+[00:00] -- dialing +18054398008 --
+[00:04] -- call answered --
+[00:05] CLINIC AGENT: This call may be recorded for quality and training purposes.
+[00:11] PATIENT (bot): Hello, this is the medical  [cut off]
+[00:12] CLINIC AGENT: Welcome to PIVOT Point
+[00:14] PATIENT (bot): Hi, I'm calling because I'm almost  [cut off]
+[00:15] CLINIC AGENT: hi there. Go ahead. What can I help you with today?
+[00:21] PATIENT (bot): I'm running low on my blood pressure medication and need a refill, please.
+[00:27] CLINIC AGENT: I can help with that. Would you like to create a demo patient profile so I can get started? I just need your first and last name.
+[00:35] PATIENT (bot): Sure, it's Sophia Williams.
+[00:41] CLINIC AGENT: Your patient profile is set up. And your date of birth is July fourth two thousand for demo purposes. How can I help you today?
+[00:50] PATIENT (bot): Actually, my real date of birth is August twentieth, nineteen ninety-two. I need a refill on lisinopril. I think I have about three days left.
+[00:59] CLINIC AGENT: Let me get your lisinopril refill started. One moment while I process your request.
+[01:04] CLINIC AGENT: I don't see any medications on your chart that I can refill right now. If you'd like, I can connect you to our patient support team for more help. Would you like to speak with someone?
+[01:14] PATIENT (bot): Yes, please connect me to the patient support team. I want to make sure the refill request is sent to the doctor who  [cut off]
+[01:19] CLINIC AGENT: Transferring you now. Thank you. Please continue. Hello. What would you like? Reached the Pretty Good AI test line. Goodbye.
+[01:27] PATIENT (bot): Oh, never mind then. I'll try following up another way. Thanks, goodbye.
+[01:32] -- hangup: patient bot said goodbye --
+[01:32] -- tool: end_call --

@@ -1,0 +1,33 @@
+{
+  "id": "reschedule_existing",
+  "title": "Move an existing appointment",
+  "goal": "Move your existing appointment to the following week, any afternoon. Make sure the old appointment is cancelled and only the new one remains.",
+  "try": [
+    "Say you don't remember the exact date of your current appointment; ask them to look it up.",
+    "Before hanging up, ask how many appointments you now have on file."
+  ],
+  "expected": "Finds the existing appointment, moves it (not double-books), confirms new time and that the old slot is released. If no appointment exists, says so clearly instead of pretending.",
+  "pass_outcome": "The patient knows the old appointment is gone and exactly when the new one is.",
+  "checks": [
+    {
+      "id": "RSC-01",
+      "fail_if": "Books the new time without cancelling the old one (double booking), or says two appointments are on file",
+      "severity": "High"
+    },
+    {
+      "id": "RSC-02",
+      "fail_if": "Cannot find the existing appointment but pretends to, or describes one that doesn't match what was booked",
+      "severity": "High"
+    },
+    {
+      "id": "RSC-03",
+      "fail_if": "Loses the patient's identity or the reschedule request partway through and starts over",
+      "severity": "Medium"
+    },
+    {
+      "id": "RSC-04",
+      "fail_if": "Ends without confirming both the new time and that the old slot is released",
+      "severity": "Medium"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "summary": "The clinic agent correctly refused to book weekend appointments, did not offer any on closed days, and stated the unavailability of weekend hours without contradiction. However, when asked for weekday appointments before 9 am or after 4 pm, the agent only offered a 10:30 am slot and did not proactively state that no early/late slots were available until prompted again. Ultimately, the agent offered to transfer to live support, which is an acceptable next step. No critical or high-severity failures were found, but there was a minor delay in addressing the requested time window.",
+  "pass_outcome_met": true,
+  "checks": [
+    {
+      "id": "WKD-01",
+      "result": "pass",
+      "timestamp": "02:37",
+      "evidence": "Can only have one routine checkup appointment booked at a time. Your soonest is Monday, October 19 at 2PM... If you wanna move this to a Saturday morning, I can help reschedule it.",
+      "confidence": "high",
+      "severity": "Critical"
+    },
+    {
+      "id": "WKD-02",
+      "result": "pass",
+      "timestamp": "02:11",
+      "evidence": "What are your hours on weekends? ... There are no Saturday morning openings available between October twenty fourth and November 24.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "WKD-03",
+      "result": "pass",
+      "timestamp": "04:05",
+      "evidence": "There are no appointments before 9AM or after 4PM on weekdays in the next month with Doctor. Zebigniew Lukowski. Would you like to try a different provider, or should I transfer you to live support for more options?",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-01",
+      "result": "pass",
+      "timestamp": "00:13",
+      "evidence": "Thank you for calling (after patient was cut off, but not by agent's interruption)",
+      "confidence": "medium",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-02",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No repeated questions or answers three or more times.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-03",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No contradictions in hours, dates, or policy.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-04",
+      "result": "pass",
+      "timestamp": "04:25",
+      "evidence": "Transferring you now. Thank you. (Action matches conversation)",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-05",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No long silences or dead air over ~8 seconds.",
+      "confidence": "high",
+      "severity": "Low"
+    }
+  ],
+  "other_findings": [
+    {
+      "title": "Delayed explicit response to early/late weekday slot request",
+      "severity": "Low",
+      "timestamp": "03:48",
+      "evidence": "Next opening is Tuesday, October 20 at 10:30AM... (did not immediately state there were no before 9am/after 4pm slots until prompted again)",
+      "why_it_matters": "The agent should proactively state when no appointments are available in the requested time window, rather than only after being asked again. This could cause minor frustration or confusion.",
+      "expected": "Agent should have immediately stated that no before 9am or after 4pm slots were available when first asked.",
+      "confidence": "high"
+    }
+  ]
+}

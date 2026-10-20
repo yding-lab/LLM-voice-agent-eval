@@ -1,0 +1,106 @@
+{
+  "summary": "The clinic agent recognized the caller as a new patient and attempted to collect some registration details (name, date of birth), but did not collect a phone number. The agent incorrectly treated the caller as an existing patient by referencing a pre-existing appointment and did not clarify the new patient status. The agent did not complete a booking or provide a clear next step before the patient ended the call. The agent did not ignore the 9-11 am window, but the call ended before any slots were offered. There were no major conversational defects, but there was a minor repetition in checking for available slots.",
+  "pass_outcome_met": false,
+  "checks": [
+    {
+      "id": "NEW-01",
+      "result": "fail",
+      "timestamp": "00:27",
+      "evidence": "I just need your first and last name. ... Your patient profile is set up. And your date of birth is July fourth two thousand for demo purposes.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "NEW-02",
+      "result": "fail",
+      "timestamp": "01:01",
+      "evidence": "You already have a routine office visit. Scheduled with doctor Kelly Noble on Tuesday. October 20 at 10AM at Pivot Point Orthopedics.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "NEW-03",
+      "result": "not_tested",
+      "timestamp": "02:49",
+      "evidence": "Let me check the schedule for weekday mornings nine and eleven next week. One moment.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "NEW-04",
+      "result": "not_tested",
+      "timestamp": "",
+      "evidence": "No date/time was confirmed or read back by the agent.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "NEW-05",
+      "result": "fail",
+      "timestamp": "03:36",
+      "evidence": "The call ended without a booking or a clear next step for the patient.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-01",
+      "result": "pass",
+      "timestamp": "00:13",
+      "evidence": "Thank you for calling Pivot. (waits for patient to finish speaking before responding)",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-02",
+      "result": "pass",
+      "timestamp": "03:03",
+      "evidence": "Let me fetch the available weekday morning slots between nine and eleven next week. For you. (No loop of three or more repeats)",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-03",
+      "result": "fail",
+      "timestamp": "01:01",
+      "evidence": "You already have a routine office visit. Scheduled with doctor Kelly Noble... (contradicts patient's statement that this is their first visit)",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-04",
+      "result": "pass",
+      "timestamp": "02:33",
+      "evidence": "Your appointment with doctor Kelly Noble on October 20 has been canceled. (Action matches conversation)",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-05",
+      "result": "pass",
+      "timestamp": "03:03",
+      "evidence": "Let me fetch the available weekday morning slots between nine and eleven next week. For you. (No long silence or dead air)",
+      "confidence": "high",
+      "severity": "Low"
+    }
+  ],
+  "other_findings": [
+    {
+      "title": "Did not collect phone number for new patient registration",
+      "severity": "High",
+      "timestamp": "00:27",
+      "evidence": "I just need your first and last name. ... Your patient profile is set up. And your date of birth is July fourth two thousand for demo purposes.",
+      "why_it_matters": "Phone number is a basic requirement for new patient registration and follow-up.",
+      "expected": "Agent should have asked for and recorded the patient's phone number.",
+      "confidence": "high"
+    },
+    {
+      "title": "Did not inform patient of next steps for first visit",
+      "severity": "Medium",
+      "timestamp": "03:36",
+      "evidence": "The call ended without the agent telling the patient what to bring or expect for a first visit.",
+      "why_it_matters": "New patients need to know what to bring (ID, insurance, forms) and what to expect.",
+      "expected": "Agent should inform new patients of any requirements for their first visit.",
+      "confidence": "high"
+    }
+  ]
+}

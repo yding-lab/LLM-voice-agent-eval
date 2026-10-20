@@ -1,0 +1,208 @@
+{
+  "call_id": "01-schedule_new_checkup",
+  "scenario": "schedule_new_checkup",
+  "started_at": 1792333010.8528671,
+  "duration_s": 134.5,
+  "end_reason": "patient bot said goodbye",
+  "latency": {
+    "bot_turns": 12,
+    "median_s": 1.44,
+    "p90_s": 1.76,
+    "max_s": 1.84
+  },
+  "turns": [
+    {
+      "t": 5.568735122680664,
+      "speaker": "CLINIC AGENT",
+      "text": "This call may be recorded for quality and training purposes.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 12.229772090911865,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I'd like to",
+      "interrupted": true,
+      "latency": 0.9204821586608887
+    },
+    {
+      "t": 12.899406909942627,
+      "speaker": "CLINIC AGENT",
+      "text": "Thank you for calling Pivot",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 15.751062870025635,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I'd like to book an annual physical sometime next",
+      "interrupted": true,
+      "latency": 1.8403711318969727
+    },
+    {
+      "t": 16.49223303794861,
+      "speaker": "CLINIC AGENT",
+      "text": "Would you like to",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 22.10710883140564,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, I'm looking for an appointment",
+      "interrupted": true,
+      "latency": 1.751835823059082
+    },
+    {
+      "t": 23.115275144577026,
+      "speaker": "CLINIC AGENT",
+      "text": "to help you",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 25.320878744125366,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, please. I'm looking",
+      "interrupted": true,
+      "latency": 1.759685754776001
+    },
+    {
+      "t": 26.115469932556152,
+      "speaker": "CLINIC AGENT",
+      "text": "would you like",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 28.281510829925537,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, I'm looking for an appointment next",
+      "interrupted": true,
+      "latency": 1.727855920791626
+    },
+    {
+      "t": 29.465616941452026,
+      "speaker": "CLINIC AGENT",
+      "text": "before",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 31.246944904327393,
+      "speaker": "PATIENT (bot)",
+      "text": "Could you please help me find an appointment",
+      "interrupted": true,
+      "latency": 1.4889130592346191
+    },
+    {
+      "t": 32.419541120529175,
+      "speaker": "CLINIC AGENT",
+      "text": "to get",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 34.16932511329651,
+      "speaker": "PATIENT (bot)",
+      "text": "Sure, I'd like to get an annual",
+      "interrupted": true,
+      "latency": 1.458268165588379
+    },
+    {
+      "t": 35.478797912597656,
+      "speaker": "CLINIC AGENT",
+      "text": "I can",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 38.517269134521484,
+      "speaker": "CLINIC AGENT",
+      "text": "to help you book an annual physical I'll need to create a demo patient profile for you. Can I have your first and last name?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 46.220619916915894,
+      "speaker": "PATIENT (bot)",
+      "text": "Sophia Williams.",
+      "interrupted": false,
+      "latency": 0.8660681247711182
+    },
+    {
+      "t": 58.46787095069885,
+      "speaker": "CLINIC AGENT",
+      "text": "Your patient profile is set up and your date of birth is 07/04/2000 for demo purposes. How may I help you today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 67.31905674934387,
+      "speaker": "PATIENT (bot)",
+      "text": "I want to schedule my annual physical for next week, preferably Tuesday or Thursday morning. Is there availability?",
+      "interrupted": false,
+      "latency": 1.0661287307739258
+    },
+    {
+      "t": 75.96600103378296,
+      "speaker": "CLINIC AGENT",
+      "text": "Just to confirm, you'd like to schedule a general office visit for your annual physical. Is that correct?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 82.13479971885681,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, that's correct. Tuesday or Thursday morning next week would be best.",
+      "interrupted": false,
+      "latency": 0.8815128803253174
+    },
+    {
+      "t": 88.56474876403809,
+      "speaker": "CLINIC AGENT",
+      "text": "There are several openings next week. For Tuesday, October twentieth, I have a 10AM slot with Kelly Noble, MD. Would you like to book that, or would you prefer to hear Thursday morning options?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 102.07171988487244,
+      "speaker": "PATIENT (bot)",
+      "text": "I'll take the Tuesday at 10AM with Dr. Noble. Do I need to fast before the visit if I want bloodwork?",
+      "interrupted": false,
+      "latency": 1.4132580757141113
+    },
+    {
+      "t": 110.61570000648499,
+      "speaker": "CLINIC AGENT",
+      "text": "You may need to fast before certain blood tests, but it depends on what your provider orders. It's best to check with your doctor or the clinic staff for specific instructions. Would you like me to note this question for your provider before your appointment?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 125.60476589202881,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, please note that for my provider. Can you repeat the date and time of my appointment?",
+      "interrupted": false,
+      "latency": 1.3495490550994873
+    }
+  ],
+  "events": [
+    [
+      0.0002529621124267578,
+      "dialing +18054398008"
+    ],
+    [
+      5.097927808761597,
+      "call answered"
+    ],
+    [
+      131.009192943573,
+      "hangup: patient bot said goodbye"
+    ],
+    [
+      131.35916996002197,
+      "tool: end_call"
+    ]
+  ]
+}

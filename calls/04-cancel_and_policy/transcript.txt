@@ -1,0 +1,29 @@
+Call: 04-cancel_and_policy
+Scenario: cancel_and_policy - Cancel an appointment, decline rescheduling, ask about fees
+Date: 2026-10-18 16:09
+Duration: 02:17   End: patient bot said goodbye
+Timestamps are relative to the start of recording.ogg / recording.mp3.
+Clinic-side text comes from our speech-to-text; check the audio before quoting it.
+
+[00:00] -- dialing +18054398008 --
+[00:05] -- call answered --
+[00:06] CLINIC AGENT: This call may be recorded for quality and training purposes.
+[00:12] PATIENT (bot): Hi, I need to cancel an appointment  [cut off]
+[00:13] CLINIC AGENT: Thank you for calling
+[00:16] CLINIC AGENT: Would you like to create a demo patient profile first? I just need your first and last name to get started.
+[00:23] PATIENT (bot): Yes, please. My name is Sophia Williams.
+[00:30] CLINIC AGENT: Your patient profile is set up. And your date of birth is 07/04/2000 for demo purposes. How may I help you today?
+[00:38] PATIENT (bot): Actually, I need to cancel an appointment I have coming up. Could you check the date for me?
+[00:46] CLINIC AGENT: Let me check your upcoming appointments. One moment.
+[00:51] CLINIC AGENT: You have an appointment scheduled for October 19 with doctor Zambignew Likosky. Is this the appointment you want to cancel?
+[00:59] PATIENT (bot): Yes, that's the one I want to cancel, please. Can you confirm the cancellation for me?
+[01:06] CLINIC AGENT: Could you tell me the reason you'd like to cancel this appointment?
+[01:09] PATIENT (bot): My schedule changed, so I just don't need the visit right now. I'm not ready to reschedule yet.
+[01:17] CLINIC AGENT: Your appointment for Monday, October 19 with doctor has been canceled. Let me know if you need help with anything else.
+[01:25] PATIENT (bot): Has the cancellation actually been processed in your system? Also, is there a cancellation fee for such short notice?
+[01:34] CLINIC AGENT: Your cancellation has been processed in the system. There is no cancellation fee for this appointment. Would you like help with anything else?
+[01:42] PATIENT (bot): No, I don't need to reschedule right now. Could you send me a confirmation of the cancellation by text, please?
+[01:51] CLINIC AGENT: I can send you a text confirming your cancellation. But I can only send details about upcoming appointments. Since you have no upcoming appointments right now, there's nothing to send. If you book a new appointment, I can text you the details.
+[02:07] PATIENT (bot): Okay, I understand. I will call back when I'm ready to book again. Thanks for your help. Goodbye.
+[02:13] -- hangup: patient bot said goodbye --
+[02:13] -- tool: end_call --

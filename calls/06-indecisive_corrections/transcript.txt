@@ -1,0 +1,37 @@
+Call: 06-indecisive_corrections
+Scenario: indecisive_corrections - Vague request, changing mind, correcting details
+Date: 2026-10-18 16:48
+Duration: 03:09   End: patient bot said goodbye
+Timestamps are relative to the start of recording.ogg / recording.mp3.
+Clinic-side text comes from our speech-to-text; check the audio before quoting it.
+
+[00:00] -- dialing +18054398008 --
+[00:05] -- call answered --
+[00:06] CLINIC AGENT: This call may be recorded for quality and training purposes.
+[00:12] PATIENT (bot): Hi, um, I need  [cut off]
+[00:13] CLINIC AGENT: Thank you for calling Pivot
+[00:16] PATIENT (bot): Yeah, hi, I need  [cut off]
+[00:16] CLINIC AGENT: hello? How... Hi there. What can I help you with today?
+[00:22] PATIENT (bot): Hi, I need to come in for, um, the thing, the follow-up appointment.
+[00:28] CLINIC AGENT: I can help with that. Would you like to create a demo patient profile first? I just need your first and last name to get started.
+[00:36] PATIENT (bot): No, thanks. I just want to book the follow-up. My name is Sophia Williams.
+[00:44] CLINIC AGENT: Thanks. Sophia. You like to create a demo patient profile now? This will let me help you book your follow-up appointment just need your first and last name.
+[00:54] PATIENT (bot): I already said Sophia Williams. Can you book the follow-up appointment now?
+[01:00] CLINIC AGENT: Your patient profile is set up and your date of birth is 07/04/2000 for demo purposes. How may I help you today?
+[01:09] PATIENT (bot): Oh, actually my date of birth is August twentieth, nineteen ninety-two. I want to book a follow-up visit.
+[01:18] CLINIC AGENT: Do you have a specific provider you'd like to see for your follow-up? Or is anyone fine?
+[01:23] PATIENT (bot): Anyone is fine, thanks. Could I come in on Friday? No, wait, maybe Thursday. Actually, let's go back to Friday.
+[01:33] CLINIC AGENT: No problem. On Friday, October twenty third, there are several openings. Would you prefer morning or afternoon?
+[01:41] PATIENT (bot): Morning is better for me, please.
+[01:45] CLINIC AGENT: The earliest available slot on Friday is at 10AM with Judy Hauser. Would you like to book that time?
+[01:52] PATIENT (bot): Yeah, 10 a.m. on Friday works for me. Can you please book that?
+[01:59] CLINIC AGENT: You are all set. Your follow-up appointment is booked for Friday, October 23 at 10AM with Judy Hauser at Pivot Point Orthopedics. Please bring your photo ID, insurance card, a list of your current medications, and any imaging discs you have. Would you like me to send you a text message with these appointment details?
+[02:21] PATIENT (bot): No, thank you. Could you please read back the appointment date, time, and my date of birth for me?
+[02:29] CLINIC AGENT: Appointment is Friday. October twenty
+[02:34] CLINIC AGENT: Your date of birth is 08/20/1992.
+[02:38] PATIENT (bot): Okay, just to be sure, that's Friday, October twenty third at 10 a.m., and my date of birth is August twentieth, nineteen ninety-two?
+[02:48] CLINIC AGENT: That's correct. Friday, October 23 at 10AM. And your date of birth is 08/20/1992.
+[02:55] PATIENT (bot): Great, thanks for confirming all that. Goodbye!
+[03:01] CLINIC AGENT: Goodbye. Have a great day.
+[03:04] -- hangup: patient bot said goodbye --
+[03:05] -- tool: end_call --

@@ -1,0 +1,138 @@
+{
+  "call_id": "05-refill_routine",
+  "scenario": "refill_routine",
+  "started_at": 1792354469.563513,
+  "duration_s": 96.4,
+  "end_reason": "patient bot said goodbye",
+  "latency": {
+    "bot_turns": 7,
+    "median_s": 1.13,
+    "p90_s": 1.52,
+    "max_s": 1.52
+  },
+  "turns": [
+    {
+      "t": 5.207334995269775,
+      "speaker": "CLINIC AGENT",
+      "text": "This call may be recorded for quality and training purposes.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 11.866999864578247,
+      "speaker": "PATIENT (bot)",
+      "text": "Hello, this is the medical",
+      "interrupted": true,
+      "latency": 0.9210009574890137
+    },
+    {
+      "t": 12.307722091674805,
+      "speaker": "CLINIC AGENT",
+      "text": "Welcome to PIVOT Point",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 14.8126699924469,
+      "speaker": "PATIENT (bot)",
+      "text": "Hi, I'm calling because I'm almost",
+      "interrupted": true,
+      "latency": 1.5172181129455566
+    },
+    {
+      "t": 15.370493173599243,
+      "speaker": "CLINIC AGENT",
+      "text": "hi there. Go ahead. What can I help you with today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 21.732948064804077,
+      "speaker": "PATIENT (bot)",
+      "text": "I'm running low on my blood pressure medication and need a refill, please.",
+      "interrupted": false,
+      "latency": 1.1311891078948975
+    },
+    {
+      "t": 27.858123064041138,
+      "speaker": "CLINIC AGENT",
+      "text": "I can help with that. Would you like to create a demo patient profile so I can get started? I just need your first and last name.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 35.57728910446167,
+      "speaker": "PATIENT (bot)",
+      "text": "Sure, it's Sophia Williams.",
+      "interrupted": false,
+      "latency": 1.1255180835723877
+    },
+    {
+      "t": 41.115920066833496,
+      "speaker": "CLINIC AGENT",
+      "text": "Your patient profile is set up. And your date of birth is July fourth two thousand for demo purposes. How can I help you today?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 50.327712059020996,
+      "speaker": "PATIENT (bot)",
+      "text": "Actually, my real date of birth is August twentieth, nineteen ninety-two. I need a refill on lisinopril. I think I have about three days left.",
+      "interrupted": false,
+      "latency": 1.4805550575256348
+    },
+    {
+      "t": 59.708784103393555,
+      "speaker": "CLINIC AGENT",
+      "text": "Let me get your lisinopril refill started. One moment while I process your request.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 64.85979008674622,
+      "speaker": "CLINIC AGENT",
+      "text": "I don't see any medications on your chart that I can refill right now. If you'd like, I can connect you to our patient support team for more help. Would you like to speak with someone?",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 74.12602996826172,
+      "speaker": "PATIENT (bot)",
+      "text": "Yes, please connect me to the patient support team. I want to make sure the refill request is sent to the doctor who",
+      "interrupted": true,
+      "latency": 0.9771411418914795
+    },
+    {
+      "t": 79.15896606445312,
+      "speaker": "CLINIC AGENT",
+      "text": "Transferring you now. Thank you. Please continue. Hello. What would you like? Reached the Pretty Good AI test line. Goodbye.",
+      "interrupted": false,
+      "latency": null
+    },
+    {
+      "t": 87.74335503578186,
+      "speaker": "PATIENT (bot)",
+      "text": "Oh, never mind then. I'll try following up another way. Thanks, goodbye.",
+      "interrupted": false,
+      "latency": 0.9447948932647705
+    }
+  ],
+  "events": [
+    [
+      0.0002048015594482422,
+      "dialing +18054398008"
+    ],
+    [
+      4.794586896896362,
+      "call answered"
+    ],
+    [
+      92.58811974525452,
+      "hangup: patient bot said goodbye"
+    ],
+    [
+      92.78458976745605,
+      "tool: end_call"
+    ]
+  ]
+}

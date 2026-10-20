@@ -1,0 +1,46 @@
+Call: 10-schedule_weekend
+Scenario: schedule_weekend - Ask for a Sunday appointment (closed-day handling)
+Date: 2026-10-19 20:37
+Duration: 05:23   End: patient bot said goodbye
+Timestamps are relative to the start of recording.ogg / recording.mp3.
+Clinic-side text comes from our speech-to-text; check the audio before quoting it.
+
+[00:00] -- dialing +18054398008 --
+[00:05] -- call answered --
+[00:05] CLINIC AGENT: This call may be recorded for quality and training purposes.
+[00:12] PATIENT (bot): Hello, this is Sophia Williams. I was  [cut off]
+[00:13] CLINIC AGENT: Thank you for calling
+[00:15] PATIENT (bot): Hi, I was wondering if I could schedule an  [cut off]
+[00:16] CLINIC AGENT: Hi, Sophie.
+[00:18] PATIENT (bot): Hi, I’m looking to book an appointment. Do you have anything available this Sunday at 10 am?
+[00:19] CLINIC AGENT: I can help with that. Before I check the schedule, would you like to create a demo patient profile? I just need your first and last name.
+[00:33] PATIENT (bot): Yes, please. My name is Sophia Williams.
+[00:40] CLINIC AGENT: Your patient profile is set up, your date of birth is July fourth two thousand. How can I help you today?
+[00:46] PATIENT (bot): Oh, my birthday is actually August twentieth, nineteen ninety-two. Could you check for a Sunday 10 am appointment?
+[00:57] CLINIC AGENT: Let me check the schedule for Sunday at 10AM. Before I do, can you tell me the reason for your visit? For example, is this for a routine checkup, a follow-up, a new patient consultation, or something else?
+[01:09] PATIENT (bot): It's for a routine checkup.
+[01:15] CLINIC AGENT: You already have a routine checkup booked for Monday, October 19, at 2PM with doctor Zeebigniew Lukosky at Pivot Point Orthopedics. Would you like to keep this appointment? Reschedule it, or cancel it?
+[01:29] PATIENT (bot): I can't do Monday afternoon. Could you please see if there is any opening on Saturday morning instead?
+[01:38] CLINIC AGENT: I'll look for Saturday morning openings. First, would you like to reschedule your current Monday appointment? Or just check for Saturday availability before making any changes?
+[01:48] PATIENT (bot): Just check Saturday availability first, please.
+[01:55] CLINIC AGENT: You have two upcoming appointments, one today, Monday, October 19 at 2PM, and another on Friday, October 23 at 10AM. Would you like to look for a Saturday morning slot to move one of these appointments? Or are you hoping to book an additional appointment?
+[02:11] PATIENT (bot): I'm hoping to book an additional appointment on Saturday morning, please. What are your hours on weekends?
+[02:17] CLINIC AGENT: Me check Saturday morning availability for a new appointment.
+[02:22] CLINIC AGENT: Just to confirm, is this Saturday morning appointment also for a routine checkup or do you have a different reason for this visit?
+[02:29] PATIENT (bot): Yes, it’s also for a routine checkup.
+[02:37] CLINIC AGENT: Can only have one routine checkup appointment booked at a time. Your soonest is Monday, October 19 at 2PM with doctor Zibing Liu If you wanna move this to a Saturday morning, I can help reschedule it. Would you like to do that?
+[02:52] PATIENT (bot): No, I can’t do Monday afternoon. Please reschedule the Monday appointment to Saturday morning, if possible.
+[03:01] CLINIC AGENT: Before I look for Saturday morning openings, can you tell me the reason you need to reschedule your Monday appointment? For example, is it a schedule conflict? Personal reason, or something else?
+[03:13] PATIENT (bot): Yes, I work Monday through Friday and can’t easily take time off during the day.
+[03:21] CLINIC AGENT: There are no Saturday morning openings available between October twenty fourth and November 24. With Doctor. Zabigniew Lukowski, Would you like to try a different day or time? Or should I check with another provider? If you prefer, I can also transfer you to live support at the clinic for more help.
+[03:36] -- soft time limit: asking the patient to wrap up --
+[03:40] PATIENT (bot): Could you please check for any weekday appointments before nine am or after four pm? I’m okay with any day like that.
+[03:48] CLINIC AGENT: Next opening is Tuesday, October 20 at 10:30AM. With doctor Zig Bingyu Lokoski at Nashville. Would you like to move your Monday appointment to this time?
+[03:58] PATIENT (bot): That’s during work hours, so no. Do you have anything before nine am or after four pm?
+[04:05] CLINIC AGENT: There are no appointments before 9AM or after 4PM on weekdays in the next month with Doctor. Zebigniew Lukowski. Would you like to try a different provider, or should I transfer you to live support at the for more options?
+[04:19] PATIENT (bot): Please transfer me to live support for more options.
+[04:25] CLINIC AGENT: Transferring you now. Thank you.
+[04:28] PATIENT (bot): Thank you, goodbye.
+[04:29] CLINIC AGENT: Hello. You've reached
+[04:30] -- hangup: patient bot said goodbye --
+[04:30] -- tool: end_call --

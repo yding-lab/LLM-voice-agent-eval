@@ -1,0 +1,27 @@
+{
+  "id": "indecisive_corrections",
+  "title": "Vague request, changing mind, correcting details",
+  "goal": "Book a follow-up visit, but start vague (\"I need to come in for, um, the thing, the follow-up\"). Pick a day, then change your mind to a different day, then back to the first one. When asked for your date of birth, give it with a wrong day first, then correct yourself right away.",
+  "try": [
+    "At the end, ask them to read back everything they have \u2014 the date, time and your date of birth."
+  ],
+  "expected": "Handles the vague opener by asking clarifying questions, tracks the final choice (not an earlier one), uses the corrected date of birth, reads back accurate details.",
+  "pass_outcome": "The read-back matches the caller's final day and corrected date of birth.",
+  "checks": [
+    {
+      "id": "CLR-01",
+      "fail_if": "Books one of the abandoned days instead of the final choice",
+      "severity": "High"
+    },
+    {
+      "id": "CLR-02",
+      "fail_if": "Uses or reads back the wrong date of birth after the correction",
+      "severity": "High"
+    },
+    {
+      "id": "CLR-03",
+      "fail_if": "Guesses the visit type from the vague opener instead of asking what it's for",
+      "severity": "Low-Medium"
+    }
+  ]
+}
