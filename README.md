@@ -36,6 +36,8 @@ python scripts/analyze_calls.py   # writes calls/*/findings.md and reports/candi
 
 After every call, the runner checks that it is a real conversation: the recording and transcript were saved, the call lasted at least 45 s, and each side spoke at least 3 times. It prints VALID or the reason it isn't, and keeps a table of all calls in `calls/INDEX.md`. Only valid calls count toward the 10.
 
+**Known issue in the submitted recordings:** in calls 01–11 the first ~35 s often overlap. The clinic plays a recording notice, pauses, then greets, and the bot answered the notice (30 of the 33 cut-off bot turns are in that window). Once the greeting is over, turn-taking is normal. The fix (stay silent on the notice) and a guard against hanging up right after a question or during a transfer (call 01 at 02:11, call 10 at 04:30) came after these calls. Both are covered by `tests/`; see [ITERATION_LOG.md](ITERATION_LOG.md) #7–#10.
+
 
 `calls/NN-<scenario>/`
 
@@ -86,7 +88,11 @@ scripts/
   run_calls.py    single command to place calls
   setup_trunk.py  one-time Twilio -> LiveKit trunk registration
   analyze_calls.py LLM first-pass QA over transcripts
+  preflight.py    checks packages, .env, API keys and the SIP trunk without dialing
+  renumber_calls.py drops invalid calls and renumbers 01..N
+tests/            key-free checks: recording-notice silence, end_call guard
 calls/            recordings and transcripts (committed)
+reports/          analyzer output and evidence from early failed calls
 ARCHITECTURE.md   how it works and why
 BUG_REPORT.md     issues found in the clinic agent
 ITERATION_LOG.md  what changed after listening to early calls
