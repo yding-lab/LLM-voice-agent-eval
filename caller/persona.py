@@ -151,6 +151,8 @@ STEERING
 - If they fail at the same thing twice, don't loop forever: accept it, mention you'll
   follow up another way, and move on or wrap up.
 - If they offer to transfer you to a person, say "sure" and wait (hold_silently).
+  "Transferring you now. Thank you." is not a goodbye: never say goodbye or end the call
+  during a transfer. Wait for whoever picks up next.
 
 ENDING THE CALL
 - When your goal is done, or it clearly can't be done, or you're past roughly

@@ -71,10 +71,43 @@ def should_wait_for_greeting(chat_ctx: llm.ChatContext) -> bool:
     return last_user is not None and is_only_recording_notice(last_user.text_content or "")
 
 
+GOODBYE = re.compile(r"\b(good ?bye|bye|take care|have a (good|great|nice) (day|night|evening))\b", re.I)
+TRANSFER_OR_HOLD = re.compile(r"\b(transferr?(ing)?|connect(ing)? you|one moment|hold on|please hold)\b", re.I)
+MAX_END_CALL_REFUSALS = 2  # after this, trust the LLM; the watchdog still caps call length
+
+
+def end_call_blocker(chat_ctx: llm.ChatContext) -> str | None:
+    """Why hanging up now would be wrong, or None if it's fine.
+
+    Seen in early calls: the bot hung up right after asking a question (calls/01 02:05),
+    and said goodbye while being transferred (calls/10 04:25)."""
+    messages = [
+        m for m in chat_ctx.items
+        if isinstance(m, llm.ChatMessage) and m.role in ("user", "assistant") and (m.text_content or "").strip()
+    ]
+    if not messages:
+        return None
+    last = messages[-1]
+    text = (last.text_content or "").strip()
+    if last.role == "user":
+        # The clinic spoke last. Fine if it said goodbye; not if it's putting us on hold.
+        if TRANSFER_OR_HOLD.search(text) and not GOODBYE.search(text):
+            return ("Don't hang up: the receptionist is transferring you or asked you to hold. "
+                    "Call hold_silently and wait for the next person.")
+        return None
+    if text.endswith("?"):
+        return ("Don't hang up: you just asked a question. Call hold_silently and wait for "
+                "the answer, then say goodbye before ending the call.")
+    if not GOODBYE.search(text):
+        return "Don't hang up yet: say a short goodbye first, then call end_call."
+    return None
+
+
 class PatientAgent(Agent):
     def __init__(self, instructions: str, hangup) -> None:
         super().__init__(instructions=instructions)
         self._hangup = hangup
+        self._end_call_refusals = 0
 
     async def llm_node(self, chat_ctx, tools, model_settings):
         # llm_node runs right before every reply, for spoken turns (phone, console) and for
@@ -94,11 +127,17 @@ class PatientAgent(Agent):
         return None  # returning None means no spoken reply follows
 
     @function_tool
-    async def end_call(self, context: RunContext) -> None:
+    async def end_call(self, context: RunContext) -> str | None:
         """Hang up the phone. Only use this after you have already said goodbye."""
-        await context.wait_for_playout()
+        await context.wait_for_playout()  # also commits what we just said to the history
+        reason = end_call_blocker(context.session.history)
+        if reason and self._end_call_refusals < MAX_END_CALL_REFUSALS:
+            self._end_call_refusals += 1
+            logger.info("end_call refused: %s", reason)
+            return reason  # goes back to the LLM instead of hanging up
         await asyncio.sleep(0.8)  # let the last syllable reach the phone line
         await self._hangup("patient bot said goodbye")
+        return None
 
 
 # Console works without LiveKit Cloud settings. AgentServer() reads LIVEKIT_URL when it is
