@@ -33,6 +33,23 @@ Scenarios are data (YAML), not code. Each one gives the bot a goal and a few pre
 | Recording | LiveKit session recorder (stereo, both sides on one timeline) | LiveKit Egress to S3; Twilio call recording | No extra storage or credentials, stays in sync with our turn timestamps, and per-side channels make analysis easy |
 | Safety | One configured target number; the agent refuses any other destination | Free-form dialing | A bot that places real phone calls should never be one typo away from calling a stranger |
 
+## Evaluation pipeline
+
+Calling the agent is half the system. The other half decides what the calls mean, and that part has its own failure modes, so it's built to be measured:
+
+1. **Pseudonymize** the transcript (`caller/redact.py`). This is healthcare-shaped data, and the judge doesn't need real values, only whether they changed. Values become stable tokens per call: `[DOB_1]`, then `[DOB_2]` after a correction.
+2. **Judge** each call against its scenario's checks (`scripts/analyze_calls.py`). The rubric is versioned, and the provider is pluggable: OpenAI, or AWS Bedrock via the Converse API (`caller/llm_providers.py`). Each result records which judge, rubric and redaction setting produced it.
+3. **Score the judge** against human labels (`scripts/eval_judge.py`, `evals/labels.yaml`): precision, recall on confirmed bugs, and "lenient" passes where the judge quoted the bug and still passed it.
+4. **Diff runs** check by check (`scripts/compare_runs.py`), for a new judge on the same calls or a new agent version with the same judge. CI scores the committed judge output and fails below a floor.
+
+| Decision | Chosen | Alternatives considered | Why |
+|---|---|---|---|
+| Grading | LLM judge with numbered, severity-tagged checks per scenario | Keyword/regex rules; free-form "rate this call 1–10" | Rules can't read intent ("did it actually defer to a pharmacist?"). A single score hides *which* behaviour broke. Numbered checks make every verdict citable and diffable |
+| Trusting the judge | Measure it against human labels and publish the error rates | Spot-check a few outputs | Spot checks don't show a pattern. Measuring showed 5 of 7 wrong fails had one shared cause (blaming the wrong side), which is a fixable prompt problem rather than noise |
+| Judge output order | Evidence → "does this meet the fail condition?" → verdict | Verdict first | Verdict-first produced passes whose own evidence showed the failure |
+| PII handling | Stable pseudonymization before any model call | Send raw; drop all PII | Raw sends health-adjacent personal data to a third party. Dropping it entirely hides corrections, a real bug class here |
+| Model provider | Thin interface over OpenAI and Bedrock | LangChain or a similar framework | Two providers and one call shape (system + user → JSON) don't justify a framework dependency. The interface is about 60 lines and easy to test with fakes |
+
 ## Measured results
 
 From the first 11 live calls (110 measured bot turns):

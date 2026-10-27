@@ -18,5 +18,22 @@ jobs:
         run: python -m py_compile caller/*.py scripts/*.py tests/*.py
       - name: Recording-notice silence (no API keys, no calls)
         run: python tests/test_recording_notice.py
-      - name: end_call guard (no API keys, no calls)
+      - name: end_call guard
         run: python tests/test_end_call_guard.py
+      - name: PII redaction
+        run: python tests/test_redact.py
+      - name: Judge pipeline (stand-in models, OpenAI + Bedrock request shapes)
+        run: python tests/test_judge_pipeline.py
+
+  eval-gate:
+    # Scores the committed judge output against human labels. A change to the judge
+    # (rubric, model, provider) that lowers precision or recall below the floor fails here.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Judge precision and recall vs. human labels
+        run: python scripts/eval_judge.py --min-precision 0.5 --min-recall 0.5 | tee -a "$GITHUB_STEP_SUMMARY"

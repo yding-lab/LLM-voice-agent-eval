@@ -2,9 +2,9 @@
 
 [![tests](https://github.com/yding-lab/patient-caller/actions/workflows/tests.yml/badge.svg)](https://github.com/yding-lab/patient-caller/actions/workflows/tests.yml) ![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%E2%80%933.13-blue) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-**Automated phone-call testing for voice AI agents.** A Python bot that phones a voice agent (here, an AI clinic receptionist), plays a realistic patient across 15 scenarios, records and transcribes every call, and grades the agent against 66 numbered checks.
+**An evaluation harness for voice AI agents.** It simulates realistic users over real phone calls, grades the agent with an LLM judge, measures that judge against human labels, and gates changes in CI.
 
-Built on LiveKit Agents in pipeline mode: Deepgram STT → GPT-4.1-mini → Cartesia TTS, dialing out over a Twilio SIP trunk.
+Here the agent under test is an AI receptionist for a medical clinic. The bot plays a patient across 15 scenarios, records and transcribes every call, and grades the agent against 66 numbered checks. Built on LiveKit Agents in pipeline mode (Deepgram STT → GPT-4.1-mini → Cartesia TTS), dialing out over a Twilio SIP trunk. The judge runs on OpenAI or AWS Bedrock.
 
 ```mermaid
 flowchart LR
@@ -12,11 +12,16 @@ flowchart LR
     W -->|SIP dial-out| T[Twilio trunk] --> A((Voice agent<br/>under test))
     A -->|audio| V[VAD + semantic<br/>turn detector] --> S[Deepgram STT] --> L[GPT-4.1-mini<br/>patient persona] --> C[Cartesia TTS] -->|audio| A
     W --> O[recording.ogg / .mp3<br/>timestamped transcript]
-    O --> Q[analyze_calls.py<br/>check matrix]
+    O --> P[PII pseudonymization] --> Q[LLM judge<br/>OpenAI or Bedrock]
+    Q --> E[eval_judge.py<br/>precision / recall vs. human labels]
+    Q --> D[compare_runs.py<br/>regression diff, CI gate]
 ```
 
 ## Highlights
 
+- **The evaluator is evaluated.** The LLM judge was scored against human-confirmed findings: **50% precision, 56% recall** at baseline. Every error traced to one of four causes (blaming the wrong side, no clock, lenient grading, a coverage gap), and each got a targeted fix in judge v2. See [JUDGE_EVAL.md](JUDGE_EVAL.md).
+- **Regression testing for LLM systems.** `compare_runs.py` diffs two runs check by check, whether the change was to the judge or to the agent, and CI fails if judge quality drops below a floor.
+- **Responsible AI by default.** Transcripts are pseudonymized before they reach any model. Names, dates of birth, phones and emails become stable tokens, so a judge can still tell that a correction was ignored without ever seeing the values.
 - **Real calls, natural turn-taking.** A semantic end-of-turn model on top of VAD, a tool for staying silent during "one moment, let me check", and guards against hanging up mid-question or during a transfer. Median response latency was **1.31 s** across 110 measured turns.
 - **Scenarios as data.** Each scenario gives the bot a goal and a few pressure tests to work in naturally (closed days, controlled-substance refills, made-up insurance, emergencies, privacy probes, prompt injection, barge-in), plus failure conditions the bot never sees.
 - **Evidence you can cite.** Stereo recording (agent left, bot right) and a transcript on the same timeline, so `[01:23]` in the text is 1:23 in the audio. An LLM first pass grades every check; findings are then confirmed by listening.
@@ -27,6 +32,7 @@ flowchart LR
 |---|---|
 | [calls/](calls/INDEX.md) | 11 real calls: recordings, timestamped transcripts, per-call findings |
 | [BUG_REPORT.md](BUG_REPORT.md) | 9 issues found in a demo clinic agent, by severity, each cited to a call and timestamp |
+| [JUDGE_EVAL.md](JUDGE_EVAL.md) | How good is the LLM judge? Precision and recall vs. human labels, error analysis, the v2 fixes |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | How it works, every design decision with the alternatives and trade-offs, measured results |
 | [ITERATION_LOG.md](ITERATION_LOG.md) | What went wrong on early calls, the real cause, the fix and how it was tested |
 
@@ -61,7 +67,16 @@ python scripts/preflight.py                          # checks every key, the tru
 python scripts/run_calls.py --all                    # every scenario, one after another
 python scripts/run_calls.py schedule_new_checkup     # one scenario
 python scripts/run_calls.py --list                   # scenario ids
-python scripts/analyze_calls.py                      # LLM first pass: calls/*/findings.md, reports/check_matrix.md
+python scripts/analyze_calls.py                      # LLM judge: calls/*/findings.md, reports/check_matrix.md
+```
+
+**Evaluate the judge and compare runs** (works on the committed calls, no phone needed):
+
+```bash
+python scripts/eval_judge.py                                          # precision / recall vs. evals/labels.yaml
+python scripts/analyze_calls.py --run-name judge-v2 --force           # a new judge run, saved separately
+python scripts/compare_runs.py evals/runs/baseline-v1-gpt-4.1 evals/runs/judge-v2
+ANALYSIS_PROVIDER=bedrock ANALYSIS_MODEL=<bedrock model id> python scripts/analyze_calls.py --run-name bedrock   # needs boto3
 ```
 
 > Only call voice agents you own or have explicit permission to test.
@@ -110,6 +125,7 @@ All variables are listed with comments in [`.env.example`](.env.example). Secret
 | `SIP_OUTBOUND_TRUNK_ID` | LiveKit outbound trunk used to dial |
 | `TARGET_NUMBER` | The voice agent under test, E.164. The only number the bot will dial |
 | `PATIENT_FIRST_NAME`, `PATIENT_LAST_NAME`, `PATIENT_DOB`, `PATIENT_PHONE` | The test patient; must match a test account on the system under test |
+| `ANALYSIS_PROVIDER`, `ANALYSIS_MODEL`, `AWS_REGION` | The LLM judge: `openai` (default, gpt-4.1) or `bedrock` |
 | `LLM_MODEL`, `STT_MODEL`, `TTS_MODEL`, `TTS_VOICE_ID`, `MIN/MAX_ENDPOINTING_DELAY` | Optional tuning |
 
 ## Project layout
@@ -122,24 +138,33 @@ caller/
   transcript.py     timestamped transcript + latency capture
   audio.py          recording export (stereo OGG + mono MP3)
   config.py         settings, console vs. outbound validation, the target number
+  redact.py         PII pseudonymization (stable tokens) before text reaches any model
+  llm_providers.py  one JSON-completion interface over OpenAI and AWS Bedrock (Converse API)
 scripts/
   run_calls.py      single command to place and validate calls
-  analyze_calls.py  LLM first-pass QA over transcripts
+  analyze_calls.py  LLM judge over transcripts (rubric v1/v2, redaction, provider, saved runs)
+  eval_judge.py     scores a judge run against human labels: precision, recall, lenient passes
+  compare_runs.py   check-by-check regression diff between two runs
   preflight.py      checks packages, .env, API keys, trunk and target without dialing
   setup_trunk.py    one-time Twilio -> LiveKit trunk registration
   renumber_calls.py drops invalid calls and renumbers 01..N
-tests/              key-free tests: recording-notice silence, end_call guard
+evals/
+  labels.yaml       human ground truth for the judge, each label with its reason
+  runs/             saved judge runs (baseline-v1-gpt-4.1, ...)
+tests/              key-free tests: turn-taking guards, redaction, judge pipeline
 calls/              recordings and transcripts of the real calls
 reports/            analyzer output (check matrix) and evidence from early failed calls
 ```
 
 ## Tests
 
-No API keys needed, and nothing is dialed. They also run in GitHub Actions on every push:
+No API keys needed, and nothing is dialed. They run in GitHub Actions on every push, next to an eval gate that fails if the judge drops below 50% precision or recall:
 
 ```bash
 python tests/test_recording_notice.py   # stays silent on "this call may be recorded", answers the real greeting
 python tests/test_end_call_guard.py     # won't hang up right after a question or during a transfer
+python tests/test_redact.py             # PII becomes stable tokens; appointment dates survive
+python tests/test_judge_pipeline.py     # judge sees no raw PII, OpenAI/Bedrock request shapes, baseline reproduces
 ```
 
 ## Debugging tips

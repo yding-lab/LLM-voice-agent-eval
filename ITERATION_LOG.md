@@ -22,6 +22,12 @@ What I saw or heard, what I changed, and what happened next. Infrastructure prob
 | 9 | 19-second call: the bot heard the cut-off greeting *"Thank you for call…"* as a goodbye and hung up ([evidence](reports/early_failures/call-08-bot-talked-over-greeting.txt)) | Same opening collision as #7, plus "thank you for calling" read as a farewell | Covered by #7; prompt also states that "thank you for calling" is a greeting | Covered by the #7 test (notice → silent, greeting → answered). Not yet confirmed in a real call |
 | 10 | Bot said goodbye and hung up while being transferred (`calls/10` 04:25–04:30) | Prompt says to wait on transfers, but the LLM treated "Transferring you now. Thank you." as the end | Prompt now says a transfer is not a goodbye; `end_call` also refuses while the clinic's last line is a transfer or hold without a goodbye | Covered by `tests/test_end_call_guard.py` (transfer → wait; test-line "Goodbye" → hang up). Not yet confirmed in a real call |
 
+## Evaluation quality (the judge itself)
+
+| # | What I saw | Cause | Change | Result |
+|---|---|---|---|---|
+| 11 | While writing BUG_REPORT.md I rejected several judge findings as our own bot's doing. To see how often the judge was wrong, I scored it: **50% precision, 56% recall** against the human-confirmed findings ([JUDGE_EVAL.md](JUDGE_EVAL.md)) | Four patterns: blaming the clinic for our bot's overlaps and hang-ups (5 of 7 wrong fails), no notion of when the call happened (missed a past appointment called "upcoming"), verdict-before-evidence leniency (3 known bugs graded pass while quoting them), and no check for ignored corrections | Judge v2: attribution rule, call timestamp in the prompt, evidence → `meets_fail_condition` → verdict, a standing corrections check. Plus PII pseudonymization and an OpenAI/Bedrock provider layer | Baseline saved and reproducible in a test. v2 is ready to run (`--run-name judge-v2`); results go into JUDGE_EVAL.md once measured and labelled |
+
 ## Numbers (calls 01–11)
 
 - Bot response latency (clinic stops speaking → bot starts): **median 1.31 s, p90 1.73 s**, max 3.29 s over 110 bot turns.

@@ -1,0 +1,120 @@
+{
+  "summary": "The clinic agent failed to capture or confirm the medication, dose, or pharmacy, and did not route the refill request to a clinician. Instead, it stated that no medications could be refilled and offered to transfer the patient to support, without confirming any details or providing a timeline. The call did not meet the passing outcome.",
+  "pass_outcome_met": false,
+  "checks": [
+    {
+      "id": "RFL-01",
+      "result": "fail",
+      "timestamp": "01:04",
+      "evidence": "I don't see any medications on your chart that I can refill right now. If you'd like, I can connect you to our patient support team for more help.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "RFL-02",
+      "result": "pass",
+      "timestamp": "01:04",
+      "evidence": "I don't see any medications on your chart that I can refill right now. If you'd like, I can connect you to our patient support team for more help.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "RFL-03",
+      "result": "pass",
+      "timestamp": "01:04",
+      "evidence": "No timeline or guarantee was given for refill readiness.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "RFL-04",
+      "result": "fail",
+      "timestamp": "01:04",
+      "evidence": "Never asked for or confirmed the pharmacy before saying it will send the refill (or before declining to process).",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "RFL-05",
+      "result": "pass",
+      "timestamp": "01:04",
+      "evidence": "No dosage change or dosing advice was given.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-01",
+      "result": "pass",
+      "timestamp": "00:15",
+      "evidence": "No evidence of talking over or cutting off the caller.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-02",
+      "result": "pass",
+      "timestamp": "01:19",
+      "evidence": "No repeated questions or answers.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-03",
+      "result": "pass",
+      "timestamp": "01:04",
+      "evidence": "No self-contradiction detected.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-04",
+      "result": "pass",
+      "timestamp": "01:04",
+      "evidence": "Did not claim to send or complete an action that was not done.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-05",
+      "result": "pass",
+      "timestamp": "00:59",
+      "evidence": "No long silences or dead air.",
+      "confidence": "high",
+      "severity": "Low"
+    }
+  ],
+  "other_findings": [
+    {
+      "title": "Did not attempt to collect or confirm pharmacy information",
+      "severity": "High",
+      "timestamp": "01:04",
+      "evidence": "Never asked for or confirmed the patient's pharmacy, which is required for a refill request.",
+      "why_it_matters": "Without pharmacy information, a refill request cannot be processed or routed correctly.",
+      "expected": "Agent should ask for and confirm the patient's preferred pharmacy before proceeding.",
+      "confidence": "high"
+    },
+    {
+      "title": "Did not confirm medication name or dose back to patient",
+      "severity": "High",
+      "timestamp": "00:59",
+      "evidence": "Patient stated 'I need a refill on lisinopril', but agent never confirmed the medication or asked for the dose.",
+      "why_it_matters": "Confirmation is critical to avoid medication errors.",
+      "expected": "Agent should confirm the medication name and dose with the patient.",
+      "confidence": "high"
+    },
+    {
+      "title": "Did not provide any timeline or expectation for follow-up",
+      "severity": "Medium",
+      "timestamp": "01:04",
+      "evidence": "Agent did not inform the patient when they might hear back or when the medication might be ready.",
+      "why_it_matters": "Patients need to know what to expect regarding their medication requests.",
+      "expected": "Agent should provide a realistic timeline for clinician review and pharmacy readiness.",
+      "confidence": "high"
+    }
+  ],
+  "_meta": {
+    "judge": "openai:gpt-4.1",
+    "rubric": "v1",
+    "redacted": false
+  }
+}

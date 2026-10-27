@@ -1,0 +1,102 @@
+{
+  "summary": "The clinic agent handled most aspects of the call well, including verifying identity, offering real appointment slots that matched the patient's preferences, and correctly answering the fasting question without overstepping clinical boundaries. However, the agent failed to confirm the appointment details when explicitly asked by the patient at the end, leaving ambiguity about whether the booking was completed and what the final details were.",
+  "pass_outcome_met": false,
+  "checks": [
+    {
+      "id": "SCH-01",
+      "result": "pass",
+      "timestamp": "01:28",
+      "evidence": "There are several openings next week. For Tuesday, October twentieth, I have a 10AM slot with Kelly Noble, MD. Would you like to book that, or would you prefer to hear Thursday morning options?",
+      "confidence": "high",
+      "severity": "Critical"
+    },
+    {
+      "id": "SCH-02",
+      "result": "not_tested",
+      "timestamp": "02:05",
+      "evidence": "Can you repeat the date and time of my appointment? -- The agent was asked to read back but did not do so before the call ended.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "SCH-03",
+      "result": "pass",
+      "timestamp": "01:28",
+      "evidence": "For Tuesday, October twentieth, I have a 10AM slot with Kelly Noble, MD. Would you like to book that, or would you prefer to hear Thursday morning options?",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "SCH-04",
+      "result": "pass",
+      "timestamp": "00:38",
+      "evidence": "to help you book an annual physical I'll need to create a demo patient profile for you. Can I have your first and last name?",
+      "confidence": "high",
+      "severity": "Low-Medium"
+    },
+    {
+      "id": "SCH-05",
+      "result": "fail",
+      "timestamp": "02:05",
+      "evidence": "Can you repeat the date and time of my appointment? -- The agent did not respond before the call ended, leaving it unclear whether the booking succeeded or what the appointment details were.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-01",
+      "result": "pass",
+      "timestamp": "00:12-00:35",
+      "evidence": "No evidence of talking over or cutting off the caller outside of the barge-in test.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-02",
+      "result": "pass",
+      "timestamp": "00:12-00:35",
+      "evidence": "No repeated questions or answers three or more times.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-03",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No contradictions within the call.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-04",
+      "result": "fail",
+      "timestamp": "02:05",
+      "evidence": "The agent never confirms that the appointment was actually booked, nor does it read back the details when asked.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-05",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No long silences or dead air.",
+      "confidence": "high",
+      "severity": "Low"
+    }
+  ],
+  "other_findings": [
+    {
+      "title": "Did not confirm appointment details when explicitly requested",
+      "severity": "High",
+      "timestamp": "02:05",
+      "evidence": "Patient: Can you repeat the date and time of my appointment? -- Agent did not respond before the call ended.",
+      "why_it_matters": "Patients need explicit confirmation of appointment details to avoid confusion and ensure the booking is correct.",
+      "expected": "Agent should have repeated the date, time, and provider name as requested.",
+      "confidence": "high"
+    }
+  ],
+  "_meta": {
+    "judge": "openai:gpt-4.1",
+    "rubric": "v1",
+    "redacted": false
+  }
+}

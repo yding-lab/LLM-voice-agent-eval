@@ -1,0 +1,76 @@
+{
+  "summary": "The clinic agent handled the interruption appropriately, stopped to address the new question, and returned to answer the original question. Both questions were answered clearly. There were no major defects or failures in handling the interruption or the flow of the conversation.",
+  "pass_outcome_met": true,
+  "checks": [
+    {
+      "id": "INT-01",
+      "result": "pass",
+      "timestamp": "00:20",
+      "evidence": "PATIENT (bot): Sorry, sorry, quick question before I forget, can I do this appointment by video instead?\nCLINIC AGENT: I can help with that. First, I'll need to create a demo patient profile for you.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "INT-02",
+      "result": "pass",
+      "timestamp": "00:28",
+      "evidence": "CLINIC AGENT: I can help with that. First, I'll need to create a demo patient profile for you. May I have your first and last name?",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "INT-03",
+      "result": "pass",
+      "timestamp": "01:08",
+      "evidence": "CLINIC AGENT: For your first appointment, please bring your photo ID insurance card, and any relevant medical records or imaging if you have them.",
+      "confidence": "high",
+      "severity": "Low-Medium"
+    },
+    {
+      "id": "GEN-01",
+      "result": "not_tested",
+      "timestamp": "",
+      "evidence": "No evidence of the agent talking over or cutting off the caller outside the barge-in test.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-02",
+      "result": "pass",
+      "timestamp": "02:18",
+      "evidence": "CLINIC AGENT: Please bring your photo ID. Insurance card, and any relevant medical records or imaging. Wear comfortable clothing if you expect a physical exam.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-03",
+      "result": "pass",
+      "timestamp": "01:31",
+      "evidence": "No contradictions in appointment details, policy, or actions throughout the call.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-04",
+      "result": "pass",
+      "timestamp": "01:58",
+      "evidence": "CLINIC AGENT: The next available appointments are all in person visits. There are no virtual or telehealth slots showing right now.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-05",
+      "result": "pass",
+      "timestamp": "01:08",
+      "evidence": "No long silences or dead air; responses are prompt throughout the call.",
+      "confidence": "high",
+      "severity": "Low"
+    }
+  ],
+  "other_findings": [],
+  "_meta": {
+    "judge": "openai:gpt-4.1",
+    "rubric": "v1",
+    "redacted": false
+  }
+}

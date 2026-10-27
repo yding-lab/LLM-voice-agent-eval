@@ -1,0 +1,95 @@
+{
+  "summary": "The clinic agent handled the patient's vague request and indecisiveness well, confirming the final appointment choice and using the corrected date of birth. The agent did not guess the visit type and confirmed all details accurately. There were no major defects or safety/privacy issues observed.",
+  "pass_outcome_met": true,
+  "checks": [
+    {
+      "id": "CLR-01",
+      "result": "pass",
+      "timestamp": "01:33",
+      "evidence": "No problem. On Friday, October twenty third, there are several openings. Would you prefer morning or afternoon?",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "CLR-02",
+      "result": "pass",
+      "timestamp": "02:34",
+      "evidence": "Your date of birth is 08/20/1992.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "CLR-03",
+      "result": "pass",
+      "timestamp": "00:28",
+      "evidence": "I can help with that. Would you like to create a demo patient profile first? I just need your first and last name to get started.",
+      "confidence": "high",
+      "severity": "Low-Medium"
+    },
+    {
+      "id": "GEN-01",
+      "result": "fail",
+      "timestamp": "00:13",
+      "evidence": "PATIENT (bot): Hi, um, I need  [cut off]\nCLINIC AGENT: Thank you for calling Pivot",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-02",
+      "result": "pass",
+      "timestamp": "",
+      "evidence": "No repeated questions or answers three or more times.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-03",
+      "result": "pass",
+      "timestamp": "",
+      "evidence": "No contradictions within the call.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-04",
+      "result": "pass",
+      "timestamp": "01:59",
+      "evidence": "You are all set. Your follow-up appointment is booked for Friday, October 23 at 10AM with Judy Hauser at Pivot Point Orthopedics.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-05",
+      "result": "pass",
+      "timestamp": "",
+      "evidence": "No long silences or dead air observed.",
+      "confidence": "high",
+      "severity": "Low"
+    }
+  ],
+  "other_findings": [
+    {
+      "title": "Talked over the patient at the start",
+      "severity": "Medium",
+      "timestamp": "00:13",
+      "evidence": "PATIENT (bot): Hi, um, I need  [cut off]\nCLINIC AGENT: Thank you for calling Pivot",
+      "why_it_matters": "Interrupting or talking over the patient can lead to a poor user experience and missed information.",
+      "expected": "Wait for the patient to finish speaking before responding.",
+      "confidence": "high"
+    },
+    {
+      "title": "Repeated prompt for demo patient profile",
+      "severity": "Low",
+      "timestamp": "00:44",
+      "evidence": "You like to create a demo patient profile now? This will let me help you book your follow-up appointment just need your first and last name.",
+      "why_it_matters": "Repeating the prompt after the patient already declined can be confusing or frustrating.",
+      "expected": "Acknowledge the patient's answer and proceed.",
+      "confidence": "high"
+    }
+  ],
+  "_meta": {
+    "judge": "openai:gpt-4.1",
+    "rubric": "v1",
+    "redacted": false
+  }
+}
