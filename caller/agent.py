@@ -37,7 +37,7 @@ from .config import AGENT_NAME, ROOT, TARGET_NUMBER, load_settings, prepare_cons
 from .persona import Scenario, build_instructions, load_scenarios
 from .transcript import CallLog
 
-logger = logging.getLogger("voice-agent-qa")
+logger = logging.getLogger("llm-voice-agent-eval")
 
 CLINIC_IDENTITY = "clinic-line"
 HELLO_AFTER_S = 6.0  # if the clinic hasn't spoken this long after answering, say "hello?"

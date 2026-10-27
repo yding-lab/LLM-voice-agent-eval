@@ -40,7 +40,7 @@ async def main() -> None:
             return
 
         trunk = api.SIPOutboundTrunkInfo(
-            name="voice-agent-qa",
+            name="llm-voice-agent-eval",
             address=need("TWILIO_TERMINATION_URI"),  # e.g. my-trunk.pstn.twilio.com
             numbers=[need("CALLER_ID_NUMBER")],  # your one Twilio number, E.164
             auth_username=need("TWILIO_SIP_USERNAME"),

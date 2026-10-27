@@ -1,6 +1,6 @@
-# voice-agent-qa
+# llm-voice-agent-eval
 
-[![tests](https://github.com/yding-lab/patient-caller/actions/workflows/tests.yml/badge.svg)](https://github.com/yding-lab/patient-caller/actions/workflows/tests.yml) ![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%E2%80%933.13-blue) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://github.com/yding-lab/llm-voice-agent-eval/actions/workflows/tests.yml/badge.svg)](https://github.com/yding-lab/llm-voice-agent-eval/actions/workflows/tests.yml) ![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%E2%80%933.13-blue) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **An evaluation harness for voice AI agents.** It simulates realistic users over real phone calls, grades the agent with an LLM judge, measures that judge against human labels, and gates changes in CI.
 

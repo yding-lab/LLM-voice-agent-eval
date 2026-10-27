@@ -49,7 +49,7 @@ _ensure_ca_certificates()
 TARGET_NUMBER = os.getenv("TARGET_NUMBER", "").strip()
 E164 = re.compile(r"^\+[1-9]\d{7,14}$")
 
-AGENT_NAME = "voice-agent-qa"
+AGENT_NAME = "llm-voice-agent-eval"
 CALLS_DIR = ROOT / "calls"
 SCENARIOS_FILE = ROOT / "caller" / "scenarios.yaml"
 
