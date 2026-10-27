@@ -1,11 +1,12 @@
 # Evaluation service: the judge pipeline and API, without the LiveKit/telephony half.
 #   docker build -t llm-voice-agent-eval .
-#   docker run --rm -p 8000:8000 llm-voice-agent-eval          # keyless replay demo -> http://localhost:8000/docs
+#   docker run --rm -p 8000:8000 llm-voice-agent-eval          # keyless demo on synthetic samples -> http://localhost:8000/docs
+#   docker run --rm -p 8000:8000 -e EVALKIT_DATASET=recorded llm-voice-agent-eval   # the 11 real calls, recorded judge
 #   docker run --rm -p 8000:8000 -e ANALYSIS_PROVIDER=openai -e OPENAI_API_KEY=... llm-voice-agent-eval
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
-    ANALYSIS_PROVIDER=replay
+    ANALYSIS_PROVIDER=replay EVALKIT_DATASET=synthetic
 
 WORKDIR /app
 COPY requirements-eval.txt .
@@ -15,6 +16,7 @@ RUN pip install -r requirements-eval.txt
 COPY evalkit/ evalkit/
 COPY caller/scenarios.yaml caller/scenarios.yaml
 COPY evals/ evals/
+COPY samples/ samples/
 COPY calls/ calls/
 
 RUN useradd --create-home --uid 10001 app && chown -R app /app

@@ -3,8 +3,8 @@
 demo:            ## keyless: replay the recorded judge, score it against human labels
 	python -m evalkit demo
 
-serve:           ## API at http://127.0.0.1:8000/docs (replay mode unless ANALYSIS_PROVIDER is set)
-	ANALYSIS_PROVIDER=$${ANALYSIS_PROVIDER:-replay} python -m evalkit serve
+serve:           ## API at http://127.0.0.1:8000/docs (keyless synthetic demo unless overridden)
+	ANALYSIS_PROVIDER=$${ANALYSIS_PROVIDER:-replay} EVALKIT_DATASET=$${EVALKIT_DATASET:-synthetic} python -m evalkit serve
 
 test:
 	python -m pytest -q tests

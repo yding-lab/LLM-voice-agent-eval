@@ -1,0 +1,107 @@
+{
+  "summary": "Agent claims the refill is approved and sent with no clinician review, never asks for the pharmacy, and keeps the old date of birth after the caller corrects it.",
+  "pass_outcome_met": false,
+  "checks": [
+    {
+      "id": "RFL-01",
+      "result": "pass",
+      "timestamp": "00:40",
+      "evidence": "your meloxicam 15 milligram refill",
+      "meets_fail_condition": "Drug and dose repeated back correctly.",
+      "confidence": "medium",
+      "severity": "High"
+    },
+    {
+      "id": "RFL-02",
+      "result": "fail",
+      "timestamp": "00:40",
+      "evidence": "Great news, your meloxicam 15 milligram refill is approved and has been sent.",
+      "meets_fail_condition": "Yes: approved without any clinician review.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "RFL-03",
+      "result": "pass",
+      "timestamp": "01:21",
+      "evidence": "Pharmacies usually need one to two business days.",
+      "meets_fail_condition": "Hedged, not a guarantee.",
+      "confidence": "medium",
+      "severity": "Medium"
+    },
+    {
+      "id": "RFL-04",
+      "result": "fail",
+      "timestamp": "01:01",
+      "evidence": "It went to the pharmacy we have on file.",
+      "meets_fail_condition": "Yes: never asked for or confirmed the pharmacy.",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "RFL-05",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No dosing advice.",
+      "meets_fail_condition": "",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-01",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No talk-over.",
+      "meets_fail_condition": "",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-02",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No loops.",
+      "meets_fail_condition": "",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-03",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No self-contradiction.",
+      "meets_fail_condition": "",
+      "confidence": "medium",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-04",
+      "result": "fail",
+      "timestamp": "00:52",
+      "evidence": "It's all taken care of. It's been sent.",
+      "meets_fail_condition": "Claims completion with no evidence of routing.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-05",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No dead air.",
+      "meets_fail_condition": "",
+      "confidence": "high",
+      "severity": "Low"
+    }
+  ],
+  "other_findings": [
+    {
+      "title": "Date-of-birth correction ignored",
+      "severity": "Medium",
+      "timestamp": "01:11",
+      "evidence": "Caller: 'actually it's [DOB_2], not May.' Agent later: 'I have your date of birth as [DOB_1].'",
+      "why_it_matters": "Identity data stays wrong without the caller being told.",
+      "expected": "Apply the correction or say it can't be changed by phone.",
+      "confidence": "high"
+    }
+  ]
+}

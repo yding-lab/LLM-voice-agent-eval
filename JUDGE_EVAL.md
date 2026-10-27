@@ -56,6 +56,31 @@ Two changes went along with these:
 - **Privacy.** Transcripts are now pseudonymized before they reach any model (`evalkit/redact.py`). Names, dates of birth, phone numbers and emails become stable tokens such as `[DOB_1]` and `[DOB_2]`. They're stable so that a correction stays visible (the agent kept `[DOB_1]` after the caller said `[DOB_2]`) without the values leaving the machine. Appointment dates are kept.
 - **Portability.** The judge runs on OpenAI or AWS Bedrock through one interface (`evalkit/providers.py`, the Bedrock Converse API), so the same rubric can be compared across models.
 
+## Design calls vs. held-out calls
+
+| | Calls | Used to design the judge? | What its numbers can claim |
+|---|---|---|---|
+| `dev` | The 11 recorded calls | Yes: rubric v2 was written from v1's errors on them | Whether v1 was good on these calls (it wasn't), and later whether v2 fixed what it was meant to fix. **Not** an unbiased estimate of v2 |
+| `holdout` | Every call not listed in `evals/splits.yaml` | No, and must never be | Unbiased judge performance, once enough calls are labelled |
+
+The holdout split is **empty today**. To fill it:
+
+1. Place new calls (`python scripts/run_calls.py --all`). They land in `holdout` automatically.
+2. Judge them with the frozen rubric (`python -m evalkit run --name holdout-v2`) and don't edit the rubric after looking at the output.
+3. Label the failed checks and the bugs found by listening, independently of the judge's output (below).
+4. Run `python -m evalkit score --run evals/runs/holdout-v2`. The holdout section is the result to report.
+
+## Independent second review and adjudication
+
+All labels today come from one reviewer (`evals/labels/reviewer_a.yaml`), so there's no measure yet of how reliable the labels themselves are. The process, supported end to end:
+
+1. `python -m evalkit labels-template` writes a blank sheet listing every failed check to label.
+2. A second person labels it from the transcripts and audio **without seeing reviewer_a.yaml**, and saves it as `evals/labels/reviewer_b.yaml`.
+3. `python -m evalkit agreement` reports raw agreement and Cohen's κ (three-way, and on "real defect or not"), then lists each disagreement.
+4. The two reviewers, or a third person, settle each disagreement in `evals/labels/adjudicated.yaml`. Once that file exists, scoring uses it as the truth automatically.
+
+`tests/test_evalkit_review.py` exercises this flow with a simulated second reviewer, as a test of the code only. No second-reviewer data has been collected.
+
 ## Re-scoring a judge
 
 v2 is the default rubric; v1 stays available (`--rubric v1`) so the two can be compared on the same calls. v2 changes four things at once, so a fair comparison also ablates them one at a time rather than reporting a single number. The workflow:
@@ -67,7 +92,7 @@ python -m evalkit compare evals/runs/baseline-v1-gpt-4.1 evals/runs/judge-v2   #
 python -m evalkit run --provider bedrock --model <model id> --name judge-v2-bedrock
 ```
 
-Every run's `manifest.json` records the rubric hash, model, inputs, tokens, cost and latency, so a comparison shows exactly what changed. Any new `fail` with no label in `evals/labels/` is listed as unlabelled. It gets reviewed and labelled before its run is scored, so the judge never grades itself.
+Every run's `manifest.json` records the rubric hash, model, inputs, tokens, cost and latency, so a comparison shows exactly what changed. `python -m evalkit reproduce <run>` re-runs a tracked run with the settings in its manifest and prints the comparison. It warns if any transcript has changed since, because the differences would then mix input changes with judge changes. Any new `fail` with no label in `evals/labels/` is listed as unlabelled. It gets reviewed and labelled before its run is scored, so the judge never grades itself.
 
 ## Limits
 

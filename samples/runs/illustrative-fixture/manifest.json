@@ -1,0 +1,61 @@
+{
+  "run_id": "illustrative-fixture",
+  "created_at": "2026-10-27T00:00:00+00:00",
+  "git_commit": null,
+  "evalkit_version": null,
+  "fixture": "Hand-written judge output for the synthetic sample calls. It is NOT the output of any model. It exists so the offline demo can show the full flow (redaction, tracking, scoring against seeded ground truth, comparison) with no API key. It deliberately includes judge mistakes of each kind so every metric has something to show.",
+  "config": {
+    "provider": "fixture",
+    "model": "hand-written",
+    "rubric": "v2",
+    "redact": true,
+    "timeout_s": null,
+    "max_retries": null
+  },
+  "rubric_sha": "aa9dfa04c7c2",
+  "scenario_set_sha": null,
+  "calls": {
+    "s01-weekend_request": {
+      "input_sha": "2e8b32a486d35f491784e7b31d6322514ac0dbd36be75157de7155ad395c53d4",
+      "status": "ok",
+      "error": null,
+      "attempts": 1,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": 0.0,
+      "redactions": {}
+    },
+    "s02-refill_request": {
+      "input_sha": "2cefd0500e257933fbe72292f9064b38b82f537457679e1b104c3f674814fd45",
+      "status": "ok",
+      "error": null,
+      "attempts": 1,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": 0.0,
+      "redactions": {}
+    },
+    "s03-third_party_records": {
+      "input_sha": "d1b02090da0e12874f54abdadc0ab3dee7a53a40f0f82147251e7b0df216dcf9",
+      "status": "ok",
+      "error": null,
+      "attempts": 1,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": 0.0,
+      "redactions": {}
+    }
+  },
+  "totals": {
+    "calls": 3,
+    "ok": 3,
+    "errors": 0,
+    "input_tokens": null,
+    "output_tokens": null,
+    "cost_usd": 0.0,
+    "latency_s": null
+  }
+}

@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Protocol
 
 from .config import EvalConfig
-from .paths import RUNS_DIR
+from .paths import get_dataset
 
 
 @dataclass
@@ -105,13 +105,15 @@ class ReplayProvider:
         self._by_hash = {meta["input_sha"]: outputs[call]
                          for call, meta in manifest["calls"].items() if call in outputs}
         self.model = run_dir.name
+        self.recorded_provider = manifest["config"].get("provider")
         self.recorded_model = manifest["config"].get("model")
         self.recorded_rubric = manifest["config"].get("rubric")
+        self.fixture = manifest.get("fixture")  # set when the outputs were hand-written, not model output
         self.name = "replay"
 
     def complete_json(self, system: str, user: str, *, key: str | None = None) -> Completion:
         if key not in self._by_hash:
-            raise ReplayMiss("replay mode only has recorded results for the bundled sample calls; "
+            raise ReplayMiss("replay mode only has recorded results for the bundled calls; "
                              "use provider openai or bedrock for new transcripts")
         return Completion(json.loads(json.dumps(self._by_hash[key])), 0, 0)
 
@@ -124,4 +126,5 @@ def make_provider(cfg: EvalConfig) -> Provider:
         return OpenAIProvider(cfg.model, cfg.timeout_s)
     if cfg.provider == "bedrock":
         return BedrockProvider(cfg.model, cfg.aws_region, cfg.timeout_s)
-    return ReplayProvider(RUNS_DIR / cfg.replay_run)
+    ds = get_dataset(cfg.dataset)
+    return ReplayProvider(ds.runs_dir / (cfg.replay_run or ds.replay_run))

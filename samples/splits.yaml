@@ -1,0 +1,6 @@
+# The synthetic calls are their own split: they demonstrate the flow, not judge quality.
+splits:
+  synthetic:
+    - s01-weekend_request
+    - s02-refill_request
+    - s03-third_party_records

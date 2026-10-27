@@ -5,7 +5,9 @@
 
 The judge provider is fixed by the server's configuration (ANALYSIS_PROVIDER), never by the
 request, so a public demo can't be used to spend someone's API credits. The Docker image
-defaults to `replay`: real recorded judge output for the bundled sample calls, no key needed.
+defaults to `replay` on the `synthetic` dataset: fictional, permission-cleared sample calls with a
+hand-written fixture judge, no key needed. EVALKIT_DATASET=recorded serves the 11 real calls and
+their recorded gpt-4.1 judge output instead.
 """
 
 from __future__ import annotations
@@ -24,11 +26,11 @@ from .compare import compare
 from .config import EvalConfig
 from .data import Call, common_checks, iter_calls, known_names, scenarios
 from .judge import judge_call
-from .paths import CALLS_DIR, RUNS_DIR
+from .paths import get_dataset
 from .providers import ReplayProvider, make_provider
 from .report import findings_md
 from .runs import list_runs, load_run, price
-from .scoring import as_dict, load_labels, score, score_by_split
+from .scoring import as_dict, load_splits, score, score_by_split, truth_labels
 
 log = logging.getLogger("evalkit.api")
 
@@ -50,9 +52,13 @@ def provider():
     return make_provider(settings())
 
 
+def dataset():
+    return get_dataset(settings().dataset)
+
+
 @lru_cache
 def sample_calls() -> dict[str, Call]:
-    return {c.name: c for c in iter_calls(CALLS_DIR)}
+    return {c.name: c for c in iter_calls(dataset().calls_dir)}
 
 
 # ---------------------------------------------------------------- models
@@ -83,6 +89,7 @@ class JudgeInfo(BaseModel):
     model: str
     rubric: str
     redacted: bool
+    note: str | None = Field(None, description="Set when the output is a replay or a hand-written fixture")
 
 
 class EvaluateResponse(BaseModel):
@@ -108,7 +115,10 @@ def _evaluate(call: Call) -> EvaluateResponse:
             raise HTTPException(422, "This server runs in replay mode (no API key): it can only return the "
                                      "recorded judge output for the bundled sample calls (GET /samples). "
                                      "Set ANALYSIS_PROVIDER=openai or bedrock to judge new transcripts.")
-        info = JudgeInfo(provider="replay", model=prov.model, rubric=prov.recorded_rubric or "?", redacted=False)
+        note = (f"FIXTURE, not model output: {prov.fixture}" if prov.fixture else
+                f"Replay of recorded {prov.recorded_provider}:{prov.recorded_model} output; no model was called.")
+        info = JudgeInfo(provider="replay", model=prov.model, rubric=prov.recorded_rubric or "?", redacted=False,
+                         note=note)
     else:
         info = JudgeInfo(provider=prov.name, model=prov.model, rubric=cfg.rubric, redacted=cfg.redact)
     out = judge_call(prov, call, cfg, known_names())
@@ -120,7 +130,7 @@ def _evaluate(call: Call) -> EvaluateResponse:
         counts[c.get("result", "not_tested")] = counts.get(c.get("result", "not_tested"), 0) + 1
     human = None
     if call.name in sample_calls() and sample_calls()[call.name].input_sha == call.input_sha:
-        s = score({call.name: r}, load_labels(), "sample", [call.name])
+        s = score({call.name: r}, truth_labels(dataset().labels_dir), "sample", [call.name])
         human = {"failed_checks_by_human_label": dict(s.fail_labels), "known_bugs": s.bugs}
     return EvaluateResponse(
         judge=info, summary=r.get("summary"), pass_outcome_met=r.get("pass_outcome_met"), counts=counts,
@@ -139,7 +149,7 @@ def root():
 @app.get("/health", tags=["service"])
 def health() -> dict:
     cfg, prov = settings(), provider()
-    return {"status": "ok", "version": __version__, "provider": prov.name, "model": prov.model,
+    return {"status": "ok", "version": __version__, "dataset": cfg.dataset, "provider": prov.name, "model": prov.model,
             "rubric": getattr(prov, "recorded_rubric", None) or cfg.rubric, "sample_calls": len(sample_calls())}
 
 
@@ -192,27 +202,30 @@ def evaluate(req: EvaluateRequest) -> EvaluateResponse:
 
 @app.get("/runs", tags=["experiments"])
 def runs() -> list[dict]:
-    """Tracked judge runs (evals/runs/*/manifest.json)."""
-    return list_runs(RUNS_DIR)
+    """Tracked judge runs for the served dataset."""
+    return list_runs(dataset().runs_dir)
 
 
 @app.get("/runs/{run}", tags=["experiments"])
 def run_detail(run: str) -> dict:
-    path = RUNS_DIR / run
-    if not (path / "manifest.json").exists() or path.resolve().parent != RUNS_DIR.resolve():
+    ds = dataset()
+    path = ds.runs_dir / run
+    if not (path / "manifest.json").exists() or path.resolve().parent != ds.runs_dir.resolve():
         _404(run)
     outputs, manifest = load_run(path)
-    return {"manifest": manifest, "scores": as_dict(score_by_split(outputs))}
+    return {"manifest": manifest, "scores": as_dict(score_by_split(outputs, truth_labels(ds.labels_dir),
+                                                                     load_splits(ds.splits_file)))}
 
 
 @app.get("/compare", tags=["experiments"])
 def compare_runs(before: str, after: str) -> dict:
     """Setup changes, score deltas per split, cost and latency, and check-by-check differences."""
-    paths = [RUNS_DIR / r for r in (before, after)]
+    ds = dataset()
+    paths = [ds.runs_dir / r for r in (before, after)]
     for p, r in zip(paths, (before, after)):
-        if not (p / "manifest.json").exists() or p.resolve().parent != RUNS_DIR.resolve():
+        if not (p / "manifest.json").exists() or p.resolve().parent != ds.runs_dir.resolve():
             _404(r)
-    return compare(*paths)
+    return compare(*paths, labels=truth_labels(ds.labels_dir), splits=load_splits(ds.splits_file))
 
 
 def _404(what: str):

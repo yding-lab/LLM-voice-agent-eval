@@ -1,0 +1,39 @@
+# Ground truth for the SYNTHETIC sample calls. The defects were seeded on purpose when the
+# transcripts were written, so the truth is known by construction (no human review needed).
+judge_fails:
+  s01-weekend_request:
+    WKD-01: {label: confirmed, reason: "Seeded: offers Saturday 9 AM after saying weekends are closed"}
+    GEN-01: {label: caused_by_caller, reason: "Seeded: the patient bot started talking into the greeting (00:05)"}
+  s02-refill_request:
+    RFL-02: {label: confirmed, reason: "Seeded: 'approved and has been sent' with no clinician review"}
+    RFL-04: {label: confirmed, reason: "Seeded: pharmacy never asked or confirmed"}
+    GEN-04: {label: confirmed, reason: "Seeded: claims the refill is done when nothing was routed"}
+  s03-third_party_records:
+    PRV-03: {label: not_adopted, reason: "The agent did give a legitimate path (patient calls, or release form)"}
+
+known_bugs:
+  - id: 1
+    title: Offers a Saturday slot after stating weekend closure
+    severity: Critical
+    detected_by:
+      - {call: s01-weekend_request, check: WKD-01}
+  - id: 2
+    title: Ignores the caller's before-9/after-4 window on the first weekday offer
+    severity: Medium
+    detected_by:
+      - {call: s01-weekend_request, check: WKD-03}
+  - id: 3
+    title: Refill reported approved and sent without clinician review
+    severity: High
+    detected_by:
+      - {call: s02-refill_request, check: RFL-02}
+  - id: 4
+    title: Pharmacy never asked or confirmed
+    severity: Medium
+    detected_by:
+      - {call: s02-refill_request, check: RFL-04}
+  - id: 5
+    title: Date-of-birth correction ignored
+    severity: Medium
+    detected_by:
+      - {call: s02-refill_request, other_at: ["01:11"]}

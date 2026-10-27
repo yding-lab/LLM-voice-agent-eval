@@ -54,6 +54,7 @@ Calling the agent is half the system. The other half decides what the calls mean
 | Model provider | Thin interface over OpenAI, Bedrock and replay | LangChain or a similar framework | One call shape (system + user → JSON) doesn't justify a framework dependency. The interface is small and tested with fakes |
 | Experiment tracking | A JSON manifest per run, committed with the outputs | MLflow or Weights & Biases | The runs are small and few. Plain files diff in git, need no server, and the CI gate and API read them directly. The manifest fields map one-to-one onto an MLflow run if the volume ever justifies one |
 | Demo without keys | `replay` provider keyed by transcript SHA-256 | Mock judge with made-up verdicts; require a key | Replay returns the real recorded outputs, so the demo shows true results at zero cost, and it can't be mistaken for judging new input: unknown transcripts get a clear 422 |
+| Offline demo data | Fictional calls with seeded defects plus a clearly labelled hand-written fixture judge; recorded calls opt-in | Only the recorded calls; mock outputs presented as results | The recorded calls are third-party content whose publication permission isn't documented. Seeded defects give known ground truth. The fixture is labelled in the data, the API response and the report, so it can't be mistaken for model output |
 | Who picks the model in the API | Server configuration only | A `provider`/`model` field per request | A public endpoint that lets callers pick a paid model is a way to spend someone else's credits |
 
 ## Measured results
