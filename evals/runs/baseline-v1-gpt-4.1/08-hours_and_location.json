@@ -77,10 +77,5 @@
       "expected": "Agent should provide information without requiring or pushing for a profile unless necessary.",
       "confidence": "high"
     }
-  ],
-  "_meta": {
-    "judge": "openai:gpt-4.1",
-    "rubric": "v1",
-    "redacted": false
-  }
+  ]
 }

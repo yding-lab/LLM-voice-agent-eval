@@ -102,10 +102,5 @@
       "expected": "Agent should inform new patients of any requirements for their first visit.",
       "confidence": "high"
     }
-  ],
-  "_meta": {
-    "judge": "openai:gpt-4.1",
-    "rubric": "v1",
-    "redacted": false
-  }
+  ]
 }

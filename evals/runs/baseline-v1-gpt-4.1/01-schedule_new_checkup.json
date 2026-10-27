@@ -93,10 +93,5 @@
       "expected": "Agent should have repeated the date, time, and provider name as requested.",
       "confidence": "high"
     }
-  ],
-  "_meta": {
-    "judge": "openai:gpt-4.1",
-    "rubric": "v1",
-    "redacted": false
-  }
+  ]
 }

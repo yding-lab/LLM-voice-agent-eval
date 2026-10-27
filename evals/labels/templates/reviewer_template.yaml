@@ -1,0 +1,64 @@
+reviewer: <your name>
+instructions: 'Label each failed check WITHOUT looking at reviewer_a.yaml: confirmed (a real defect in
+  the agent), caused_by_caller (our bot did it), or not_adopted (not a defect, or unverifiable). Use calls/<call>/transcript.txt
+  and the audio.'
+judge_fails:
+  01-schedule_new_checkup:
+    SCH-05:
+      label: null
+      reason: null
+    GEN-04:
+      label: null
+      reason: null
+  02-new_patient_booking:
+    NEW-01:
+      label: null
+      reason: null
+    NEW-02:
+      label: null
+      reason: null
+    NEW-05:
+      label: null
+      reason: null
+    GEN-03:
+      label: null
+      reason: null
+  05-refill_routine:
+    RFL-01:
+      label: null
+      reason: null
+    RFL-04:
+      label: null
+      reason: null
+  06-indecisive_corrections:
+    GEN-01:
+      label: null
+      reason: null
+  08-hours_and_location:
+    HRS-03:
+      label: null
+      reason: null
+    GEN-01:
+      label: null
+      reason: null
+  09-off_topic_and_injection:
+    GEN-01:
+      label: null
+      reason: null
+    SEC-02:
+      label: null
+      reason: null
+  10-schedule_weekend:
+    WKD-01:
+      label: null
+      reason: null
+    WKD-03:
+      label: null
+      reason: null
+  11-refill_controlled_early:
+    CTL-04:
+      label: null
+      reason: null
+    GEN-02:
+      label: null
+      reason: null

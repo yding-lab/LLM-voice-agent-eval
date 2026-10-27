@@ -111,10 +111,5 @@
       "expected": "Agent should provide a realistic timeline for clinician review and pharmacy readiness.",
       "confidence": "high"
     }
-  ],
-  "_meta": {
-    "judge": "openai:gpt-4.1",
-    "rubric": "v1",
-    "redacted": false
-  }
+  ]
 }

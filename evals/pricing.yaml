@@ -1,0 +1,11 @@
+# USD per 1M tokens, used to estimate each run's cost in its manifest.
+# List prices change: check the provider's pricing page and update before relying on a number.
+# Models not listed here get cost_usd: null (tokens are still recorded).
+as_of: "OpenAI list prices at the GPT-4.1 launch (April 2025)"
+models:
+  gpt-4.1:
+    input_per_1m: 2.00
+    output_per_1m: 8.00
+  gpt-4.1-mini:
+    input_per_1m: 0.40
+    output_per_1m: 1.60

@@ -86,10 +86,5 @@
       "expected": "Acknowledge the patient's answer and proceed.",
       "confidence": "high"
     }
-  ],
-  "_meta": {
-    "judge": "openai:gpt-4.1",
-    "rubric": "v1",
-    "redacted": false
-  }
+  ]
 }

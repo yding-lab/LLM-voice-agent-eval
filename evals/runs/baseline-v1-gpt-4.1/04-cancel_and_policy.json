@@ -91,10 +91,5 @@
       "severity": "Low"
     }
   ],
-  "other_findings": [],
-  "_meta": {
-    "judge": "openai:gpt-4.1",
-    "rubric": "v1",
-    "redacted": false
-  }
+  "other_findings": []
 }

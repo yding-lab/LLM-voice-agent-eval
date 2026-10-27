@@ -1,0 +1,152 @@
+{
+  "run_id": "baseline-v1-gpt-4.1",
+  "created_at": "2026-10-19T00:00:00+00:00",
+  "git_commit": null,
+  "evalkit_version": null,
+  "backfilled": "This run predates experiment tracking. Config and input hashes were reconstructed from the repository; tokens, latency and cost were not recorded and are null. created_at is the date of the calls.",
+  "config": {
+    "provider": "openai",
+    "model": "gpt-4.1",
+    "rubric": "v1",
+    "redact": false,
+    "timeout_s": 120.0,
+    "max_retries": 3,
+    "retry_backoff_s": 2.0,
+    "replay_run": "baseline-v1-gpt-4.1",
+    "aws_region": "us-east-1"
+  },
+  "rubric_sha": "f8534aafdea3",
+  "scenario_set_sha": null,
+  "calls": {
+    "01-schedule_new_checkup": {
+      "input_sha": "3ab107be20b0695f467ae9a7de4f92564062f218146268a624d4a99b5ad67b10",
+      "status": "ok",
+      "error": null,
+      "attempts": null,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "redactions": {}
+    },
+    "02-new_patient_booking": {
+      "input_sha": "51006e1d7cb7259171975880414714203cfbee1653461ba7a783ded8c38c4567",
+      "status": "ok",
+      "error": null,
+      "attempts": null,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "redactions": {}
+    },
+    "03-reschedule_existing": {
+      "input_sha": "fa7e3e2084b91663ab449c7afece211c3a28e10bd528303b337a22aac824ab98",
+      "status": "ok",
+      "error": null,
+      "attempts": null,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "redactions": {}
+    },
+    "04-cancel_and_policy": {
+      "input_sha": "b308bd3d16a9a3ea60ebb31e16e317d35865455ef05b291de337f8689584d1d6",
+      "status": "ok",
+      "error": null,
+      "attempts": null,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "redactions": {}
+    },
+    "05-refill_routine": {
+      "input_sha": "75b47c18140f363865f92badd500636d214554f6d432f4eebec37c3c36f6fa7a",
+      "status": "ok",
+      "error": null,
+      "attempts": null,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "redactions": {}
+    },
+    "06-indecisive_corrections": {
+      "input_sha": "a9a03e50353d617a38bec567d186e2a5c7eac5c7bdaf2bafd4fb0bbed03e31d6",
+      "status": "ok",
+      "error": null,
+      "attempts": null,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "redactions": {}
+    },
+    "07-barge_in": {
+      "input_sha": "0e8ab37e8a5b16866a9175dab116ccb257e6c15254405fcc7b3c07f82b92677b",
+      "status": "ok",
+      "error": null,
+      "attempts": null,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "redactions": {}
+    },
+    "08-hours_and_location": {
+      "input_sha": "2a3b81e0aa1250839a3a41f047254662c1c9dbdc2513d32658c9fab6102b61e6",
+      "status": "ok",
+      "error": null,
+      "attempts": null,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "redactions": {}
+    },
+    "09-off_topic_and_injection": {
+      "input_sha": "06f5247685ecfd4f7b8763f0d17d76ad7077e69bfbf5238e996e68089df0b439",
+      "status": "ok",
+      "error": null,
+      "attempts": null,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "redactions": {}
+    },
+    "10-schedule_weekend": {
+      "input_sha": "c515c03565e67c661c888485edc8b5668d429d54fa253542c100e70ff0612051",
+      "status": "ok",
+      "error": null,
+      "attempts": null,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "redactions": {}
+    },
+    "11-refill_controlled_early": {
+      "input_sha": "d9d441b2f7d272aee4216290b87a847a9731ac4818de75d514c7238a761833a9",
+      "status": "ok",
+      "error": null,
+      "attempts": null,
+      "latency_s": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "redactions": {}
+    }
+  },
+  "totals": {
+    "calls": 11,
+    "ok": 11,
+    "errors": 0,
+    "input_tokens": null,
+    "output_tokens": null,
+    "cost_usd": null,
+    "latency_s": null
+  }
+}

@@ -38,7 +38,7 @@ fi
 # shellcheck disable=SC1091
 source "$VENV/bin/activate"
 python -m pip install --upgrade pip -q
-python -m pip install -r requirements.txt
+python -m pip install -r requirements.txt -r requirements-eval.txt pytest
 
 [ -f .env ] || { cp .env.example .env; echo "Created .env from .env.example (it is git-ignored)."; }
 

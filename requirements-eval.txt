@@ -1,0 +1,7 @@
+# Evaluation pipeline + API only (no LiveKit, no telephony). Used by the Docker image and CI.
+fastapi>=0.110,<1
+uvicorn>=0.29
+pydantic>=2.6,<3
+pyyaml>=6.0
+openai>=1.40
+boto3>=1.34      # AWS Bedrock judge (optional at runtime)

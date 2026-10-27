@@ -1,0 +1,21 @@
+# Which calls each metric is computed on.
+#
+# dev       The 11 recorded calls. Judge rubric v2 was designed from the errors v1 made on
+#           these calls, so any v2 score on them is in-sample: a check that the fixes work,
+#           not an estimate of how well v2 generalizes.
+# holdout   Every call NOT listed here. New calls placed with scripts/run_calls.py land in
+#           holdout automatically. Label their judge output (evals/labels/) before reading
+#           holdout numbers, and never tune a rubric on them.
+splits:
+  dev:
+    - 01-schedule_new_checkup
+    - 02-new_patient_booking
+    - 03-reschedule_existing
+    - 04-cancel_and_policy
+    - 05-refill_routine
+    - 06-indecisive_corrections
+    - 07-barge_in
+    - 08-hours_and_location
+    - 09-off_topic_and_injection
+    - 10-schedule_weekend
+    - 11-refill_controlled_early

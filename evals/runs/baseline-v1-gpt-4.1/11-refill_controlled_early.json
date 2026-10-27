@@ -94,10 +94,5 @@
       "expected": "The agent should mention what to do if symptoms are severe (e.g., contact provider, go to ER).",
       "confidence": "high"
     }
-  ],
-  "_meta": {
-    "judge": "openai:gpt-4.1",
-    "rubric": "v1",
-    "redacted": false
-  }
+  ]
 }

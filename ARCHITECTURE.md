@@ -33,22 +33,28 @@ Scenarios are data (YAML), not code. Each one gives the bot a goal and a few pre
 | Recording | LiveKit session recorder (stereo, both sides on one timeline) | LiveKit Egress to S3; Twilio call recording | No extra storage or credentials, stays in sync with our turn timestamps, and per-side channels make analysis easy |
 | Safety | One configured target number; the agent refuses any other destination | Free-form dialing | A bot that places real phone calls should never be one typo away from calling a stranger |
 
-## Evaluation pipeline
+## Evaluation pipeline (`evalkit/`)
 
-Calling the agent is half the system. The other half decides what the calls mean, and that part has its own failure modes, so it's built to be measured:
+Calling the agent is half the system. The other half decides what the calls mean, and that half has its own failure modes, so it's built to be measured, tracked and run anywhere. `evalkit` doesn't depend on LiveKit or telephony, so it runs in a slim container.
 
-1. **Pseudonymize** the transcript (`caller/redact.py`). This is healthcare-shaped data, and the judge doesn't need real values, only whether they changed. Values become stable tokens per call: `[DOB_1]`, then `[DOB_2]` after a correction.
-2. **Judge** each call against its scenario's checks (`scripts/analyze_calls.py`). The rubric is versioned, and the provider is pluggable: OpenAI, or AWS Bedrock via the Converse API (`caller/llm_providers.py`). Each result records which judge, rubric and redaction setting produced it.
-3. **Score the judge** against human labels (`scripts/eval_judge.py`, `evals/labels.yaml`): precision, recall on confirmed bugs, and "lenient" passes where the judge quoted the bug and still passed it.
-4. **Diff runs** check by check (`scripts/compare_runs.py`), for a new judge on the same calls or a new agent version with the same judge. CI scores the committed judge output and fails below a floor.
+1. **Pseudonymize** the transcript (`redact.py`). This is healthcare-shaped data, and the judge doesn't need real values, only whether they changed. Values become stable tokens per call: `[DOB_1]`, then `[DOB_2]` after a correction.
+2. **Judge** each call against its scenario's checks (`judge.py`, `rubrics.py`, `providers.py`). Rubrics are versioned and hashed. The provider is OpenAI, AWS Bedrock via the Converse API, or `replay`, which serves a recorded run by transcript hash for keyless demos. Failures are retried with exponential backoff, malformed JSON included. A replay miss isn't retried, because it can't succeed. A call that still fails is recorded with its error, and the run continues.
+3. **Track** the run (`runs.py`): one JSON per call plus `manifest.json` with the resolved config, rubric and scenario-set hashes, per-call input hashes, git commit, tokens, estimated cost and latency. Runs resume: calls with saved output aren't re-judged unless forced.
+4. **Score** against human labels (`scoring.py`), per split (`dev` = in-sample, `holdout` = everything new). It reports precision, recall overall and by severity, error types, and lenient passes, each with a 95% Wilson interval. With more than one reviewer it also reports Cohen's κ.
+5. **Compare** two runs (`compare.py`): setup changes, score deltas per split, cost and latency, then every check whose verdict changed. CI fails if the newest committed run drops below a precision and recall floor.
+6. **Serve** it (`api.py`): FastAPI endpoints to evaluate a transcript, list runs and compare them, in a non-root Docker image that defaults to replay mode. CI builds the image and calls the running container on every push.
 
 | Decision | Chosen | Alternatives considered | Why |
 |---|---|---|---|
 | Grading | LLM judge with numbered, severity-tagged checks per scenario | Keyword/regex rules; free-form "rate this call 1–10" | Rules can't read intent ("did it actually defer to a pharmacist?"). A single score hides *which* behaviour broke. Numbered checks make every verdict citable and diffable |
 | Trusting the judge | Measure it against human labels and publish the error rates | Spot-check a few outputs | Spot checks don't show a pattern. Measuring showed 5 of 7 wrong fails had one shared cause (blaming the wrong side), which is a fixable prompt problem rather than noise |
+| Uncertainty | Wilson score intervals on every rate; dev/holdout splits | Point estimates only | With n = 9 bugs, "56% recall" without an interval (27–81%) overstates what is known. Splitting keeps in-sample numbers from being read as generalization |
 | Judge output order | Evidence → "does this meet the fail condition?" → verdict | Verdict first | Verdict-first produced passes whose own evidence showed the failure |
 | PII handling | Stable pseudonymization before any model call | Send raw; drop all PII | Raw sends health-adjacent personal data to a third party. Dropping it entirely hides corrections, a real bug class here |
-| Model provider | Thin interface over OpenAI and Bedrock | LangChain or a similar framework | Two providers and one call shape (system + user → JSON) don't justify a framework dependency. The interface is about 60 lines and easy to test with fakes |
+| Model provider | Thin interface over OpenAI, Bedrock and replay | LangChain or a similar framework | One call shape (system + user → JSON) doesn't justify a framework dependency. The interface is small and tested with fakes |
+| Experiment tracking | A JSON manifest per run, committed with the outputs | MLflow or Weights & Biases | The runs are small and few. Plain files diff in git, need no server, and the CI gate and API read them directly. The manifest fields map one-to-one onto an MLflow run if the volume ever justifies one |
+| Demo without keys | `replay` provider keyed by transcript SHA-256 | Mock judge with made-up verdicts; require a key | Replay returns the real recorded outputs, so the demo shows true results at zero cost, and it can't be mistaken for judging new input: unknown transcripts get a clear 422 |
+| Who picks the model in the API | Server configuration only | A `provider`/`model` field per request | A public endpoint that lets callers pick a paid model is a way to spend someone else's credits |
 
 ## Measured results
 

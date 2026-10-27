@@ -1,0 +1,11 @@
+# Default evaluation settings (evalkit/config.py). Environment variables and CLI/API
+# overrides take precedence; the resolved values are saved in every run's manifest.json.
+provider: openai          # openai | bedrock | replay (keyless, serves a recorded run)
+model: gpt-4.1
+rubric: v2                # v1 = the rubric behind the recorded baseline
+redact: true              # pseudonymize names, DOBs, phones, emails before any model call
+timeout_s: 120
+max_retries: 3            # with exponential backoff: 2 s, 4 s, 8 s
+retry_backoff_s: 2.0
+replay_run: baseline-v1-gpt-4.1
+aws_region: us-east-1

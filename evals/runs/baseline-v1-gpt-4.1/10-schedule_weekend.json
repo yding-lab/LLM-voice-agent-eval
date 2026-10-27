@@ -77,10 +77,5 @@
       "expected": "Agent should have immediately stated that no before 9am or after 4pm slots were available when first asked.",
       "confidence": "high"
     }
-  ],
-  "_meta": {
-    "judge": "openai:gpt-4.1",
-    "rubric": "v1",
-    "redacted": false
-  }
+  ]
 }

@@ -1,0 +1,13 @@
+.git
+.github
+.venv*
+venv*
+.env
+.env.*
+**/__pycache__
+logs/
+reports/
+calls/**/*.mp3
+calls/**/*.ogg
+calls/**/findings.*
+calls/**/DONE

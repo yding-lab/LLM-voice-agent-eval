@@ -13,27 +13,42 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -r requirements.txt
-      - name: Compile
-        run: python -m py_compile caller/*.py scripts/*.py tests/*.py
-      - name: Recording-notice silence (no API keys, no calls)
-        run: python tests/test_recording_notice.py
-      - name: end_call guard
-        run: python tests/test_end_call_guard.py
-      - name: PII redaction
-        run: python tests/test_redact.py
-      - name: Judge pipeline (stand-in models, OpenAI + Bedrock request shapes)
-        run: python tests/test_judge_pipeline.py
+      - run: pip install -r requirements.txt -r requirements-eval.txt pytest
+      - name: Unit and integration tests (no API keys, no network)
+        run: python -m pytest -q tests
+      - name: Turn-taking guards (real LiveKit session, stand-in LLM)
+        run: |
+          python tests/test_recording_notice.py
+          python tests/test_end_call_guard.py
 
   eval-gate:
-    # Scores the committed judge output against human labels. A change to the judge
-    # (rubric, model, provider) that lowers precision or recall below the floor fails here.
+    # Scores the newest committed judge run against human labels. A judge change
+    # (rubric, model, provider) that drops below the floor can't merge silently.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - run: pip install pyyaml
+      - run: pip install -r requirements-eval.txt
       - name: Judge precision and recall vs. human labels
-        run: python scripts/eval_judge.py --min-precision 0.5 --min-recall 0.5 | tee -a "$GITHUB_STEP_SUMMARY"
+        run: python -m evalkit score --min-precision 0.5 --min-recall 0.5 | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Keyless demo runs end to end
+        run: python -m evalkit demo > /dev/null
+
+  docker:
+    # Builds the service image and smoke-tests the running container the way a reviewer would use it.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: docker build -t llm-voice-agent-eval .
+      - run: docker run -d --name eval -p 8000:8000 llm-voice-agent-eval
+      - name: Wait for the service
+        run: timeout 60 bash -c 'until curl -fs localhost:8000/health; do sleep 1; done'
+      - name: Evaluate a bundled call through the API
+        run: |
+          curl -fs -X POST localhost:8000/samples/02-new_patient_booking/evaluate -o out.json
+          python3 -c "import json; j=json.load(open('out.json')); assert j['counts']['fail'] == 4, j['counts']; print(j['judge'], j['counts'])"
+      - name: Container logs
+        if: always()
+        run: docker logs eval
