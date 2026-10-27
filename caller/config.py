@@ -6,13 +6,14 @@ There are two modes:
   receptionist. Needs only the speech/LLM provider keys. Telephony settings are not
   used, and the patient falls back to a fictional identity if PATIENT_* is unset.
 * outbound (`scripts/run_calls.py`): real phone calls. Everything is validated strictly,
-  including the SIP trunk, LiveKit credentials and an explicit test patient that
-  matches the account created on the clinic's signup page.
+  including the SIP trunk, LiveKit credentials, the target number and an explicit test
+  patient that matches a test account on the system under test.
 """
 
 from __future__ import annotations
 
 import os
+import re
 import ssl
 from dataclasses import dataclass
 from pathlib import Path
@@ -42,18 +43,20 @@ def _ensure_ca_certificates() -> None:
 
 _ensure_ca_certificates()
 
-# The ONLY number this bot is ever allowed to dial. Hard-coded on purpose:
-# the agent refuses to place a call anywhere else, whatever the job metadata says.
-TARGET_NUMBER = "+18054398008"
+# The ONLY number this bot is ever allowed to dial: the voice agent under test, set in .env.
+# The agent refuses to place a call anywhere else, whatever the job metadata says.
+# Only point this at an agent you own or have written permission to test.
+TARGET_NUMBER = os.getenv("TARGET_NUMBER", "").strip()
+E164 = re.compile(r"^\+[1-9]\d{7,14}$")
 
-AGENT_NAME = "patient-caller"
+AGENT_NAME = "voice-agent-qa"
 CALLS_DIR = ROOT / "calls"
 SCENARIOS_FILE = ROOT / "caller" / "scenarios.yaml"
 
 # Needed in both modes: the STT -> LLM -> TTS pipeline.
 PROVIDER_KEYS = ("DEEPGRAM_API_KEY", "OPENAI_API_KEY", "CARTESIA_API_KEY")
 # Needed only to place real calls.
-OUTBOUND_KEYS = ("LIVEKIT_URL", "LIVEKIT_API_KEY", "LIVEKIT_API_SECRET", "SIP_OUTBOUND_TRUNK_ID")
+OUTBOUND_KEYS = ("TARGET_NUMBER", "LIVEKIT_URL", "LIVEKIT_API_KEY", "LIVEKIT_API_SECRET", "SIP_OUTBOUND_TRUNK_ID")
 PATIENT_KEYS = ("PATIENT_FIRST_NAME", "PATIENT_LAST_NAME", "PATIENT_DOB", "PATIENT_PHONE")
 
 # Fictional identity for console rehearsals only (555-01xx numbers are reserved for fiction).
@@ -88,7 +91,10 @@ def missing_settings(*, outbound: bool) -> list[str]:
     names = list(PROVIDER_KEYS)
     if outbound:
         names += [*OUTBOUND_KEYS, *PATIENT_KEYS]
-    return [n for n in names if not _value(n)]
+    missing = [n for n in names if not _value(n)]
+    if outbound and "TARGET_NUMBER" not in missing and not E164.match(TARGET_NUMBER):
+        missing.append("TARGET_NUMBER")  # must be E.164, e.g. +14155550100
+    return missing
 
 
 @dataclass(frozen=True)

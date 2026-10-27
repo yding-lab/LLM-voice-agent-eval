@@ -1,4 +1,4 @@
-"""Turns the session recording into the two files we submit.
+"""Turns the session recording into the two files saved with every call.
 
 LiveKit's session recorder writes a stereo OGG/Opus file with both sides on one
 timeline: channel 0 is what we heard (the clinic agent), channel 1 is what we

@@ -3,7 +3,7 @@
     python tests/test_end_call_guard.py
 
 Needs no API keys and places no calls. Covers the two early-call failures: hanging up right
-after asking a question (calls/01 02:05) and hanging up during a transfer (calls/10 04:25).
+after asking a question and hanging up during a transfer.
 """
 
 import sys
@@ -27,11 +27,11 @@ def ctx(*turns: tuple[str, str]) -> llm.ChatContext:
 CASES = {
     "goodbye after the task -> hang up": (
         [("user", "You're all set for Tuesday at 10."), ("assistant", "Great, thanks. Goodbye!")], False),
-    "question as last line -> wait (calls/01)": (
+    "question as last line -> wait (seen in early calls)": (
         [("user", "I'll note that."), ("assistant", "Can you repeat the date and time of my appointment?")], True),
     "no goodbye yet -> say goodbye first": (
         [("user", "Anything else?"), ("assistant", "No, that's everything.")], True),
-    "clinic is transferring -> wait (calls/10)": (
+    "clinic is transferring -> wait (seen in early calls)": (
         [("assistant", "Sure, thanks."), ("user", "Transferring you now. Thank you.")], True),
     "clinic says goodbye -> hang up": (
         [("assistant", "Thanks."), ("user", "You've reached the test line. Goodbye.")], False),

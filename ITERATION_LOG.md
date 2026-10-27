@@ -11,7 +11,7 @@ What I saw or heard, what I changed, and what happened next. Infrastructure prob
 | 3 | Every HTTPS call failed with `CERTIFICATE_VERIFY_FAILED` | python.org's macOS Python ships without CA certificates | Fall back to the `certifi` bundle when the system has none | Deepgram / Cartesia / LiveKit reachable |
 | 4 | Console hung with `either token, or api_key and api_secret, must be set` | A `LIVEKIT_URL` without key/secret (e.g. the `.env.example` placeholder) crashes the LiveKit worker | Console mode ignores a half-filled LiveKit config, before `AgentServer()` reads it | Console starts with any `.env` |
 | 5 | First real call: `SIP 403 No International Permission` ([evidence](reports/early_failures/call-01-sip-403.txt)) | Twilio voice geo-permissions blocked the destination | Enabled the destination in Twilio's voice geographic permissions | All later calls connected |
-| 6 | Some calls ran with no recording or transcript, or never finished | Laptop went to sleep or ran out of battery mid-call | `run_calls.py` now checks every call (recording + transcript saved, ≥45 s, ≥3 turns each side) and `renumber_calls.py` drops failures before submission | Only full conversations are submitted |
+| 6 | Some calls ran with no recording or transcript, or never finished | Laptop went to sleep or ran out of battery mid-call | `run_calls.py` now checks every call (recording + transcript saved, ≥45 s, ≥3 turns each side) and `renumber_calls.py` drops failures | Only full conversations are kept |
 
 ## Conversation quality (from listening to calls 01–11)
 

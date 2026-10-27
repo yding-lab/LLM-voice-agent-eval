@@ -59,7 +59,7 @@ class Worker:
             self._log.flush()
             if "registered worker" in line:
                 self.ready.set()
-            if any(k in line for k in ("ERROR", "error", "patient-caller", "call ")):
+            if any(k in line for k in ("ERROR", "error", "voice-agent-qa", "call ")):
                 print("  [worker]", line.rstrip()[:240])
 
     def alive(self) -> bool:

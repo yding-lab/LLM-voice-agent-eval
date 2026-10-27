@@ -37,7 +37,7 @@ from .config import AGENT_NAME, ROOT, TARGET_NUMBER, load_settings, prepare_cons
 from .persona import Scenario, build_instructions, load_scenarios
 from .transcript import CallLog
 
-logger = logging.getLogger("patient-caller")
+logger = logging.getLogger("voice-agent-qa")
 
 CLINIC_IDENTITY = "clinic-line"
 HELLO_AFTER_S = 6.0  # if the clinic hasn't spoken this long after answering, say "hello?"
@@ -79,8 +79,8 @@ MAX_END_CALL_REFUSALS = 2  # after this, trust the LLM; the watchdog still caps 
 def end_call_blocker(chat_ctx: llm.ChatContext) -> str | None:
     """Why hanging up now would be wrong, or None if it's fine.
 
-    Seen in early calls: the bot hung up right after asking a question (calls/01 02:05),
-    and said goodbye while being transferred (calls/10 04:25)."""
+    Seen in early calls: the bot hung up right after asking a question, and said goodbye
+    while being transferred."""
     messages = [
         m for m in chat_ctx.items
         if isinstance(m, llm.ChatMessage) and m.role in ("user", "assistant") and (m.text_content or "").strip()
@@ -173,8 +173,8 @@ async def entrypoint(ctx: JobContext) -> None:
     out_dir = Path(meta.get("output_dir") or ROOT / "logs" / f"rehearsal-{int(time.time())}")
     call_to = meta.get("phone_number", TARGET_NUMBER)
 
-    # Safety rail: this bot only ever calls the assessment line.
-    if call_to != TARGET_NUMBER:
+    # Safety rail: this bot only ever calls the configured target number.
+    if not TARGET_NUMBER or call_to != TARGET_NUMBER:
         logger.error("refusing to dial %s: only %s is allowed", call_to, TARGET_NUMBER)
         ctx.shutdown("disallowed number")
         return

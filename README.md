@@ -1,63 +1,100 @@
-# Patient Caller: a voice QA bot for a clinic's AI receptionist
+# voice-agent-qa
 
-A Python voice bot, built on LiveKit Agents in pipeline mode (Deepgram STT → OpenAI LLM → Cartesia TTS), that phones a clinic's AI receptionist as a simulated patient. It runs scripted-but-improvised scenarios (scheduling, refills, insurance, emergencies, privacy probes, interruptions) and saves a recording and a timestamped transcript of every call so bugs can be found and cited.
+**Automated phone-call testing for voice AI agents.** A Python bot that phones a voice agent (here, an AI clinic receptionist), plays a realistic patient across 15 scenarios, records and transcribes every call, and grades the agent against 66 numbered checks.
 
-The bot dials exactly one number, `+1-805-439-8008`. The number is hard-coded in `caller/config.py`, and the agent refuses any other destination.
+Built on LiveKit Agents in pipeline mode: Deepgram STT → GPT-4.1-mini → Cartesia TTS, dialing out over a Twilio SIP trunk.
+
+```mermaid
+flowchart LR
+    R[run_calls.py] -->|dispatch scenario| W[LiveKit worker]
+    W -->|SIP dial-out| T[Twilio trunk] --> A((Voice agent<br/>under test))
+    A -->|audio| V[VAD + semantic<br/>turn detector] --> S[Deepgram STT] --> L[GPT-4.1-mini<br/>patient persona] --> C[Cartesia TTS] -->|audio| A
+    W --> O[recording.ogg / .mp3<br/>timestamped transcript]
+    O --> Q[analyze_calls.py<br/>check matrix]
+```
+
+## Highlights
+
+- **Real calls, natural turn-taking.** A semantic end-of-turn model on top of VAD, a tool for staying silent during "one moment, let me check", and guards against hanging up mid-question or during a transfer. Median response latency was **1.31 s** across 110 measured turns.
+- **Scenarios as data.** Each scenario gives the bot a goal and a few pressure tests to work in naturally (closed days, controlled-substance refills, made-up insurance, emergencies, privacy probes, prompt injection, barge-in), plus failure conditions the bot never sees.
+- **Evidence you can cite.** Stereo recording (agent left, bot right) and a transcript on the same timeline, so `[01:23]` in the text is 1:23 in the audio. An LLM first pass grades every check; findings are then confirmed by listening.
+- **It found real bugs.** Including a critical one: records matched on caller ID, so a second caller from the same number could see and cancel another patient's appointment. See [BUG_REPORT.md](BUG_REPORT.md).
+- **Safe by construction.** The bot dials exactly one configured number and refuses any other destination.
+
+| Doc | What's in it |
+|---|---|
+| [calls/](calls/INDEX.md) | 11 real calls: recordings, timestamped transcripts, per-call findings |
+| [BUG_REPORT.md](BUG_REPORT.md) | 9 issues found in a demo clinic agent, by severity, each cited to a call and timestamp |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | How it works, every design decision with the alternatives and trade-offs, measured results |
+| [ITERATION_LOG.md](ITERATION_LOG.md) | What went wrong on early calls, the real cause, the fix and how it was tested |
+
+## Real calls
+
+[`calls/INDEX.md`](calls/INDEX.md) lists 11 calls (96–323 s, mean 2.8 min) to a demo AI receptionist for an orthopedic clinic. Start with `calls/02-new_patient_booking` (the critical privacy bug, at 01:01 and 02:33) or `calls/07-barge_in` (a scripted interruption the agent handles well). These calls used an earlier primary-care version of the scenarios; each `scenario.json` records what that call used.
+
+**Known issue in these recordings:** the first ~35 s of several calls overlap. The line plays a recording notice, pauses, then greets, and the bot answered the notice (30 of 33 cut-off bot turns are in that window). After the greeting, turn-taking is normal. The fix, and a guard against hanging up right after a question or during a transfer, came after these calls and are covered by `tests/`; see [ITERATION_LOG.md](ITERATION_LOG.md) #7–#10.
 
 ## Quick start
 
-Requirements: macOS or Linux, Python 3.11–3.13 (`brew install python@3.12` on a Mac; 3.14 has no voice-package builds for Intel Macs, and 3.10 cannot install them either), a LiveKit Cloud project, a Twilio account with one phone number, and API keys for Deepgram, OpenAI and Cartesia.
+Requirements: macOS or Linux, Python 3.11–3.13 (`brew install python@3.12` on a Mac), and API keys for Deepgram, OpenAI and Cartesia. Real calls also need a LiveKit Cloud project and a Twilio account with one phone number.
 
 ```bash
-./setup.sh                        # creates .venv (or VENV=.venv312 ./setup.sh), installs deps, copies .env
-source .venv/bin/activate         # do this in every new terminal
-# fill in .env: keys, Twilio trunk details, and the test patient
-python scripts/setup_trunk.py     # registers the Twilio trunk with LiveKit; copy the printed id into .env
-python scripts/preflight.py       # checks packages, .env, every API key and the SIP trunk without placing a call
+./setup.sh                        # creates .venv, installs deps, copies .env.example to .env
+source .venv/bin/activate
+python scripts/preflight.py --console
 ```
 
-Run the calls (one command; it starts the worker, places calls one after another, and waits for each to finish):
+**Try it without a phone line.** You play the receptionist, through your mic or by typing. Nothing is dialed, and only the three provider keys are needed:
 
 ```bash
-python scripts/run_calls.py --all                    # every scenario, in order
+SCENARIO=refill_routine python -m caller.agent console --text
+```
+
+**Place real calls:**
+
+```bash
+# in .env: LiveKit, Twilio trunk, TARGET_NUMBER and a test patient
+python scripts/setup_trunk.py                        # registers the Twilio trunk with LiveKit; copy the id into .env
+python scripts/preflight.py                          # checks every key, the trunk and the target without dialing
+python scripts/run_calls.py --all                    # every scenario, one after another
 python scripts/run_calls.py schedule_new_checkup     # one scenario
-python scripts/run_calls.py --list                   # see scenario ids
-python scripts/run_calls.py --check                  # re-check saved calls, rewrite calls/INDEX.md
-python scripts/renumber_calls.py                     # before submitting: drop invalid calls, renumber 01..N (add --apply)
+python scripts/run_calls.py --list                   # scenario ids
+python scripts/analyze_calls.py                      # LLM first pass: calls/*/findings.md, reports/check_matrix.md
 ```
 
-Then do a first-pass review of the transcripts (optional):
-
-```bash
-python scripts/analyze_calls.py   # writes calls/*/findings.md and reports/candidate_findings.md
-```
+> Only call voice agents you own or have explicit permission to test.
 
 ## What each call produces
 
-After every call, the runner checks that it is a real conversation: the recording and transcript were saved, the call lasted at least 45 s, and each side spoke at least 3 times. It prints VALID or the reason it isn't, and keeps a table of all calls in `calls/INDEX.md`. Only valid calls count toward the 10.
-
-**Known issue in the submitted recordings:** in calls 01–11 the first ~35 s often overlap. The clinic plays a recording notice, pauses, then greets, and the bot answered the notice (30 of the 33 cut-off bot turns are in that window). Once the greeting is over, turn-taking is normal. The fix (stay silent on the notice) and a guard against hanging up right after a question or during a transfer (call 01 at 02:11, call 10 at 04:30) came after these calls. Both are covered by `tests/`; see [ITERATION_LOG.md](ITERATION_LOG.md) #7–#10.
-
+After every call, the runner checks that it was a real conversation: recording and transcript saved, at least 45 s long, and at least 3 turns from each side. It prints VALID or the reason it isn't, and keeps a table of all calls in `calls/INDEX.md`.
 
 `calls/NN-<scenario>/`
 
 | File | Contents |
 |---|---|
-| `recording.mp3` | Mono mix of both sides. Listen to this one. |
-| `recording.ogg` | Stereo Opus: left channel is the clinic agent, right channel is the patient bot. Same timeline. |
-| `transcript.txt` | Both sides, with `[mm:ss]` timestamps that match the recording. Barge-ins, hangups and tool calls are marked. |
-| `transcript.json` | The same turns in structured form, plus the bot's per-turn response latency. |
-| `scenario.json` | The goal and the expected correct behaviour for this call. |
-| `findings.md` / `.json` | Each check graded pass, fail or not tested, plus other candidate issues (if you ran the analyzer). These must be verified against the audio. |
+| `recording.mp3` | Mono mix of both sides |
+| `recording.ogg` | Stereo Opus: left channel is the agent under test, right channel is the bot |
+| `transcript.txt` | Both sides with `[mm:ss]` timestamps that match the recording; barge-ins, hangups and tool calls marked |
+| `transcript.json` | The same turns in structured form, plus the bot's per-turn response latency |
+| `scenario.json` | The goal and expected behaviour used for this call |
+| `findings.md` / `.json` | Each check graded pass, fail or not tested (after running the analyzer) |
+
+## Scenarios and checks
+
+`caller/scenarios.yaml` holds 15 scenarios for an orthopedic clinic: booking, new patients, rescheduling, cancellation, refills (routine and controlled), insurance, hours, an emergency disguised as a follow-up, indecisive callers, barge-in, third-party privacy requests and prompt injection. Each has:
+- a goal and a few things to try, which the bot sees;
+- numbered failure conditions with a severity (for example `SCH-01`: confirms an appointment without checking availability, Critical), which the bot does not see;
+- a one-line passing outcome.
+
+Five common checks (`GEN-01` to `GEN-05`: talking over the caller, loops, self-contradiction, false "done" claims, dead air) apply to every call, for 66 checks in total. A scenario can override the caller's identity, opening line and voice, or script a barge-in. Adding a scenario means adding a YAML entry, not code.
 
 ## Telephony setup (Twilio → LiveKit SIP)
 
-1. **Buy one Twilio number.** Use it for every call; it's the number that goes on the submission form.
-2. **Create a SIP trunk.** In Twilio, go to Elastic SIP Trunking, create a trunk, and under Termination:
-   - Set a termination SIP URI (for example `my-caller.pstn.twilio.com`). This value is `TWILIO_TERMINATION_URI`.
-   - Under Authentication, add a credential list. Its username and password are `TWILIO_SIP_USERNAME` and `TWILIO_SIP_PASSWORD`.
-3. **Attach the number.** Under the trunk's Phone Numbers, add your number. Put the same number in `CALLER_ID_NUMBER`.
-4. **Register the trunk.** Run `python scripts/setup_trunk.py`, then put the printed `SIP_OUTBOUND_TRUNK_ID` in `.env`.
+1. **Buy one Twilio number** and use it for every call.
+2. **Create an Elastic SIP trunk.** Under Termination, set a termination SIP URI (this is `TWILIO_TERMINATION_URI`) and add a credential list (`TWILIO_SIP_USERNAME`, `TWILIO_SIP_PASSWORD`).
+3. **Attach the number** to the trunk and put it in `CALLER_ID_NUMBER`.
+4. **Check geo permissions.** If the first call fails with `SIP 403 No International Permission`, enable the destination in Twilio's voice geographic permissions.
+5. **Register the trunk.** Run `python scripts/setup_trunk.py` and put the printed `SIP_OUTBOUND_TRUNK_ID` in `.env`.
 
 ## Environment variables
 
@@ -65,60 +102,46 @@ All variables are listed with comments in [`.env.example`](.env.example). Secret
 
 | Variable | Purpose |
 |---|---|
-| `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` | LiveKit Cloud project: rooms, SIP, turn-detector inference |
-| `DEEPGRAM_API_KEY` | Speech-to-text |
-| `OPENAI_API_KEY` | Patient LLM and the transcript analyzer |
-| `CARTESIA_API_KEY` | Text-to-speech |
-| `TWILIO_*`, `CALLER_ID_NUMBER` | Only used by `setup_trunk.py` |
+| `DEEPGRAM_API_KEY`, `OPENAI_API_KEY`, `CARTESIA_API_KEY` | STT, patient LLM and analyzer, TTS |
+| `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` | LiveKit Cloud project: rooms, SIP, turn detection |
+| `TWILIO_*`, `CALLER_ID_NUMBER` | Used once by `setup_trunk.py` |
 | `SIP_OUTBOUND_TRUNK_ID` | LiveKit outbound trunk used to dial |
-| `PATIENT_FIRST_NAME`, `PATIENT_LAST_NAME`, `PATIENT_DOB`, `PATIENT_PHONE` | The test patient. Match the account you created on the clinic's signup page so lookups work. |
+| `TARGET_NUMBER` | The voice agent under test, E.164. The only number the bot will dial |
+| `PATIENT_FIRST_NAME`, `PATIENT_LAST_NAME`, `PATIENT_DOB`, `PATIENT_PHONE` | The test patient; must match a test account on the system under test |
 | `LLM_MODEL`, `STT_MODEL`, `TTS_MODEL`, `TTS_VOICE_ID`, `MIN/MAX_ENDPOINTING_DELAY` | Optional tuning |
 
 ## Project layout
 
 ```
 caller/
-  agent.py        LiveKit worker: dials, runs the patient session, records, hangs up
-  persona.py      scenario loader + the patient system prompt
-  scenarios.yaml  the test scenarios (goal, things to try, expected behaviour)
-  transcript.py   timestamped transcript + latency capture
-  audio.py        recording export (stereo OGG + mono MP3)
-  config.py       env settings and the hard-coded target number
+  agent.py          LiveKit worker: dials, runs the patient session, records, hangs up
+  persona.py        scenario loader + the patient system prompt
+  scenarios.yaml    the test scenarios (goal, things to try, hidden checks)
+  transcript.py     timestamped transcript + latency capture
+  audio.py          recording export (stereo OGG + mono MP3)
+  config.py         settings, console vs. outbound validation, the target number
 scripts/
-  run_calls.py    single command to place calls
-  setup_trunk.py  one-time Twilio -> LiveKit trunk registration
-  analyze_calls.py LLM first-pass QA over transcripts
-  preflight.py    checks packages, .env, API keys and the SIP trunk without dialing
+  run_calls.py      single command to place and validate calls
+  analyze_calls.py  LLM first-pass QA over transcripts
+  preflight.py      checks packages, .env, API keys, trunk and target without dialing
+  setup_trunk.py    one-time Twilio -> LiveKit trunk registration
   renumber_calls.py drops invalid calls and renumbers 01..N
-tests/            key-free checks: recording-notice silence, end_call guard
-calls/            recordings and transcripts (committed)
-reports/          analyzer output and evidence from early failed calls
-ARCHITECTURE.md   how it works and why
-BUG_REPORT.md     issues found in the clinic agent
-ITERATION_LOG.md  what changed after listening to early calls
+tests/              key-free tests: recording-notice silence, end_call guard
+calls/              recordings and transcripts of the real calls
+reports/            analyzer output (check matrix) and evidence from early failed calls
 ```
 
-## Scenarios and bug detection criteria
+## Tests
 
-`caller/scenarios.yaml` holds 15 scenarios. The clinic agent under test answers for a demo orthopedic practice, so the patients call about knees, shoulders, post-surgery care, arthritis medication and so on. (The submitted calls 01–11 were made with the earlier primary-care version of these scenarios; each call's `scenario.json` records what it used.) Each one has:
-- a goal and a few things to try, which the bot sees;
-- numbered failure conditions with a severity (for example `SCH-01`: confirms an appointment without checking availability, Critical), which the bot does not see;
-- a one-line passing outcome.
+No API keys needed, and nothing is dialed:
 
-Five common checks (`GEN-01` to `GEN-05`: talking over the caller, loops, self-contradiction, false "done" claims, dead air) apply to every call. That makes 66 checks in total.
-
-`scripts/analyze_calls.py` grades every check as pass, fail or not tested, and writes `reports/check_matrix.md`. Confirm every fail by listening before it goes into `BUG_REPORT.md`, and cite it by check ID.
-
-A scenario can also override the caller's `identity` (name, DOB, phone), give an `opening` line, and set a `tts_voice` so the voice matches the persona. `new_patient_booking` (Sarah Mitchell) and `reschedule_unknown_appointment` (Daniel Brooks) do this. Otherwise the caller is the test account from `.env`.
-
-To add a scenario, append an entry with an `id`, `goal`, `try` items, `expected`, `checks` and `pass_outcome`. Add an `interrupt` block to script a barge-in.
+```bash
+python tests/test_recording_notice.py   # stays silent on "this call may be recorded", answers the real greeting
+python tests/test_end_call_guard.py     # won't hang up right after a question or during a transfer
+```
 
 ## Debugging tips
 
-- `python tests/test_recording_notice.py` checks, with no API keys, that the bot stays silent on the clinic's recording notice and answers the real greeting.
-- `python tests/test_end_call_guard.py` checks, with no API keys, that the bot won't hang up right after asking a question or while being transferred.
-
-- **Rehearse without phone charges:** run `SCENARIO=refill_routine python -m caller.agent console` to play the receptionist through your mic, or add `--text` to type instead. Nothing is dialed. Console mode needs only the Deepgram, OpenAI and Cartesia keys. With no `PATIENT_*` values set, it uses a fictional patient (Sarah Mitchell, March 15, 1992, +12125550147). Real calls refuse to start until the LiveKit, SIP and test-patient settings are all filled in.
-- `python -m caller.agent dev` runs the worker with debug logs. In another shell, run `python scripts/run_calls.py --no-worker <scenario>`.
-- The worker log for batch runs is at `logs/worker.log`.
-- If the bot talks over the clinic's pauses, raise `MIN_ENDPOINTING_DELAY` (for example to 0.9). If it feels sluggish, lower it.
+- `python -m caller.agent dev` runs the worker with debug logs. In another shell: `python scripts/run_calls.py --no-worker <scenario>`. Batch-run worker logs are in `logs/worker.log`.
+- If the bot talks over the agent's pauses, raise `MIN_ENDPOINTING_DELAY` (for example to 0.9). If it feels sluggish, lower it.
+- With no `PATIENT_*` values, console mode uses a fictional patient (Sarah Mitchell, March 15, 1992, +12125550147). Real calls refuse to start until the LiveKit, SIP, target and test-patient settings are all filled in.

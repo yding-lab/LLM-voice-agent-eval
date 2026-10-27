@@ -1,4 +1,4 @@
-"""Tidy calls/ before submitting: drop calls that aren't valid full conversations and
+"""Tidy calls/ before sharing results: drop calls that aren't valid full conversations and
 renumber the rest 01, 02, 03... in the order they were made.
 
     python scripts/renumber_calls.py            # preview only, changes nothing

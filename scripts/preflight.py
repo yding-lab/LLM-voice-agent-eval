@@ -119,9 +119,9 @@ def main() -> None:
             build_instructions(one, s)
         return f"{len(sc)} scenarios"
 
-    @check("Target number is the assessment line only")
+    @check("Target number is set (E.164)", "set TARGET_NUMBER in .env, e.g. +14155550100")
     def _():
-        return (config.TARGET_NUMBER == "+18054398008", config.TARGET_NUMBER)
+        return (bool(config.E164.match(config.TARGET_NUMBER)), config.TARGET_NUMBER or "not set")
 
     @check("Voice activity model loads", "run: python -m livekit.agents download-files")
     def _():
