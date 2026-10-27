@@ -1,5 +1,7 @@
 # voice-agent-qa
 
+[![tests](https://github.com/yding-lab/patient-caller/actions/workflows/tests.yml/badge.svg)](https://github.com/yding-lab/patient-caller/actions/workflows/tests.yml) ![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%E2%80%933.13-blue) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 **Automated phone-call testing for voice AI agents.** A Python bot that phones a voice agent (here, an AI clinic receptionist), plays a realistic patient across 15 scenarios, records and transcribes every call, and grades the agent against 66 numbered checks.
 
 Built on LiveKit Agents in pipeline mode: Deepgram STT → GPT-4.1-mini → Cartesia TTS, dialing out over a Twilio SIP trunk.
@@ -133,7 +135,7 @@ reports/            analyzer output (check matrix) and evidence from early faile
 
 ## Tests
 
-No API keys needed, and nothing is dialed:
+No API keys needed, and nothing is dialed. They also run in GitHub Actions on every push:
 
 ```bash
 python tests/test_recording_notice.py   # stays silent on "this call may be recorded", answers the real greeting
