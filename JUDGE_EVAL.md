@@ -51,9 +51,9 @@ Two changes went along with these:
 - **Privacy.** Transcripts are now pseudonymized before they reach any model (`caller/redact.py`). Names, dates of birth, phone numbers and emails become stable tokens such as `[DOB_1]` and `[DOB_2]`. They're stable so that a correction stays visible (the agent kept `[DOB_1]` after the caller said `[DOB_2]`) without the values leaving the machine. Appointment dates are kept.
 - **Portability.** The judge runs on OpenAI or AWS Bedrock through one interface (`caller/llm_providers.py`, the Bedrock Converse API), so the same rubric can be compared across models.
 
-## Measuring v2
+## Re-scoring a judge
 
-v2 changes four things at once. That's fine for a first pass but would be wrong to report as one number, so the plan is to run it, then ablate:
+v2 is the default rubric; v1 stays available (`--rubric v1`) so the two can be compared on the same calls. v2 changes four things at once, so a fair comparison also ablates them one at a time rather than reporting a single number. The workflow:
 
 ```bash
 python scripts/analyze_calls.py --run-name judge-v2 --force                           # same 11 calls, new judge
@@ -69,7 +69,7 @@ Any new `fail` that isn't in `evals/labels.yaml` is listed as unlabelled. It get
 - **Small sample:** 11 calls, 100 graded checks, 9 confirmed bugs. One flipped label moves recall by 11 points. These numbers show direction, not a benchmark.
 - **One reviewer.** A second labeller and an agreement score (Cohen's κ) would be the next step.
 - **Recall is measured on known bugs only.** Passes weren't exhaustively re-reviewed, so bugs neither the judge nor the human found are invisible here.
-- **The rubric was revised after looking at these same calls.** Measuring v2 on them is a check that the changes work, not an unbiased estimate. New calls are the real test.
+- **v2 was designed from errors on these same calls.** Scoring it on them would check that the fixes work, not give an unbiased estimate. That needs new calls, which is why the baseline is the only number reported here.
 
 ## In CI
 
