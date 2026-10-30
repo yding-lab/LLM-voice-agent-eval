@@ -1,6 +1,6 @@
 # llm-voice-agent-eval
 
-[![tests](https://github.com/yding-lab/llm-voice-agent-eval/actions/workflows/tests.yml/badge.svg)](https://github.com/yding-lab/llm-voice-agent-eval/actions/workflows/tests.yml) ![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%E2%80%933.13-blue) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://github.com/yding-lab/LLM-voice-agent-eval/actions/workflows/tests.yml/badge.svg)](https://github.com/yding-lab/LLM-voice-agent-eval/actions/workflows/tests.yml) ![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%E2%80%933.13-blue) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **An evaluation platform for voice AI agents.** It simulates realistic users over real phone calls, grades every call with an LLM judge, measures that judge against human labels with confidence intervals, tracks every run as a reproducible experiment, and serves the whole pipeline over an API.
 
@@ -8,20 +8,33 @@ The agent under test here is an AI receptionist for a medical clinic. The caller
 
 ## Try it in 60 seconds, no keys
 
-The evaluation half runs on the 11 recorded calls with no API keys, phone line or LiveKit account. Its `replay` mode serves the recorded judge outputs, so the scores and reports you see are the real ones, at no cost.
-
-```bash
-docker build -t llm-voice-agent-eval . && docker run --rm -p 8000:8000 llm-voice-agent-eval
-# open http://localhost:8000/docs  ->  POST /samples/02-new_patient_booking/evaluate  ->  "Try it out"
-```
-
-Or without Docker:
+The evaluation half runs offline, with no API keys, phone line or paid service:
 
 ```bash
 pip install -r requirements-eval.txt
-python -m evalkit demo      # replay the judge on all 11 calls and score it against human labels
-make serve                  # the same API at http://127.0.0.1:8000/docs
+python -m evalkit demo                       # synthetic sample calls: the whole flow, end to end
+python -m evalkit demo --dataset recorded    # the 11 real calls, replaying the recorded gpt-4.1 judge
 ```
+
+Or as a service:
+
+```bash
+docker build -t llm-voice-agent-eval . && docker run --rm -p 8000:8000 llm-voice-agent-eval
+# open http://localhost:8000/docs  ->  POST /samples/s02-refill_request/evaluate  ->  "Try it out"
+```
+
+| Demo data | What it is | What its numbers mean |
+|---|---|---|
+| `synthetic` (default) | Three fictional calls written for this repo, with five seeded defects ([samples/](samples/README.md)), and a **hand-written fixture** standing in for the judge | How the pipeline and the metrics work. Nothing about judge quality |
+| `recorded` | The 11 real calls, with the judge output gpt-4.1 actually produced **replayed** from disk (no model is called) | The measured baseline in [JUDGE_EVAL.md](JUDGE_EVAL.md), nothing more |
+
+**Three kinds of judge output live in this repo, and only one is evidence of judge quality:**
+
+| Kind | Where | Produced by | Evidence of judge quality? |
+|---|---|---|---|
+| Real model output | `evals/runs/baseline-v1-gpt-4.1/` | gpt-4.1 with rubric v1 on the 11 real calls. The manifest was reconstructed afterwards; tokens, latency and cost weren't recorded | Yes, but only in-sample (`dev`) and against one reviewer's labels |
+| Replay | any run with `provider: replay` | Re-serves the stored outputs above, matched by transcript hash | No new evidence: same numbers as the run it replays |
+| Hand-written fixture | `samples/runs/illustrative-fixture/` | Written by the author, with deliberate mistakes | **No.** It only shows how scoring works |
 
 ## How it fits together
 
@@ -46,10 +59,10 @@ flowchart LR
 
 ## Highlights
 
-- **The evaluator is evaluated.** The LLM judge was scored against human-confirmed findings: **50% precision (95% CI 27–73%)** and **56% recall (27–81%)** at baseline. Every error traced to one of four causes (blaming the wrong side, no clock, lenient grading, a coverage gap), and judge v2 targets each one. See [JUDGE_EVAL.md](JUDGE_EVAL.md).
-- **Honest about sample size.** Every rate comes with a Wilson interval. Metrics are split into `dev` (the calls v2 was designed on, so in-sample) and `holdout` (every new call). A second reviewer's labels give Cohen's κ, and the labelling template and agreement command are already in place.
+- **The evaluator is evaluated.** The LLM judge (gpt-4.1, rubric v1) was scored against human-confirmed findings: **50% precision (95% CI 27–73%)** and **56% recall (27–81%)**. Every error traced to one of four causes (blaming the wrong side, no clock, lenient grading, a coverage gap), and rubric v2 targets each one. **v2 hasn't been run on the real calls yet, so no v2 result is claimed.** See [JUDGE_EVAL.md](JUDGE_EVAL.md).
+- **Honest about sample size.** Every rate comes with a Wilson interval. All 11 real calls are `dev` data: v2 was designed from v1's errors on them, so they can't measure how v2 generalizes. The `holdout` split (every new call) is empty, and all labels come from one reviewer, the author. The workflow for an independent second reviewer and a holdout run is ready (template, Cohen's κ, disagreement list, adjudicated labels), but none of that data exists yet.
 - **Every run is a tracked experiment.** Each run records its provider, model, rubric hash, scenario-set hash, input hashes, git commit, tokens, estimated cost and latency in `manifest.json`. `compare` shows what changed in the setup, the scores, the cost, and check by check.
-- **One pipeline, production habits.** Pseudonymize → judge → save → score → report, with layered config, retries with exponential backoff, timeouts, per-call error isolation, resumable runs and per-call logging.
+- **One pipeline, production habits.** Pseudonymize → judge → save → score → report, with layered config, retries with exponential backoff, timeouts, per-call error isolation and per-call logging. Runs resume after a failure, but saved outputs are reused only when the transcript, the scenario and every result-affecting setting are unchanged; otherwise the run refuses and asks for a new run name.
 - **A service, not just scripts.** The FastAPI endpoints evaluate a transcript, list runs and compare them, packaged as a non-root Docker image that CI builds and smoke-tests on every push.
 - **Responsible AI by default.** Names, dates of birth, phones and emails become stable tokens before any model call, so the judge can still see that a correction was ignored without ever seeing the values.
 - **Real calls, real bugs.** 11 calls to a live demo agent turned up 9 confirmed issues, including a critical one: records were matched on caller ID, so a second caller from the same number could see and cancel another patient's appointment ([BUG_REPORT.md](BUG_REPORT.md)).
@@ -61,19 +74,21 @@ flowchart LR
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Both halves of the system, every design decision with alternatives and trade-offs |
 | [BUG_REPORT.md](BUG_REPORT.md) | 9 issues found in the demo agent, by severity, each cited to a call and timestamp |
 | [ITERATION_LOG.md](ITERATION_LOG.md) | What went wrong, the real cause, the fix and how it was tested |
+| [DATA_AUDIT.md](DATA_AUDIT.md) | Identities, personal information, secrets and publication permission for the committed data |
 | [calls/](calls/INDEX.md) | 11 real calls: recordings, timestamped transcripts |
 
 ## Evaluation pipeline (`evalkit`)
 
 ```bash
-python -m evalkit demo                                    # keyless replay + scoring
+python -m evalkit demo [--dataset recorded]               # offline, no key
 python -m evalkit run --name judge-v2                     # judge all calls with the configured model (OPENAI_API_KEY)
+python -m evalkit reproduce baseline-v1-gpt-4.1           # re-run with a run's recorded settings, then compare
 python -m evalkit run --provider bedrock --model <bedrock model id> --name v2-bedrock   # AWS credentials
 python -m evalkit score --run evals/runs/judge-v2         # precision / recall per split, CIs, severity, error types
 python -m evalkit compare evals/runs/baseline-v1-gpt-4.1 evals/runs/judge-v2
 python -m evalkit runs -v                                 # every tracked run with model, rubric, cost, latency
-python -m evalkit labels-template                         # blank sheet for a second reviewer
-python -m evalkit agreement                               # Cohen's kappa once a second reviewer has labelled
+python -m evalkit labels-template                         # blank sheet for an independent second reviewer
+python -m evalkit agreement                               # Cohen's kappa + the disagreements to adjudicate
 ```
 
 Settings come from `evals/config.yaml`, then environment variables (`ANALYSIS_PROVIDER`, `ANALYSIS_MODEL`, `EVAL_RUBRIC`, …), then CLI flags. The resolved values are saved with every run.
@@ -83,7 +98,9 @@ Settings come from `evals/config.yaml`, then environment variables (`ANALYSIS_PR
 | Field | Why |
 |---|---|
 | `config` (provider, model, rubric, redaction, timeouts, retries) | So a result can be traced to the exact settings |
-| `rubric_sha`, `scenario_set_sha`, per-call `input_sha` | An edited prompt or transcript can't pass for the version that was scored |
+| `rubric_sha`, `scenario_set_sha`, per-call `input_sha` and `scenario_sha` | An edited prompt, transcript or scenario can't pass for the version that was scored |
+| `fingerprint` (provider, model, rubric + hash, scenarios hash, redaction and its name list hash, dataset, replay source) | A resumed run must match it exactly, or it refuses to reuse anything |
+| per call: `judged_at`; run: `resumes` (when, commit, which calls judged vs reused) | Reused outputs keep their original records; a resume never re-stamps them with new settings |
 | `git_commit`, `created_at`, `evalkit_version` | Reproducibility |
 | per call: `status`, `error`, `attempts`, `latency_s`, tokens, `cost_usd`, `redactions` | Reliability, cost and privacy at a glance |
 | `totals` | Run-level cost, token, error and latency summary |
@@ -101,9 +118,11 @@ Settings come from `evals/config.yaml`, then environment variables (`ANALYSIS_PR
 | `GET /runs`, `GET /runs/{run}` | Tracked runs, with manifest and scores |
 | `GET /compare?before=&after=` | Setup changes, score deltas, cost and latency, check-by-check differences |
 
-The judge provider is fixed by the server's configuration, never by the request, so a public demo can't be used to spend API credits. In replay mode (the image default), only the bundled transcripts can be graded. Set `ANALYSIS_PROVIDER=openai` with a key to grade new ones.
+The judge provider is fixed by the server's configuration, never by the request, so a public demo can't be used to spend API credits. In replay mode (the image default, on the synthetic samples), only the bundled transcripts can be graded, and every response says whether it came from a fixture or a recorded model run. Set `ANALYSIS_PROVIDER=openai` with a key to grade new ones.
 
 ## Real calls
+
+**Publication status: unresolved.** These recordings are of a third-party demo agent, and written permission to publish them isn't on file ([DATA_AUDIT.md](DATA_AUDIT.md)). The recordings and transcripts are still public in this repository and its history. The offline demo and the Docker image default to the synthetic samples, but that doesn't settle the question.
 
 [`calls/INDEX.md`](calls/INDEX.md) lists 11 calls (96–323 s, mean 2.8 min) to a demo AI receptionist for an orthopedic clinic. Start with `calls/02-new_patient_booking` (the critical privacy bug, at 01:01 and 02:33) or `calls/07-barge_in` (a scripted interruption the agent handles well). These calls used an earlier primary-care version of the scenarios; each `scenario.json` records what that call used.
 
@@ -144,7 +163,7 @@ All are listed with comments in [`.env.example`](.env.example); secrets live onl
 | Variable | Purpose |
 |---|---|
 | `ANALYSIS_PROVIDER`, `ANALYSIS_MODEL`, `AWS_REGION` | The judge: `openai` (default, gpt-4.1), `bedrock`, or `replay` (keyless) |
-| `EVAL_RUBRIC`, `EVAL_REDACT`, `EVAL_TIMEOUT_S`, `EVAL_MAX_RETRIES`, `EVAL_REPLAY_RUN` | Judge settings that override `evals/config.yaml` |
+| `EVALKIT_DATASET`, `EVAL_RUBRIC`, `EVAL_REDACT`, `EVAL_TIMEOUT_S`, `EVAL_MAX_RETRIES`, `EVAL_REPLAY_RUN` | Dataset (`recorded`/`synthetic`) and judge settings that override `evals/config.yaml` |
 | `DEEPGRAM_API_KEY`, `OPENAI_API_KEY`, `CARTESIA_API_KEY` | STT, patient LLM and judge, TTS |
 | `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`, `SIP_OUTBOUND_TRUNK_ID` | LiveKit Cloud and the outbound trunk |
 | `TWILIO_*`, `CALLER_ID_NUMBER` | Used once by `setup_trunk.py` |
@@ -162,7 +181,7 @@ evalkit/            evaluation pipeline (no LiveKit dependency)
   rubrics.py        versioned judge rubrics (v1 kept byte-for-byte for the baseline)
   providers.py      OpenAI, AWS Bedrock (Converse API), replay; token usage
   judge.py          prompt building, retries with backoff, per-call outcome
-  pipeline.py       end to end: judge -> save -> score -> report; resumable
+  pipeline.py       end to end: judge -> save -> score -> report; resumes only with verified provenance
   runs.py           experiment tracking: manifest, cost, latency, run listing
   scoring.py        labels, splits, Wilson CIs, severity, error types, Cohen's kappa
   compare.py        run-vs-run: setup, metrics, cost, check-by-check
@@ -170,20 +189,21 @@ evalkit/            evaluation pipeline (no LiveKit dependency)
   cli.py            python -m evalkit ...
 evals/
   config.yaml       default judge settings
-  labels/           human ground truth (reviewer_a = adjudicated) + template for more reviewers
+  labels/           human ground truth: reviewer_a (+ reviewer_b, adjudicated when they exist), template
   splits.yaml       dev (in-sample) vs. holdout
   pricing.yaml      per-1M-token prices for cost estimates
   runs/             tracked judge runs (baseline-v1-gpt-4.1, ...)
 caller/             the caller bot: LiveKit worker, persona, scenarios, recording, transcripts
 scripts/            run_calls, setup_trunk, preflight, renumber_calls; analyze/eval/compare wrap evalkit
 tests/              pytest suite (no keys, no network) + turn-taking guard checks
-calls/              recordings and transcripts of the real calls
+calls/              recordings and transcripts of the real calls (dataset "recorded")
+samples/            fictional calls with seeded defects, labels and a fixture judge run (dataset "synthetic")
 Dockerfile          the evaluation service image (replay mode by default)
 ```
 
 ## Tests
 
-No API keys and no network. CI runs them on every push, alongside an eval gate (the newest judge run must keep ≥50% precision and recall against human labels) and a Docker build plus smoke test of the running container.
+No API keys and no network. CI runs them on every push, alongside an eval gate (the newest judge run must keep ≥50% precision and recall against human labels on `dev`; a regression check on in-sample data, not a quality claim) and a Docker build plus smoke test of the running container.
 
 ```bash
 make test        # pytest suite (pipeline, providers, retries, scoring, tracking, API) + turn-taking guards

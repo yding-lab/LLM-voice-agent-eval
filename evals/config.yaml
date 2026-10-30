@@ -7,5 +7,6 @@ redact: true              # pseudonymize names, DOBs, phones, emails before any 
 timeout_s: 120
 max_retries: 3            # with exponential backoff: 2 s, 4 s, 8 s
 retry_backoff_s: 2.0
-replay_run: baseline-v1-gpt-4.1
+dataset: recorded         # recorded (the 11 real calls) | synthetic (samples/, permission-cleared)
+replay_run: ""            # empty = the dataset's default recorded run
 aws_region: us-east-1

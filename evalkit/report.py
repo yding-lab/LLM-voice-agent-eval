@@ -9,10 +9,16 @@ def score_md(scores: dict[str, Score], run_name: str, manifest: dict | None) -> 
     lines = [f"# Judge evaluation: {run_name}", ""]
     if manifest:
         c = manifest["config"]
+        redaction = ("no model call (replay)" if manifest.get("replayed_from")
+                     else f"redaction {'on' if c.get('redact') else 'off'}")
         lines += [f"Judge: `{c.get('provider')}:{c.get('model')}`, rubric `{c.get('rubric')}` "
-                  f"(sha `{manifest.get('rubric_sha')}`), redaction {'on' if c.get('redact') else 'off'}.", ""]
-        if manifest.get("backfilled"):
-            lines += [f"> {manifest['backfilled']}", ""]
+                  f"(sha `{manifest.get('rubric_sha')}`), {redaction}.", ""]
+        for key in ("backfilled", "fixture"):
+            if manifest.get(key):
+                lines += [f"> **{key.upper()}:** {manifest[key]}", ""]
+        if manifest.get("replayed_from"):
+            r = manifest["replayed_from"]
+            lines += [f"Replayed from run `{r['run']}` (originally `{r['provider']}:{r['model']}`).", ""]
     for name, s in scores.items():
         lines += [f"## Split: {name} ({len(s.calls)} calls)", ""]
         if not s.calls:

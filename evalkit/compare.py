@@ -13,7 +13,7 @@ from .runs import load_run
 from .scoring import score_by_split
 
 SEV_ORDER = {"Critical": 0, "High": 1, "Medium": 2, "Low": 3}
-SETUP_KEYS = ("provider", "model", "rubric", "redact", "timeout_s", "max_retries")
+SETUP_KEYS = ("provider", "model", "rubric", "redact", "timeout_s", "max_retries", "dataset")
 
 
 def _results(run: dict[str, dict]) -> dict[tuple[str, str], tuple[str, str]]:
@@ -38,12 +38,12 @@ def check_diff(a: dict[str, dict], b: dict[str, dict]) -> dict[str, list[dict]]:
     return groups
 
 
-def compare(before: Path, after: Path) -> dict:
+def compare(before: Path, after: Path, labels: dict | None = None, splits: dict | None = None) -> dict:
     a, ma = load_run(before)
     b, mb = load_run(after)
     shared = sorted(set(a) & set(b))
     a, b = {k: a[k] for k in shared}, {k: b[k] for k in shared}
-    sa, sb = score_by_split(a), score_by_split(b)
+    sa, sb = score_by_split(a, labels, splits), score_by_split(b, labels, splits)
     setup = {}
     for k in SETUP_KEYS:
         va, vb = (ma or {}).get("config", {}).get(k), (mb or {}).get("config", {}).get(k)

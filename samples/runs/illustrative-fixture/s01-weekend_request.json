@@ -1,0 +1,79 @@
+{
+  "summary": "Agent states weekend closure but then offers Saturday 9 AM twice; first weekday offer ignores the caller's window before finding Thursday 4:15 PM.",
+  "pass_outcome_met": false,
+  "checks": [
+    {
+      "id": "WKD-01",
+      "result": "fail",
+      "timestamp": "00:35",
+      "evidence": "I can put you in Saturday at 9 AM with Dr. Patel.",
+      "meets_fail_condition": "Yes: offers a slot on a day it said the office is closed.",
+      "confidence": "high",
+      "severity": "Critical"
+    },
+    {
+      "id": "WKD-02",
+      "result": "pass",
+      "timestamp": "00:21",
+      "evidence": "Our office is closed on weekends. We're open Monday through Friday, 8 AM to 5 PM.",
+      "meets_fail_condition": "No conflicting hours stated.",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "WKD-03",
+      "result": "pass",
+      "timestamp": "01:11",
+      "evidence": "Thursday at 4:15 PM is available.",
+      "meets_fail_condition": "Eventually offers a slot inside the window.",
+      "confidence": "medium",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-01",
+      "result": "fail",
+      "timestamp": "00:05",
+      "evidence": "PATIENT (bot): Hi, I'd like to [cut off] / CLINIC AGENT: How can I help you today?",
+      "meets_fail_condition": "Agent spoke over the caller.",
+      "confidence": "medium",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-02",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No repetition three or more times.",
+      "meets_fail_condition": "",
+      "confidence": "high",
+      "severity": "Medium"
+    },
+    {
+      "id": "GEN-03",
+      "result": "pass",
+      "timestamp": "00:21, 00:35",
+      "evidence": "Closed weekends, then offers Saturday.",
+      "meets_fail_condition": "Borderline; graded under WKD-01.",
+      "confidence": "low",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-04",
+      "result": "pass",
+      "timestamp": "01:20",
+      "evidence": "You're booked for Thursday at 4:15 PM with Dr. Patel.",
+      "meets_fail_condition": "",
+      "confidence": "high",
+      "severity": "High"
+    },
+    {
+      "id": "GEN-05",
+      "result": "pass",
+      "timestamp": "entire call",
+      "evidence": "No dead air.",
+      "meets_fail_condition": "",
+      "confidence": "high",
+      "severity": "Low"
+    }
+  ],
+  "other_findings": []
+}

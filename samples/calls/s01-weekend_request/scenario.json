@@ -1,0 +1,28 @@
+{
+  "id": "schedule_weekend",
+  "title": "Ask for a Sunday appointment (closed-day handling)",
+  "goal": "Try hard to get an appointment on a weekend. Ask for this Sunday at 10 am first. If refused, try Saturday morning. Only if both are refused, accept the earliest weekday slot before 9 am or after 4 pm.\n",
+  "expected": "Does not book on days the office is closed; states hours correctly and consistently; offers the nearest valid weekday slots in the requested time window.\n",
+  "pass_outcome": "The patient is told clearly the office is closed on the weekend (if it is) and leaves with a valid weekday slot or a clear next step.\n",
+  "try": [
+    "If they offer Sunday or Saturday, accept it and ask them to confirm it's really open that day.",
+    "Ask what their hours are on weekends."
+  ],
+  "checks": [
+    {
+      "id": "WKD-01",
+      "fail_if": "Books or offers an appointment on a day the office says it is closed",
+      "severity": "Critical"
+    },
+    {
+      "id": "WKD-02",
+      "fail_if": "States weekend hours that conflict with the hours it gives elsewhere in the call",
+      "severity": "High"
+    },
+    {
+      "id": "WKD-03",
+      "fail_if": "After refusing the weekend, offers no alternative or ignores the early/late time window",
+      "severity": "Medium"
+    }
+  ]
+}

@@ -6,19 +6,39 @@ from fastapi.testclient import TestClient
 from evalkit import api
 
 
+def _client(monkeypatch, dataset):
+    monkeypatch.setenv("ANALYSIS_PROVIDER", "replay")
+    monkeypatch.setenv("EVALKIT_DATASET", dataset)
+    for f in (api.settings, api.provider, api.sample_calls):
+        f.cache_clear()
+    return TestClient(api.app)
+
+
 @pytest.fixture()
 def client(monkeypatch):
-    monkeypatch.setenv("ANALYSIS_PROVIDER", "replay")
+    yield _client(monkeypatch, "recorded")
     for f in (api.settings, api.provider, api.sample_calls):
         f.cache_clear()
-    yield TestClient(api.app)
+
+
+@pytest.fixture()
+def synthetic(monkeypatch):
+    yield _client(monkeypatch, "synthetic")
     for f in (api.settings, api.provider, api.sample_calls):
         f.cache_clear()
+
+
+def test_synthetic_default_demo_is_labelled_as_a_fixture(synthetic):
+    assert synthetic.get("/health").json()["dataset"] == "synthetic"
+    assert len(synthetic.get("/samples").json()) == 3
+    j = synthetic.post("/samples/s02-refill_request/evaluate").json()
+    assert j["counts"]["fail"] == 3 and "FIXTURE" in j["judge"]["note"]
+    assert {b["id"]: b["status"] for b in j["human_label_score"]["known_bugs"]} == {3: "detected", 4: "detected", 5: "detected"}
 
 
 def test_health_and_inputs(client):
     h = client.get("/health").json()
-    assert h["status"] == "ok" and h["provider"] == "replay" and h["sample_calls"] == 11
+    assert h["status"] == "ok" and h["provider"] == "replay" and h["sample_calls"] == 11 and h["dataset"] == "recorded"
     assert len(client.get("/scenarios").json()) == 15
     assert len(client.get("/samples").json()) == 11
 

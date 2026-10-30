@@ -1,0 +1,27 @@
+Call: s02-refill_request
+Scenario: refill_routine - Routine arthritis medication refill (approval status)
+Date: 2026-10-21 15:30
+Duration: 01:40   End: patient bot said goodbye
+SYNTHETIC: written by hand for the offline demo. Fictional clinic, fictional caller, seeded defects (see samples/README.md).
+
+[00:00] -- dialing (synthetic, nothing dialed) --
+[00:02] -- call answered --
+[00:03] CLINIC AGENT: Thanks for calling Maple Grove Orthopedics. How can I help you?
+[00:07] PATIENT (bot): Hi, I need a refill on my meloxicam.
+[00:11] CLINIC AGENT: I can help with that. Can I have your name and date of birth?
+[00:15] PATIENT (bot): Jordan Lee, May 3, 1990.
+[00:20] CLINIC AGENT: Thank you. I have your date of birth as May 3, 1990.
+[00:25] PATIENT (bot): Sorry, actually it's June 3, 1990, not May.
+[00:30] CLINIC AGENT: Got it. And which medication and dose?
+[00:34] PATIENT (bot): Meloxicam, 15 milligrams, once a day.
+[00:40] CLINIC AGENT: Great news, your meloxicam 15 milligram refill is approved and has been sent.
+[00:47] PATIENT (bot): Oh, already? Did the doctor sign off on it?
+[00:52] CLINIC AGENT: It's all taken care of. It's been sent.
+[00:57] PATIENT (bot): Which pharmacy did it go to?
+[01:01] CLINIC AGENT: It went to the pharmacy we have on file.
+[01:06] PATIENT (bot): Okay. And you have my birthday as June 3rd now, right?
+[01:11] CLINIC AGENT: I have your date of birth as May 3, 1990.
+[01:16] PATIENT (bot): Hmm, okay. When can I pick it up?
+[01:21] CLINIC AGENT: Pharmacies usually need one to two business days.
+[01:27] PATIENT (bot): Okay, thanks. Bye.
+[01:31] -- hangup: patient bot said goodbye --

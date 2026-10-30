@@ -1,7 +1,9 @@
 """Score a judge run against human labels.
 
-Ground truth lives in evals/labels/<reviewer>.yaml. `reviewer_a` is the adjudicated truth;
-any further reviewer files are used only to measure inter-rater agreement (Cohen's kappa).
+Ground truth lives in evals/labels/. Each reviewer labels independently in reviewer_<x>.yaml.
+Truth is `adjudicated.yaml` when it exists (disagreements resolved after both reviewers
+labelled), otherwise reviewer_a. Further reviewers are compared for agreement (Cohen's kappa),
+and `disagreements()` lists exactly what an adjudicator has to decide.
 
 Everything is reported per split (evals/splits.yaml). `dev` holds the calls the current rubric
 was designed on, so its numbers are in-sample. Every other call is `holdout`.
@@ -74,8 +76,20 @@ class Rate:
 
 
 # ---------------------------------------------------------------- labels and splits
+ADJUDICATED = "adjudicated"
+
+
 def load_labels(reviewer: str = TRUTH, labels_dir: Path = LABELS_DIR) -> dict:
     return yaml.safe_load((labels_dir / f"{reviewer}.yaml").read_text()) or {}
+
+
+def truth_source(labels_dir: Path = LABELS_DIR) -> str:
+    return ADJUDICATED if (labels_dir / f"{ADJUDICATED}.yaml").exists() else TRUTH
+
+
+def truth_labels(labels_dir: Path = LABELS_DIR) -> dict:
+    """Adjudicated labels if they exist, else reviewer_a."""
+    return load_labels(truth_source(labels_dir), labels_dir)
 
 
 def reviewers(labels_dir: Path = LABELS_DIR) -> list[str]:
@@ -167,7 +181,7 @@ def score(outputs: dict[str, dict], labels: dict, split: str, calls: list[str]) 
                 c = next((c for c in out.get("checks", []) if c["id"] == d["check"]), None)
                 if c and c.get("result") == "fail":
                     hit = True
-                    how.append(f"{d['call'][:2]} {d['check']}")
+                    how.append(f"{d['call'].split('-')[0]} {d['check']}")
                 elif c and c.get("result") == "pass":
                     lenient_here = True
                     s.lenient.append(f"bug {bug['id']}: {d['call']} {d['check']} graded pass "
@@ -176,7 +190,7 @@ def score(outputs: dict[str, dict], labels: dict, split: str, calls: list[str]) 
                 f = next((f for f in out.get("other_findings", []) if cites(f.get("timestamp", ""), d["other_at"])), None)
                 if f:
                     hit = True
-                    how.append(f"{d['call'][:2]} other @ {f.get('timestamp')}")
+                    how.append(f"{d['call'].split('-')[0]} other @ {f.get('timestamp')}")
             if hit:
                 status = "detected" if not d.get("partial") else ("partial" if status == "missed" else status)
         miss_type = None
@@ -189,28 +203,47 @@ def score(outputs: dict[str, dict], labels: dict, split: str, calls: list[str]) 
 
 def score_by_split(outputs: dict[str, dict], labels: dict | None = None,
                    splits: dict[str, list[str]] | None = None) -> dict[str, Score]:
-    labels = labels if labels is not None else load_labels()
+    labels = labels if labels is not None else truth_labels()
     splits = splits if splits is not None else load_splits()
     groups: dict[str, list[str]] = {}
     for call in outputs:
         groups.setdefault(split_of(call, splits), []).append(call)
-    for name in list(splits) + ["holdout"]:
+    # A dataset with a dev split always reports holdout, even when empty, so its absence is visible.
+    for name in list(splits) + (["holdout"] if "dev" in splits else []):
         groups.setdefault(name, [])
     return {name: score(outputs, labels, name, calls) for name, calls in groups.items()}
 
 
 # ---------------------------------------------------------------- inter-rater agreement
+def _pairs(a: dict, b: dict) -> list[tuple[str, str, str, str]]:
+    """(call, check, label_a, label_b) for items both reviewers labelled."""
+    return [(call, cid, a[call][cid]["label"], lab["label"])
+            for call, checks in (b or {}).items() for cid, lab in (checks or {}).items()
+            if lab and lab.get("label") and (a.get(call) or {}).get(cid, {}).get("label")]
+
+
+def disagreements(labels_dir: Path = LABELS_DIR) -> list[dict]:
+    """Items where reviewer_a and another reviewer disagree: the adjudicator's to-do list."""
+    a = load_labels(TRUTH, labels_dir).get("judge_fails", {})
+    out = []
+    for r in reviewers(labels_dir):
+        if r == TRUTH:
+            continue
+        for call, cid, la, lb in _pairs(a, load_labels(r, labels_dir).get("judge_fails", {})):
+            if la != lb:
+                out.append({"call": call, "check": cid, TRUTH: la, r: lb})
+    return out
+
+
 def agreement(labels_dir: Path = LABELS_DIR) -> list[dict]:
-    """Cohen's kappa between the truth reviewer and every other reviewer, on items both labelled."""
+    """Cohen's kappa between reviewer_a and every other independent reviewer, on items both labelled."""
     truth = load_labels(TRUTH, labels_dir).get("judge_fails", {})
     out = []
     for r in reviewers(labels_dir):
         if r == TRUTH:
             continue
         other = load_labels(r, labels_dir).get("judge_fails", {}) or {}
-        pairs = [(truth[call][cid]["label"], lab["label"])
-                 for call, checks in other.items() for cid, lab in (checks or {}).items()
-                 if lab and lab.get("label") and cid in truth.get(call, {})]
+        pairs = [(la, lb) for _, _, la, lb in _pairs(truth, other)]
         binary = [(a == "confirmed", b == "confirmed") for a, b in pairs]
         out.append({"reviewer": r, "items": len(pairs),
                     "kappa_3way": cohen_kappa(pairs), "kappa_real_defect": cohen_kappa(binary),
@@ -222,5 +255,5 @@ def as_dict(scores: dict[str, Score]) -> dict:
     return {name: s.to_dict() for name, s in scores.items()}
 
 
-__all__ = ["Rate", "Score", "agreement", "as_dict", "cohen_kappa", "load_labels", "load_splits",
-           "score", "score_by_split", "wilson", "asdict"]
+__all__ = ["Rate", "Score", "agreement", "as_dict", "cohen_kappa", "disagreements", "load_labels",
+           "load_splits", "score", "score_by_split", "truth_labels", "truth_source", "wilson", "asdict"]

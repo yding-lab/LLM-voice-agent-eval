@@ -23,6 +23,7 @@ ENV = {  # field -> environment variable
     "timeout_s": "EVAL_TIMEOUT_S",
     "max_retries": "EVAL_MAX_RETRIES",
     "replay_run": "EVAL_REPLAY_RUN",
+    "dataset": "EVALKIT_DATASET",
     "aws_region": "AWS_REGION",
 }
 
@@ -36,7 +37,8 @@ class EvalConfig:
     timeout_s: float = 120.0  # per request
     max_retries: int = 3  # extra attempts after the first, with exponential backoff
     retry_backoff_s: float = 2.0
-    replay_run: str = "baseline-v1-gpt-4.1"  # recorded run that the replay provider serves from
+    dataset: str = "recorded"  # recorded (real calls) | synthetic (permission-cleared samples)
+    replay_run: str = ""  # run the replay provider serves from; "" = the dataset's default
     aws_region: str = "us-east-1"
 
     @classmethod
@@ -62,6 +64,10 @@ class EvalConfig:
             raise ValueError(f"provider must be openai, bedrock or replay, not {self.provider!r}")
         if self.rubric not in RUBRICS:
             raise ValueError(f"rubric must be one of {sorted(RUBRICS)}, not {self.rubric!r}")
+        from .paths import DATASETS
+
+        if self.dataset not in DATASETS:
+            raise ValueError(f"dataset must be one of {sorted(DATASETS)}, not {self.dataset!r}")
         if self.max_retries < 0 or self.timeout_s <= 0:
             raise ValueError("max_retries must be >= 0 and timeout_s > 0")
 

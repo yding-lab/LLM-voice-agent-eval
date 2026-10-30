@@ -33,8 +33,10 @@ jobs:
       - run: pip install -r requirements-eval.txt
       - name: Judge precision and recall vs. human labels
         run: python -m evalkit score --min-precision 0.5 --min-recall 0.5 | tee -a "$GITHUB_STEP_SUMMARY"
-      - name: Keyless demo runs end to end
-        run: python -m evalkit demo > /dev/null
+      - name: Keyless demos run end to end
+        run: |
+          python -m evalkit demo > /dev/null
+          python -m evalkit demo --dataset recorded > /dev/null
 
   docker:
     # Builds the service image and smoke-tests the running container the way a reviewer would use it.
@@ -45,10 +47,16 @@ jobs:
       - run: docker run -d --name eval -p 8000:8000 llm-voice-agent-eval
       - name: Wait for the service
         run: timeout 60 bash -c 'until curl -fs localhost:8000/health; do sleep 1; done'
-      - name: Evaluate a bundled call through the API
+      - name: Evaluate a synthetic sample call through the API (image default)
         run: |
-          curl -fs -X POST localhost:8000/samples/02-new_patient_booking/evaluate -o out.json
-          python3 -c "import json; j=json.load(open('out.json')); assert j['counts']['fail'] == 4, j['counts']; print(j['judge'], j['counts'])"
+          curl -fs -X POST localhost:8000/samples/s02-refill_request/evaluate -o out.json
+          python3 -c "import json; j=json.load(open('out.json')); assert j['counts']['fail'] == 3, j['counts']; assert 'FIXTURE' in j['judge']['note']; print(j['judge'], j['counts'])"
+      - name: Recorded-calls mode
+        run: |
+          docker run -d --name eval-recorded -p 8001:8000 -e EVALKIT_DATASET=recorded llm-voice-agent-eval
+          timeout 60 bash -c 'until curl -fs localhost:8001/health; do sleep 1; done'
+          curl -fs -X POST localhost:8001/samples/02-new_patient_booking/evaluate -o rec.json
+          python3 -c "import json; j=json.load(open('rec.json')); assert j['counts']['fail'] == 4, j['counts']; print(j['judge'], j['counts'])"
       - name: Container logs
         if: always()
         run: docker logs eval

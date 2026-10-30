@@ -10,8 +10,16 @@ manifest.json:
   config            the resolved EvalConfig (provider, model, rubric, redact, timeouts, retries)
   rubric_sha        SHA-256 of the rubric text actually sent
   scenario_set_sha  SHA-256 of caller/scenarios.yaml
-  calls.<call>      input_sha, status, error, attempts, latency_s, input/output tokens, cost_usd, redactions
+  fingerprint       every setting that changes the judge's output (see fingerprint()); a run
+                    can only be resumed with an identical fingerprint
+  calls.<call>      input_sha, scenario_sha, judged_at, status, error, attempts, latency_s,
+                    input/output tokens, cost_usd, redactions
+  resumes           one entry per resumed invocation: when, which commit, which calls were
+                    judged and which were reused unchanged
   totals            calls, ok, errors, tokens, cost_usd, mean/p50/max latency
+
+A reused call keeps its original manifest entry byte for byte, so the record always describes
+the invocation that actually produced that output.
 """
 
 from __future__ import annotations
@@ -26,7 +34,7 @@ import yaml
 
 from . import __version__
 from .config import EvalConfig
-from .data import scenario_set_sha
+from .data import Call, scenario_set_sha, sha256
 from .judge import Outcome
 from .paths import PRICING_FILE, ROOT, RUNS_DIR
 from .rubrics import rubric_sha
@@ -53,26 +61,77 @@ def price(model: str, input_tokens: int | None, output_tokens: int | None) -> fl
     return round((input_tokens * p["input_per_1m"] + output_tokens * p["output_per_1m"]) / 1e6, 6)
 
 
-def build_manifest(run_id: str, cfg: EvalConfig, outcomes: list[Outcome]) -> dict:
-    calls = {}
-    for o in outcomes:
-        calls[o.call] = {
-            "input_sha": o.input_sha, "status": o.status, "error": o.error, "attempts": o.attempts,
-            "latency_s": o.latency_s, "input_tokens": o.input_tokens, "output_tokens": o.output_tokens,
-            "cost_usd": price(cfg.model, o.input_tokens, o.output_tokens) if cfg.provider != "replay" else 0.0,
-            "redactions": o.redactions,
-        }
+def scenario_sha(call: Call) -> str:
+    """Hash of the per-call scenario (goal, expected behaviour, checks) that goes into the prompt."""
+    return sha256(json.dumps(call.scenario, sort_keys=True, ensure_ascii=False))[:12]
+
+
+def fingerprint(cfg: EvalConfig, names: list[str] = ()) -> dict:
+    """Every run-level setting that can change what the judge returns for the same transcript.
+
+    Timeouts and retry settings are left out: they change whether a call succeeds, not what
+    a successful call returns. The pseudonymization name list is hashed (never stored) because
+    it decides what the model sees when redaction is on.
+    """
     return {
-        "run_id": run_id,
-        "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "git_commit": git_commit(),
-        "evalkit_version": __version__,
-        "config": cfg.to_dict(),
+        "provider": cfg.provider,
+        "model": cfg.model,
+        "rubric": cfg.rubric,
         "rubric_sha": rubric_sha(cfg.rubric),
         "scenario_set_sha": scenario_set_sha(),
-        "calls": calls,
-        "totals": totals(calls),
+        "redact": cfg.redact,
+        "redaction_names_sha": sha256("\n".join(sorted(set(names))))[:12] if cfg.redact else None,
+        "dataset": cfg.dataset,
+        "replay_run": cfg.replay_run or None,
     }
+
+
+def call_entry(o: Outcome, cfg: EvalConfig, call: Call | None) -> dict:
+    return {
+        "input_sha": o.input_sha, "scenario_sha": scenario_sha(call) if call else None,
+        "judged_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "status": o.status, "error": o.error, "attempts": o.attempts,
+        "latency_s": o.latency_s, "input_tokens": o.input_tokens, "output_tokens": o.output_tokens,
+        "cost_usd": price(cfg.model, o.input_tokens, o.output_tokens) if cfg.provider != "replay" else 0.0,
+        "redactions": o.redactions,
+    }
+
+
+def build_manifest(run_id: str, cfg: EvalConfig, outcomes: list[Outcome], *, calls_by_name: dict | None = None,
+                   names: list[str] = (), previous: dict | None = None, reused: tuple[str, ...] = ()) -> dict:
+    """A fresh manifest, or `previous` extended by a resumed invocation.
+
+    On resume, calls in `reused` and calls of `previous` not touched this time keep their
+    original entries unchanged; only newly judged calls get new entries.
+    """
+    calls_by_name = calls_by_name or {}
+    calls = dict(previous["calls"]) if previous else {}
+    judged = []
+    for o in outcomes:
+        if o.call in reused:
+            continue
+        calls[o.call] = call_entry(o, cfg, calls_by_name.get(o.call))
+        judged.append(o.call)
+    now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    if previous:
+        manifest = {k: v for k, v in previous.items() if k not in ("calls", "totals")}
+        manifest["resumes"] = list(previous.get("resumes", [])) + [{
+            "at": now, "git_commit": git_commit(), "evalkit_version": __version__,
+            "judged": judged, "reused": list(reused)}]
+    else:
+        manifest = {
+            "run_id": run_id,
+            "created_at": now,
+            "git_commit": git_commit(),
+            "evalkit_version": __version__,
+            "config": cfg.to_dict(),
+            "rubric_sha": rubric_sha(cfg.rubric),
+            "scenario_set_sha": scenario_set_sha(),
+            "fingerprint": fingerprint(cfg, names),
+        }
+    manifest["calls"] = calls
+    manifest["totals"] = totals(calls)
+    return manifest
 
 
 def totals(calls: dict) -> dict:
@@ -92,12 +151,14 @@ def totals(calls: dict) -> dict:
     }
 
 
-def save_run(run_dir: Path, cfg: EvalConfig, outcomes: list[Outcome]) -> dict:
+def save_run(run_dir: Path, cfg: EvalConfig, outcomes: list[Outcome], **kw) -> dict:
+    """Write outputs and the manifest. Reused outputs (kw['reused']) are left untouched on disk."""
     run_dir.mkdir(parents=True, exist_ok=True)
+    reused = kw.get("reused", ())
     for o in outcomes:
-        if o.output is not None:
+        if o.output is not None and o.call not in reused:
             (run_dir / f"{o.call}.json").write_text(json.dumps(o.output, indent=2))
-    manifest = build_manifest(run_dir.name, cfg, outcomes)
+    manifest = build_manifest(run_dir.name, cfg, outcomes, **kw)
     (run_dir / MANIFEST).write_text(json.dumps(manifest, indent=2))
     return manifest
 

@@ -1,0 +1,27 @@
+Call: s01-weekend_request
+Scenario: schedule_weekend - Ask for a Sunday appointment (closed-day handling)
+Date: 2026-10-21 10:00
+Duration: 01:32   End: patient bot said goodbye
+SYNTHETIC: written by hand for the offline demo. Fictional clinic, fictional caller, seeded defects (see samples/README.md).
+
+[00:00] -- dialing (synthetic, nothing dialed) --
+[00:02] -- call answered --
+[00:03] CLINIC AGENT: Thanks for calling Maple Grove Orthopedics.
+[00:05] PATIENT (bot): Hi, I'd like to  [cut off]
+[00:05] CLINIC AGENT: How can I help you today?
+[00:08] PATIENT (bot): Hi, I'd like to book a visit for my knee this Sunday at ten if possible.
+[00:14] CLINIC AGENT: Sure. Can I have your first and last name?
+[00:17] PATIENT (bot): Jordan Lee.
+[00:21] CLINIC AGENT: Thanks, Jordan. Our office is closed on weekends. We're open Monday through Friday, 8 AM to 5 PM.
+[00:29] PATIENT (bot): Oh, okay. Is there really nothing on Saturday morning? Even early?
+[00:35] CLINIC AGENT: I can put you in Saturday at 9 AM with Dr. Patel. Would you like that?
+[00:41] PATIENT (bot): Wait, I thought you were closed on weekends?
+[00:46] CLINIC AGENT: I can hold Saturday at 9 AM for you. Should I book it?
+[00:51] PATIENT (bot): Hmm. Then I'd rather do a weekday, but it has to be before 9 AM or after 4 PM because of work.
+[00:59] CLINIC AGENT: The next opening is Tuesday at 10:30 AM. Does that work?
+[01:05] PATIENT (bot): No, 10:30 doesn't work, I said before 9 or after 4.
+[01:11] CLINIC AGENT: Let me check. Thursday at 4:15 PM is available.
+[01:16] PATIENT (bot): Thursday at 4:15 works. Please book that.
+[01:20] CLINIC AGENT: You're booked for Thursday at 4:15 PM with Dr. Patel.
+[01:25] PATIENT (bot): Great, thank you. Bye.
+[01:30] -- hangup: patient bot said goodbye --

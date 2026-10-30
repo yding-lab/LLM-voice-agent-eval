@@ -1,0 +1,8 @@
+{
+  "call_id": "s02-refill_request",
+  "scenario": "refill_routine",
+  "started_at": 1792611000.0,
+  "duration_s": 91,
+  "end_reason": "patient bot said goodbye",
+  "synthetic": true
+}
