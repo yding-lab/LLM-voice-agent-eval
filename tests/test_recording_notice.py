@@ -20,7 +20,7 @@ from livekit.plugins import openai  # noqa: E402
 import caller.agent as ca  # noqa: E402
 
 NOTICE = "This call may be recorded for quality and training purposes."
-GREETING = "Thank you for calling Pivot Point Orthopedics, how can I help you?"
+GREETING = "Thank you for calling Maple Grove Orthopedics, how can I help you?"  # fictional
 
 
 async def _fake_llm_node(agent, chat_ctx, tools, model_settings):

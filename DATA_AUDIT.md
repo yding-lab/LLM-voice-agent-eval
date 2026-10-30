@@ -9,9 +9,13 @@ This audit covers what is committed under `calls/`, `reports/`, `evals/` and `sa
 | Test-only identities? | Yes. The callers are personas: "Sophia Williams" (a test account created for the line) and "Sarah Mitchell" (fictional console persona). Dates of birth are `07/04/2000` (a placeholder the agent assigns) and `August 20, 1992` (fictional, confirmed by the repository owner). No caller phone number is spoken | OK |
 | Personal information? | No real person's data found. The only phone number in transcripts and metadata is the test line that was called. No emails. Clinic and doctor names are the demo agent's fictional ones | OK |
 | Secrets? | None in the working tree or in history. The only key-shaped strings are the `.env.example` placeholder `ST_xxxxxxxxxxxx`. `.env` was never committed. Commit author emails were rewritten to the GitHub noreply address | OK |
-| Permission to publish the recordings? | **Not documented.** See below | **Needs the owner's decision** |
+| Permission to publish the recordings? | **Pending confirmation.** No written permission on file. See below | **Pending confirmation (待确认)** |
 
 ## Permission to publish
+
+**Status: pending confirmation (待确认).** Nothing in this repository should be read as permission having been granted.
+
+**Backup.** On 2026-10-30, before any clean-up, the complete repository (every commit and ref, as a git bundle) and a snapshot of `calls/`, `reports/` and `evals/` were backed up, restore-tested and checksummed. The backup is held privately by the owner, outside this repository.
 
 The 11 calls were placed to a third-party company's demo voice agent, on a test line provided for a hiring assessment. The recordings contain that agent's synthesized voice and wording, and the company's name appears in its test-line message in calls 05 and 11. The assessment instructions asked candidates to keep the submission repository private. There is no written permission on file to publish these recordings or transcripts.
 
@@ -25,8 +29,8 @@ To keep the project usable regardless of the outcome:
 Defaulting the demo to synthetic data does **not** resolve this. As of 2026-10-30 the repository is public and contains:
 
 - `calls/*/recording.mp3` and `recording.ogg` (22 files, about 44 MB) and `transcript.txt`/`.json` for all 11 calls, on `main` and on this branch. They've been in the history since commit `43a915a`.
-- The company's name, spoken by its test-line message in calls 05 and 11 (`transcript.txt` and `.json`).
-- The test line's phone number (`+18054398008`) in 24 places in call metadata. It's the company's published test number, not a personal one.
+- The company's name, spoken by its test-line message in calls 05 and 11 (`transcript.txt` and `.json`), and its demo clinic's and doctors' names in transcripts, judge outputs (`evals/runs/`) and `reports/candidate_findings.md`. Public documents written for this repository (README, BUG_REPORT and the others) are anonymized; the evidence files are not edited.
+- The test line's phone number in 24 places in call metadata and two early-failure notes. It's the company's test number, not a personal one, but it identifies the company.
 - `reports/` excerpts quoting the agent's wording, and `BUG_REPORT.md`, which describes defects in the company's demo agent.
 
 ### Authorization records
