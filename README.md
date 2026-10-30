@@ -1,6 +1,6 @@
 # llm-voice-agent-eval
 
-[![tests](https://github.com/yding-lab/llm-voice-agent-eval/actions/workflows/tests.yml/badge.svg)](https://github.com/yding-lab/llm-voice-agent-eval/actions/workflows/tests.yml) ![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%E2%80%933.13-blue) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![tests](https://github.com/yding-lab/LLM-voice-agent-eval/actions/workflows/tests.yml/badge.svg)](https://github.com/yding-lab/LLM-voice-agent-eval/actions/workflows/tests.yml) ![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%E2%80%933.13-blue) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **An evaluation platform for voice AI agents.** It simulates realistic users over real phone calls, grades every call with an LLM judge, measures that judge against human labels with confidence intervals, tracks every run as a reproducible experiment, and serves the whole pipeline over an API.
 
