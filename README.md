@@ -26,7 +26,15 @@ docker build -t llm-voice-agent-eval . && docker run --rm -p 8000:8000 llm-voice
 | Demo data | What it is | What its numbers mean |
 |---|---|---|
 | `synthetic` (default) | Three fictional calls written for this repo, with five seeded defects ([samples/](samples/README.md)), and a **hand-written fixture** standing in for the judge | How the pipeline and the metrics work. Nothing about judge quality |
-| `recorded` | The 11 real calls and the judge output gpt-4.1 actually produced | The measured baseline in [JUDGE_EVAL.md](JUDGE_EVAL.md) |
+| `recorded` | The 11 real calls, with the judge output gpt-4.1 actually produced **replayed** from disk (no model is called) | The measured baseline in [JUDGE_EVAL.md](JUDGE_EVAL.md), nothing more |
+
+**Three kinds of judge output live in this repo, and only one is evidence of judge quality:**
+
+| Kind | Where | Produced by | Evidence of judge quality? |
+|---|---|---|---|
+| Real model output | `evals/runs/baseline-v1-gpt-4.1/` | gpt-4.1 with rubric v1 on the 11 real calls. The manifest was reconstructed afterwards; tokens, latency and cost weren't recorded | Yes, but only in-sample (`dev`) and against one reviewer's labels |
+| Replay | any run with `provider: replay` | Re-serves the stored outputs above, matched by transcript hash | No new evidence: same numbers as the run it replays |
+| Hand-written fixture | `samples/runs/illustrative-fixture/` | Written by the author, with deliberate mistakes | **No.** It only shows how scoring works |
 
 ## How it fits together
 
@@ -51,10 +59,10 @@ flowchart LR
 
 ## Highlights
 
-- **The evaluator is evaluated.** The LLM judge was scored against human-confirmed findings: **50% precision (95% CI 27–73%)** and **56% recall (27–81%)** at baseline. Every error traced to one of four causes (blaming the wrong side, no clock, lenient grading, a coverage gap), and judge v2 targets each one. See [JUDGE_EVAL.md](JUDGE_EVAL.md).
-- **Honest about sample size.** Every rate comes with a Wilson interval. Metrics are split into `dev` (the calls v2 was designed on, so in-sample) and `holdout` (every new call; empty today). The workflow for an independent second reviewer is ready: a blank template, Cohen's κ, a list of disagreements, and an adjudicated label file that becomes the truth once it exists.
+- **The evaluator is evaluated.** The LLM judge (gpt-4.1, rubric v1) was scored against human-confirmed findings: **50% precision (95% CI 27–73%)** and **56% recall (27–81%)**. Every error traced to one of four causes (blaming the wrong side, no clock, lenient grading, a coverage gap), and rubric v2 targets each one. **v2 hasn't been run on the real calls yet, so no v2 result is claimed.** See [JUDGE_EVAL.md](JUDGE_EVAL.md).
+- **Honest about sample size.** Every rate comes with a Wilson interval. All 11 real calls are `dev` data: v2 was designed from v1's errors on them, so they can't measure how v2 generalizes. The `holdout` split (every new call) is empty, and all labels come from one reviewer, the author. The workflow for an independent second reviewer and a holdout run is ready (template, Cohen's κ, disagreement list, adjudicated labels), but none of that data exists yet.
 - **Every run is a tracked experiment.** Each run records its provider, model, rubric hash, scenario-set hash, input hashes, git commit, tokens, estimated cost and latency in `manifest.json`. `compare` shows what changed in the setup, the scores, the cost, and check by check.
-- **One pipeline, production habits.** Pseudonymize → judge → save → score → report, with layered config, retries with exponential backoff, timeouts, per-call error isolation, resumable runs and per-call logging.
+- **One pipeline, production habits.** Pseudonymize → judge → save → score → report, with layered config, retries with exponential backoff, timeouts, per-call error isolation and per-call logging. Runs resume after a failure, but saved outputs are reused only when the transcript, the scenario and every result-affecting setting are unchanged; otherwise the run refuses and asks for a new run name.
 - **A service, not just scripts.** The FastAPI endpoints evaluate a transcript, list runs and compare them, packaged as a non-root Docker image that CI builds and smoke-tests on every push.
 - **Responsible AI by default.** Names, dates of birth, phones and emails become stable tokens before any model call, so the judge can still see that a correction was ignored without ever seeing the values.
 - **Real calls, real bugs.** 11 calls to a live demo agent turned up 9 confirmed issues, including a critical one: records were matched on caller ID, so a second caller from the same number could see and cancel another patient's appointment ([BUG_REPORT.md](BUG_REPORT.md)).
@@ -90,7 +98,9 @@ Settings come from `evals/config.yaml`, then environment variables (`ANALYSIS_PR
 | Field | Why |
 |---|---|
 | `config` (provider, model, rubric, redaction, timeouts, retries) | So a result can be traced to the exact settings |
-| `rubric_sha`, `scenario_set_sha`, per-call `input_sha` | An edited prompt or transcript can't pass for the version that was scored |
+| `rubric_sha`, `scenario_set_sha`, per-call `input_sha` and `scenario_sha` | An edited prompt, transcript or scenario can't pass for the version that was scored |
+| `fingerprint` (provider, model, rubric + hash, scenarios hash, redaction and its name list hash, dataset, replay source) | A resumed run must match it exactly, or it refuses to reuse anything |
+| per call: `judged_at`; run: `resumes` (when, commit, which calls judged vs reused) | Reused outputs keep their original records; a resume never re-stamps them with new settings |
 | `git_commit`, `created_at`, `evalkit_version` | Reproducibility |
 | per call: `status`, `error`, `attempts`, `latency_s`, tokens, `cost_usd`, `redactions` | Reliability, cost and privacy at a glance |
 | `totals` | Run-level cost, token, error and latency summary |
@@ -112,7 +122,7 @@ The judge provider is fixed by the server's configuration, never by the request,
 
 ## Real calls
 
-Publication status: these recordings are of a third-party demo agent, and written permission to publish them isn't on file yet ([DATA_AUDIT.md](DATA_AUDIT.md)). The offline demo and the Docker image default to the synthetic samples for that reason.
+**Publication status: unresolved.** These recordings are of a third-party demo agent, and written permission to publish them isn't on file ([DATA_AUDIT.md](DATA_AUDIT.md)). The recordings and transcripts are still public in this repository and its history. The offline demo and the Docker image default to the synthetic samples, but that doesn't settle the question.
 
 [`calls/INDEX.md`](calls/INDEX.md) lists 11 calls (96–323 s, mean 2.8 min) to a demo AI receptionist for an orthopedic clinic. Start with `calls/02-new_patient_booking` (the critical privacy bug, at 01:01 and 02:33) or `calls/07-barge_in` (a scripted interruption the agent handles well). These calls used an earlier primary-care version of the scenarios; each `scenario.json` records what that call used.
 
@@ -171,7 +181,7 @@ evalkit/            evaluation pipeline (no LiveKit dependency)
   rubrics.py        versioned judge rubrics (v1 kept byte-for-byte for the baseline)
   providers.py      OpenAI, AWS Bedrock (Converse API), replay; token usage
   judge.py          prompt building, retries with backoff, per-call outcome
-  pipeline.py       end to end: judge -> save -> score -> report; resumable
+  pipeline.py       end to end: judge -> save -> score -> report; resumes only with verified provenance
   runs.py           experiment tracking: manifest, cost, latency, run listing
   scoring.py        labels, splits, Wilson CIs, severity, error types, Cohen's kappa
   compare.py        run-vs-run: setup, metrics, cost, check-by-check
@@ -193,7 +203,7 @@ Dockerfile          the evaluation service image (replay mode by default)
 
 ## Tests
 
-No API keys and no network. CI runs them on every push, alongside an eval gate (the newest judge run must keep ≥50% precision and recall against human labels) and a Docker build plus smoke test of the running container.
+No API keys and no network. CI runs them on every push, alongside an eval gate (the newest judge run must keep ≥50% precision and recall against human labels on `dev`; a regression check on in-sample data, not a quality claim) and a Docker build plus smoke test of the running container.
 
 ```bash
 make test        # pytest suite (pipeline, providers, retries, scoring, tracking, API) + turn-taking guards

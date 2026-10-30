@@ -31,7 +31,7 @@ from .compare import compare, compare_md
 from .config import EvalConfig
 from .data import iter_calls
 from .paths import get_dataset
-from .pipeline import run_pipeline
+from .pipeline import ResumeConflict, run_pipeline
 from .report import run_md, score_md
 from .runs import latest_run, list_runs, load_run
 from .scoring import TRUTH, agreement, disagreements, load_labels, load_splits, score_by_split, truth_labels
@@ -44,7 +44,11 @@ def _cfg(args, **extra) -> EvalConfig:
 
 
 def cmd_run(args) -> int:
-    res = run_pipeline(_cfg(args), args.name, force=args.force)
+    try:
+        res = run_pipeline(_cfg(args), args.name, force=args.force)
+    except ResumeConflict as e:
+        print(f"refusing to resume: {e}", file=sys.stderr)
+        return 2
     print((Path(res["run_dir"]) / "report.md").read_text())
     return 0 if res["manifest"]["totals"]["errors"] == 0 else 1
 
@@ -198,7 +202,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--model")
     p.add_argument("--rubric", choices=["v1", "v2"])
     p.add_argument("--no-redact", action="store_true")
-    p.add_argument("--force", action="store_true", help="re-judge calls that already have output")
+    p.add_argument("--force", action="store_true", help="re-judge every call, even ones with verified saved output (same settings only)")
     p.set_defaults(fn=cmd_run)
 
     p = sub.add_parser("demo", help="offline demo (no key, no cost)")
