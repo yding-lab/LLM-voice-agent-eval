@@ -65,14 +65,14 @@ flowchart LR
 - **One pipeline, production habits.** Pseudonymize → judge → save → score → report, with layered config, retries with exponential backoff, timeouts, per-call error isolation and per-call logging. Runs resume after a failure, but saved outputs are reused only when the transcript, the scenario and every result-affecting setting are unchanged; otherwise the run refuses and asks for a new run name.
 - **A service, not just scripts.** The FastAPI endpoints evaluate a transcript, list runs and compare them, packaged as a non-root Docker image that CI builds and smoke-tests on every push.
 - **Responsible AI by default.** Names, dates of birth, phones and emails become stable tokens before any model call, so the judge can still see that a correction was ignored without ever seeing the values.
-- **Real calls, real bugs.** 11 calls to a live demo agent turned up 9 confirmed issues, including a critical one: records were matched on caller ID, so a second caller from the same number could see and cancel another patient's appointment ([BUG_REPORT.md](BUG_REPORT.md)).
+- **Real calls, real bugs.** 11 calls to a third-party voice AI demo system turned up 9 confirmed issues, including a critical one: records were matched on caller ID, so a second caller from the same number could see and cancel another patient's appointment ([BUG_REPORT.md](BUG_REPORT.md)).
 - **Natural turn-taking.** A semantic end-of-turn model on top of VAD, a tool for staying silent during "one moment, let me check", and guards against hanging up mid-question. Median response latency was **1.31 s** over 110 turns.
 
 | Doc | What's in it |
 |---|---|
 | [JUDGE_EVAL.md](JUDGE_EVAL.md) | How good is the LLM judge? Method, results with intervals, error analysis, v2, limits |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Both halves of the system, every design decision with alternatives and trade-offs |
-| [BUG_REPORT.md](BUG_REPORT.md) | 9 issues found in the demo agent, by severity, each cited to a call and timestamp |
+| [BUG_REPORT.md](BUG_REPORT.md) | 9 issues found in the third-party demo system (anonymized), by severity, each cited to a call and timestamp |
 | [ITERATION_LOG.md](ITERATION_LOG.md) | What went wrong, the real cause, the fix and how it was tested |
 | [DATA_AUDIT.md](DATA_AUDIT.md) | Identities, personal information, secrets and publication permission for the committed data |
 | [calls/](calls/INDEX.md) | 11 real calls: recordings, timestamped transcripts |
@@ -122,9 +122,9 @@ The judge provider is fixed by the server's configuration, never by the request,
 
 ## Real calls
 
-**Publication status: unresolved.** These recordings are of a third-party demo agent, and written permission to publish them isn't on file ([DATA_AUDIT.md](DATA_AUDIT.md)). The recordings and transcripts are still public in this repository and its history. The offline demo and the Docker image default to the synthetic samples, but that doesn't settle the question.
+**Publication status: pending confirmation.** These recordings are of a third-party voice AI demo system, and written permission to publish them isn't on file ([DATA_AUDIT.md](DATA_AUDIT.md)). The recordings and transcripts are still public in this repository and its history. The offline demo and the Docker image default to the synthetic samples, but that doesn't settle the question.
 
-[`calls/INDEX.md`](calls/INDEX.md) lists 11 calls (96–323 s, mean 2.8 min) to a demo AI receptionist for an orthopedic clinic. Start with `calls/02-new_patient_booking` (the critical privacy bug, at 01:01 and 02:33) or `calls/07-barge_in` (a scripted interruption the agent handles well). These calls used an earlier primary-care version of the scenarios; each `scenario.json` records what that call used.
+[`calls/INDEX.md`](calls/INDEX.md) lists 11 calls (96–323 s, mean 2.8 min) to a third-party voice AI demo system: an AI receptionist for a fictional orthopedic clinic. For a first look, use the synthetic samples (`python -m evalkit demo`) instead. Start with `calls/02-new_patient_booking` (the critical privacy bug, at 01:01 and 02:33) or `calls/07-barge_in` (a scripted interruption the agent handles well). These calls used an earlier primary-care version of the scenarios; each `scenario.json` records what that call used.
 
 **Known issue in these recordings:** the first ~35 s of several calls overlap. The line plays a recording notice, pauses, then greets, and the bot answered the notice (30 of 33 cut-off bot turns are in that window). After the greeting, turn-taking is normal. The fix, and a guard against hanging up right after a question or during a transfer, came after these calls and are covered by `tests/`; see [ITERATION_LOG.md](ITERATION_LOG.md) #7–#10.
 

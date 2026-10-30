@@ -1,8 +1,10 @@
 # Bug report: clinic AI receptionist
 
-11 calls were placed to the test line between Oct 18 and Oct 19, 2026, all from one caller number (`calls/01`–`calls/11`). Each issue below was found in the transcripts and cross-checked against what happened in other calls. Timestamps match both `transcript.txt` and `recording.mp3` in the same folder.
+> **Anonymized public version.** The system under test is a third-party voice AI demo system (an AI receptionist for a fictional clinic) reached through a test line. The company, its demo clinic and its doctors are not named here: they're replaced by bracketed placeholders such as `[doctor A]`, including inside quotes, which are otherwise verbatim. The unedited material is kept in a private backup. Publication permission for the underlying recordings is **pending confirmation** ([DATA_AUDIT.md](DATA_AUDIT.md)).
 
-The clinic side of each transcript comes from our speech-to-text. Doctor names in particular are transcribed inconsistently ("Zbigniew Lukowski" appears in five spellings), so names were not treated as bugs.
+11 calls were placed to the third-party demo system's test line between Oct 18 and Oct 19, 2026, all from one caller number (`calls/01`–`calls/11`). Each issue below was found in the transcripts and cross-checked against what happened in other calls. Timestamps match both `transcript.txt` and `recording.mp3` in the same folder.
+
+The clinic side of each transcript comes from our speech-to-text. Doctor names in particular are transcribed inconsistently (one name appears in five spellings), so names were not treated as bugs.
 
 Severity:
 - **Critical**: privacy or safety harm.
@@ -33,13 +35,13 @@ Severity:
 **Calls:** `calls/01-schedule_new_checkup`, `calls/02-new_patient_booking` at 01:01 and 02:33, `calls/03-reschedule_existing` at 00:57
 
 **Steps / context:**
-1. In call 01, patient **Sophia Williams** books Tuesday, Oct 20 at 10 AM with Dr. Kelly Noble.
+1. In call 01, patient **Sophia Williams** books Tuesday, Oct 20 at 10 AM with [doctor A].
 2. In call 02, from the same phone number, a different person, **Sarah Mitchell**, says she is a new patient and that this is her first visit. The agent creates a profile for her.
 3. In call 03, Sophia calls back to change her appointment.
 
 **What happened:**
-- At 01:01 in call 02, the agent tells Sarah: *"You already have a routine office visit. Scheduled with doctor Kelly Noble on Tuesday, October 20 at 10AM."*
-- Sarah says *"This is my first visit to your office, so I don't have any appointments yet"* (01:15). The agent insists the appointment is hers, refuses to book until it is removed, and cancels it at 02:33: *"Your appointment with doctor Kelly Noble on October 20 has been canceled."*
+- At 01:01 in call 02, the agent tells Sarah: *"You already have a routine office visit. Scheduled with [doctor A] on Tuesday, October 20 at 10AM."*
+- Sarah says *"This is my first visit to your office, so I don't have any appointments yet"* (01:15). The agent insists the appointment is hers, refuses to book until it is removed, and cancels it at 02:33: *"Your appointment with [doctor A] on October 20 has been canceled."*
 - In call 03 at 00:57, Sophia is told *"I don't see any upcoming appointments for you right now."* Her booking is gone.
 
 **Why it's a problem:**
